@@ -62,5 +62,34 @@
             }
             return false;
         }
+        function update($table,$where, $fields){
+            $set='';
+            $id='';
+            $x=1;
+            $y=1;
+            // manage fields to be where updated
+            foreach($fields as $name=>$value){
+                $set.="{$name}=?";
+                if($x<count($fields)){
+                    $set.=", ";
+                }
+                $x++;
+            }
+            // manage where condition
+            foreach($where as $name=>$value){
+                $id.="{$name}=?";
+                if($y<count($where)){
+                    $id.=" AND ";
+                }
+                $y++;
+            }
+            $fields=array_merge($fields,$where);
+            $sql="UPDATE {$table} SET {$set} WHERE {$id}";
+
+            if(!$this->query($sql,$fields)->error()){
+                return true;
+            }
+            return false;
+        }
     }
 ?>
