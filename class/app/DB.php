@@ -42,5 +42,25 @@
             }
             return $this;
         }
+        function insert($table,$fields=[]){
+            if(count($fields)){
+                $keys=array_keys($fields);
+                $values=null;
+                $x=1;
+                foreach($fields as $field){
+                    $values.="?, ";
+                    if($x<count($fields)){
+                        $values.=', ';
+                    }
+                    $x++;
+                }
+                $sql="INSERT INTO {$table} ('". implode('`,`',$keys) . "') VALUES ({$values})";
+                if(!$this->query($sql,$fields)){
+                    $this->_lastid = $this->query->lastInsertId();
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 ?>
