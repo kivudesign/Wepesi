@@ -91,5 +91,62 @@
             }
             return false;
         }
+        private function action($action,$table,$where=[]){
+            if(count($where)){
+                $operators=array('=','>','<','>=','<=','<>','!=');
+
+                $field=$where[0];
+                $operator=$where[1];
+                $value=$where[2];
+                if(in_array($operator,$operators)){
+                    $sql="{$action} FROM {$table} WHERE {$field}{$operator} ?";
+                    if(!$this->query($sql,array($value))->error()){
+                        return $this;
+                    }
+                }
+            }
+        }
+        
+        function get($table,$where=[],$fields=[],$order=null){
+            $field="*";            
+            if(count($fields)>0 && is_array($fields)){
+                $field="";
+                $i=1;
+                foreach($fields as $name){
+                    $field.= $name;
+                    if($i<count($fields)){
+                        $field.=",";
+                    }
+                    $i++;
+                }
+            }
+            if(!count($where)){
+                $sql = "SELECT {$field} FROM {$table}";  
+                if($order!=null && strlen($order)>5){
+                    $sql.=" {$order}";
+                }   
+                return $this->query($sql,[]);
+            }else{
+                return $this->action("SELECT {$field} ",$table,$where);
+            }           
+        }
+        function delete($table,$where){
+            return $this->action('DELETE', $table, $where);
+        }
+
+        function error(){
+            return $this->_error;
+        }
+
+        function count(){
+            return $this->_count;
+        }
+
+        function result(){
+            return $this->_results;
+        }
+        function lastId(){
+            return $this->_lastid;
+        }
     }
 ?>
