@@ -148,5 +148,73 @@
         function lastId(){
             return $this->_lastid;
         }
+
+        function join($tables,$rules,$on,$where){
+            
+            $sql="SELECT ";
+            // $tables=
+            //     [
+            //         "users"=>["sexe", "birthday", "phonenumber", "email", "username"],
+            //         "account"=>["grade", "company", "about", "city", "country", "adress"],
+            //         "usersdomaine"=>["designation"],
+            //         "media"=>["link as avatar"],
+            //         "userlevel"=>["designation as level"]
+            //     ];
+            // $rules=
+            //         [
+            //             "users"=>["accounts","Left Join"],
+            //             "accounts"=>["usersdomaine","Left Join"],
+            //             "usersdomaine"=>["media","Left Join"],
+            //             "media"=>["userlevel","Join"]                    
+            //         ];
+            //the rule of the array, start with the table to join from after table to join after 
+            // e.g: for=>user.iduser=account.idacount  <=> ["users","account","iduser","idacount"]
+            // $on=
+            //         [
+            //             ["users","accounts","iduser", "iduser"],
+            //             ["accounts","usersdomaine","iddomain", "iddomain"],
+            //             ["users","media","idavatar", "idmedia"],
+            //             ["users","userlevel","iduserlevel", "iduserlevel"]                    
+            //         ];
+            
+            if(count($tables)){
+                $i=0;
+                $SelectedField="";
+                
+                $tlen= 0;
+                foreach($tables as $tableName=>$tableValues){
+                    $tlen+=count($tableValues);
+
+                    foreach($tableValues as $tableValue){
+
+                        $SelectedField.="{$tableName}.{$tableValue}";
+                        
+                        if($i<$tlen){
+                            $SelectedField.=",";
+                        }                        
+                        $i++;   
+                    }
+                }
+                $SelectedField= substr_replace($SelectedField, "", (strlen($SelectedField) - 1));
+                //
+                $selectedTables="";
+                $j=0;
+                $rlen=0;
+                $sql.=$SelectedField;
+                if(count($rules)){
+                    foreach($rules as $tablesRules=>$tableRulevalues){
+                        //table name concat the field on the table
+                        $tableToJoin = $on[$j][0].".". $on[$j][2]; 
+                        $tableToBeJoin = $on[$j][1].".". $on[$j][3];
+                        
+                        $rlen+=count($tableRulevalues);
+                        $selectedTables.="{$tablesRules} {$tableRulevalues[1]} {$tableRulevalues[0]} ON {$tableToJoin}={$tableToBeJoin} ";                       
+                        $j++;
+                    }
+                    // $this->action($sql,$selectedTables,$where);
+                    var_dump($sql);
+                }
+            }
+        }
     }
 ?>
