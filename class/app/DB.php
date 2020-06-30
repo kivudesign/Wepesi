@@ -12,7 +12,7 @@
         private function __construct()
         {
             try {
-                $this->_pdo = new PDO("mysql:host=" . config::get('mysql/host') . ";dbname=" . config::get('mysql/db'), config::get('mysql/username'), config::get('mysql/password'));
+                $this->_pdo = new PDO("mysql:host=" . Config::get('mysql/host') . ";dbname=" . Config::get('mysql/db'), Config::get('mysql/username'), Config::get('mysql/password'));
             } catch (PDOException $ex) {
                 die($ex->getMessage());
             }
