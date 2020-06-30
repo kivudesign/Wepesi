@@ -4,7 +4,7 @@
         new view('exemple');
     });
 
-    $route->get('/list',function($id){
+    $route->get('/list',function(){
         Controller::useController('Examples');
         $ex = new Examples();
         $result=$ex->echo();
@@ -18,4 +18,12 @@
         $view = new View('exemple');
         $view->assign("data",$result);
     });
+
+    $route->post('/list',function(){
+        Controller::useController('Examples');
+        $ex = new Examples();
+        $ex->addList($_REQUEST);
+    });
+
+    $route->run();
 ?>
