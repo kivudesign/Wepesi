@@ -9,7 +9,7 @@
         Bundles::insertCSS('w3');
         Bundles::insertCSS('index');
     ?>
-    <title>Document</title>
+    <title><?php echo $title;?></title>
 </head>
 <body>
     

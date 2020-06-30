@@ -15,7 +15,7 @@
             "tokee_name"=>"token"
         )
     );
-    $queries = explode('/', $_GET['queries']);
+    $queries = explode('/', $_GET['url']);
 
     function getSubDirectories($dir)    {
         $subDir = array();
