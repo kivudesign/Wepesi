@@ -24,7 +24,15 @@
         }
 
         function call(){
-            return call_user_func_array($this->_collable,$this->_matches);
+           if(is_string($this->_collable)){
+                $params=explode("#",$this->_collable);
+                //include the controller file from the route if exist
+                Controller::useController($params[0]);
+                $ctrl= new $params[0];
+                call_user_func_array([$ctrl,$params[1]],$this->_matches);
+            }else{
+                return call_user_func_array($this->_collable,$this->_matches);
+            }
         }
         private function paramMatch($match){
             // 
