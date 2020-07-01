@@ -20,8 +20,10 @@
                     "name"=>"sunday",
                     "qte"=>7],
             ];
+            $detail=false;
             $len=count($list);
-            if($id){            
+            if($id){
+                $detail=true;          
                 foreach ($list as $key => $value) {
                     if ($value['id'] == $id) {
                         return [$list[$key]];
@@ -30,8 +32,14 @@
                         return false;
                     }
                 }
-            }                
-            return $list;
+            }
+            if($detail){
+                $view = new View('exemple');
+                $view->assign("data", $list);
+            }else{
+                return $list;
+            }
+                
         }
 
         function addList($req){
