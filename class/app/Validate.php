@@ -35,6 +35,21 @@
                                     $this->addError("{$rule} must match {$item}");
                                 }
                             break;
+                            case "number":
+                                if(!(int)$value){
+                                    $this->addError("{$item} must be a number");
+                                }
+                            break;
+                            case "email":
+                                if(!filter_var($value, FILTER_VALIDATE_EMAIL)){
+                                    $this->addError("{$item} invalid email address");
+                                }
+                            break;
+                            case "url":
+                                if(!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $source[$rvalue])){
+                                    $this->addError("{$item} invalid url");
+                                }
+                            break;
                             case "unique":
                                 $check=$this->_db->get($rvalue,array($item,'=',$value));
                                 if($check->count()){
