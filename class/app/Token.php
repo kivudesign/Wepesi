@@ -2,7 +2,7 @@
     
     class Token{
         static function generate(){
-            return Session::put("session/token_name",md5(uniqid()));
+            return Session::put(config::get("session/token_name"),md5(uniqid()));
         }
         static function check($token){
             $tokenName=config::get("session/token_name");
