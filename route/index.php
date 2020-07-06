@@ -18,6 +18,10 @@
         $ex = new Examples();
         $ex->addList($_REQUEST);
     });
+    $route->get('/register',function(){
+        new View('register');
+    });
+    $route->post('/register',"Example#register");
 
     $route->run();
 ?>

@@ -1,6 +1,6 @@
 <?php    
     class Input{
-        static function exista($type="post"){
+        static function exists($type="post"){
             switch($type){
                 case "post":
                     return (!empty($_POST))?true:false;
