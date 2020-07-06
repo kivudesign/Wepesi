@@ -67,9 +67,11 @@
             $id='';
             $x=1;
             $y=1;
+            $params=[];
             // manage fields to be where updated
             foreach($fields as $name=>$value){
                 $set.="{$name}=?";
+                array_push($params,$value);
                 if($x<count($fields)){
                     $set.=", ";
                 }
@@ -78,12 +80,13 @@
             // manage where condition
             foreach($where as $name=>$value){
                 $id.="{$name}=?";
+                array_push($params,$value);
                 if($y<count($where)){
                     $id.=" AND ";
                 }
                 $y++;
             }
-            $fields=array_merge($fields,$where);
+            $params=array_merge($fields,$where);
             $sql="UPDATE {$table} SET {$set} WHERE {$id}";
 
             if(!$this->query($sql,$fields)->error()){
