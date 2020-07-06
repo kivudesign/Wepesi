@@ -54,8 +54,8 @@
                     }
                     $x++;
                 }
-                $sql="INSERT INTO {$table} ('". implode('`,`',$keys) . "') VALUES ({$values})";
-                if(!$this->query($sql,$fields)){
+                $sql="INSERT INTO {$table} (`". implode('`,`',$keys) . "`) VALUES ({$values})";
+                if(!$this->query($sql,$fields)->error()){
                     $this->_lastid = $this->query->lastInsertId();
                     return true;
                 }
