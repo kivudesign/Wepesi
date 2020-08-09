@@ -12,7 +12,7 @@
         ),
         'remender'=>array(),
         'session'=>array(
-            "tokee_name"=>"token"
+            "token_name"=>"token"
         )
     );
     $queries = explode('/', $_GET['url']);

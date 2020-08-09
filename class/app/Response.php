@@ -1,8 +1,13 @@
 <?php
     class Response{
-        static function send(array $data){
+        static function send($data,$status=200){
+            http_response_code($status);
             header('Content-Type:application/json;chartset=utf-8');
-            echo json_encode($data,true);
+            $response=$data;
+            if(is_array($data)){
+                $response= json_encode($data, true);
+            }
+            echo $response;
             exit();
         }
     }

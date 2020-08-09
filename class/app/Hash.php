@@ -7,7 +7,7 @@
         }
         static function salt($length){
         // bin2hex($bytes)
-            return random_bytes($length);
+            return crypt($length);
         }
         static function unique(){
             return self::make(uniqid());
