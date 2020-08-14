@@ -5,9 +5,8 @@
             // check https://www.php.net/manual/en/function.password-hash.php
             return hash('sha256',$string.$salt);
         }
-        static function salt($length){
-        // bin2hex($bytes)
-            return crypt($length);
+        static function salt($bytes){
+            return bin2hex($bytes);
         }
         static function unique(){
             return self::make(uniqid());

@@ -15,8 +15,7 @@
             "token_name"=>"token"
         )
     );
-    $queries = explode('/', $_GET['url']);
-
+    
     function getSubDirectories($dir)    {
         $subDir = array();
         $directories = array_filter(glob($dir), 'is_dir');
@@ -30,8 +29,8 @@
         $dirs = getSubDirectories("class");
         foreach($dirs as $dir){
             $file=$dir."/".$class.".php";
-            if (is_file("{$dir}/{$class}.php")) { // check if the file exist
-                require_once("{$dir}/{$class}.php"); // incluse the file request if it exist
+            if (is_file($file)) { // check if the file exist
+                require_once($file); // incluse the file request if it exist
             }
         }
     });

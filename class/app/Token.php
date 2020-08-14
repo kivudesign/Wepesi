@@ -2,10 +2,10 @@
     
     class Token{
         static function generate(){
-            return Session::put(config::get("session/token_name"),md5(uniqid()));
+            return Session::put(Config::get("session/token_name"),md5(uniqid()));
         }
         static function check($token){
-            $tokenName=config::get("session/token_name");
+            $tokenName=Config::get("session/token_name");
             if(Session::exists($tokenName && $token===Session::get($tokenName))){
                 Session::delete($tokenName);
                 return true;

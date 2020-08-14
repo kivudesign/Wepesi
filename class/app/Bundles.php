@@ -8,7 +8,7 @@
 
         static function insertJS($file){
         if (is_file("layout/js/" . $file . ".js")) {
-                print '<script  src="'.WEB_ROOT.'layout/js/'.$file.'".js></script>';
+                print '<script  src="'.WEB_ROOT.'layout/js/'.$file.'.js"></script>';
             }
         }
         static function insertIMG($file){

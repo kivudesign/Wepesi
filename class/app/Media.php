@@ -1,5 +1,5 @@
 <?php
-    class media{
+    class Media{
         private $_target_dir;
         const maxWidth = 480;
         const maxHeigth = 400; 
