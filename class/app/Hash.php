@@ -6,7 +6,7 @@
             return hash('sha256',$string.$salt);
         }
         static function salt($bytes){
-            return bin2hex($bytes);
+            return bin2hex(random_bytes($bytes));
         }
         static function unique(){
             return self::make(uniqid());
