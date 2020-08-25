@@ -34,4 +34,4 @@
             }
         }
     });
-    require_once 'controller/sanitize.php';
+    require_once 'controller/function.php';

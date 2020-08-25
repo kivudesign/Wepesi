@@ -1,8 +1,8 @@
 <?php    
     class Input{
-        static function exists($type="post"){
+        static function exists($type="POST"){
             switch($type){
-                case "post":
+                case "POST":
                     return (!empty($_POST))?true:false;
                 break;
                 default: 

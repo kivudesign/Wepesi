@@ -2,8 +2,8 @@
 
 // database configuration setup
 define("HOST", "localhost");
-define("DATABASE", "");
-define("USER", "");
+define("DATABASE", "root");
+define("USER", "root");
 define("PASSWORD", "");
 
 //web root configaration
