@@ -13,7 +13,7 @@
             foreach($items as $item=>$rules){
                 foreach($rules as $rule=>$rvalue){
 
-                    $value=is_array($source[$item])? $source[$item]:trim($source[$item]);
+                    $value= is_array($source[$item]) ? $source[$item]['name'] : trim($source[$item]);
                     $item=escape($item);
                     
                     if($rule=='required' && empty($value)){
