@@ -56,7 +56,6 @@
                                     $this->addError("{$item} already exist.");
                                 }
                             break;
-
                         }
                     }   
                 }
@@ -78,4 +77,3 @@
             return $this->_passed;
         }
     }
-?>
