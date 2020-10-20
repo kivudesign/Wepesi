@@ -1,6 +1,6 @@
 <?php
 
-class Export {
+class Export{
 
     static function cleanData(&$str){
         $str = preg_replace("/\t/", "\\t", $str);

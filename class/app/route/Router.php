@@ -28,6 +28,18 @@
         function post($path, $collable,$name=null){
            return $this->add($path,$collable,$name,"POST");
         }
+        
+        function delete($path, $collable,$name=null){
+           return $this->add($path,$collable,$name,"DELETE");
+        }
+
+        function put($path, $collable,$name=null){
+           return $this->add($path,$collable,$name,"PUT");
+        }
+
+        function patch($path, $collable,$name=null){
+           return $this->add($path,$collable,$name,"PATCH");
+        }
 
         private function add($path,$collable,$name,$methode){
             $route = new Route($path, $collable);
