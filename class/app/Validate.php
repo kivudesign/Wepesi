@@ -13,7 +13,7 @@
             foreach($items as $item=>$rules){
                 foreach($rules as $rule=>$rvalue){
 
-                    $value=trim($source[$item]);
+                    $value= is_array($source[$item]) ? $source[$item]['name'] : trim($source[$item]);
                     $item=escape($item);
                     
                     if($rule=='required' && empty($value)){
@@ -36,7 +36,7 @@
                                 }
                             break;
                             case "number":
-                                if(!(int)$value){
+                                if(preg_match("#.\W#", $value) || preg_match("#[a-zA-Z]#", $value)){
                                     $this->addError("{$item} must be a number");
                                 }
                             break;
@@ -56,7 +56,6 @@
                                     $this->addError("{$item} already exist.");
                                 }
                             break;
-
                         }
                     }   
                 }
@@ -78,4 +77,3 @@
             return $this->_passed;
         }
     }
-?>

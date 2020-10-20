@@ -23,7 +23,6 @@
         foreach ($directories as $directory) $subDir = array_merge($subDir, getSubDirectories($directory . '/*'));
         return $subDir;
     }
-
     // will load all class from the class folder
     spl_autoload_register(function($class){
         $dirs = getSubDirectories("class");
