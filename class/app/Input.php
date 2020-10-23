@@ -18,4 +18,11 @@
             }
             return "";
         }
+        static function header($item){            
+            $headers = getallheaders();
+            if(isset($headers[$item])){
+                return $headers[$item];
+            }
+            return false;
+        }
     }
