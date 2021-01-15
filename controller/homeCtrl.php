@@ -1,5 +1,5 @@
 <?php
-
+    use Demo\View;
     class homeCtrl{
         function __construct()
         {

@@ -1,4 +1,5 @@
 <?php
+    namespace Demo;
     class View{
         private $data=[];
         private $render=false;

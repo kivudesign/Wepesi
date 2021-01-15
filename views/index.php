@@ -17,13 +17,12 @@
         <p class="w3-text-gray">you can find the simple example here: <a class="w3-text-blue" href="https://github.com/bim-g/library-exemple">example</a> </p>
 
     </div>
-    <div class="w3-padding w3-margin w3-blue">
-        <?php
-        if (isset($result)) {
-            echo $result;
-        }
-        ?>
-    </div>
+    <?php
+        if (isset($result)) {?>
+        <div class="w3-padding w3-margin w3-blue">        
+        <?=print_r($result);?>        
+        </div>
+    <?php }?>
 </body>
 
 </html>

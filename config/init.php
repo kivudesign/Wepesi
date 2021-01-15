@@ -24,12 +24,16 @@
         return $subDir;
     }
     // will load all class from the class folder
-    spl_autoload_register(function($class){
+    spl_autoload_register(function($className){
+        $check_NameSpace_separator=explode("\\",$className); // explode to get all namespace defined, if there is
+        $len=count($check_NameSpace_separator);//count how much namescpace exist  
+        $n_class= $check_NameSpace_separator[$len-1]; // get the last name with is the reel class name
+        $class=str_replace("\\", DIRECTORY_SEPARATOR, $n_class);
         $dirs = getSubDirectories("class");
         foreach($dirs as $dir){
-            $file=$dir."/".$class.".php";
+            $file= $dir."/".str_replace('\\', '/',$class).".php";
             if (is_file($file)) { // check if the file exist
-                require_once($file); // incluse the file request if it exist
+                include_once($file); // incluse the file request if it exist
             }
         }
     });
