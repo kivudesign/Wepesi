@@ -4,9 +4,10 @@
         private $data=[];
         private $render=false;
 
-        function __construct($file){
-            if (is_file(ROOT . "views/" . $file . ".php")) { 
-                $this->render=ROOT . "views/" . $file . ".php"; 
+        function __construct($fileName){
+            $file= check_file_extention($fileName);
+            if (is_file(ROOT . "views/" . $file )) { 
+                $this->render=ROOT . "views/" . $file ; 
             }
         }
 
