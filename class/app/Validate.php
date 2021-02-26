@@ -51,8 +51,8 @@
                                         $this->addError("{$item} " . $this->lang->url);
                                     }
                             case "unique":
-                                $check=$this->_db->get($rvalue,array($item,'=',$value));
-                                if($check->count()){
+                                $check=$this->_db->get($rvalue)->where(array($item,'=',$value))->result();
+                                if(count($check)>0){
                                     $this->addError("{$item} ". $this->lang->unique);
                                 }
                             break;
