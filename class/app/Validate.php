@@ -11,6 +11,7 @@
         }
 
         function check($source,$items=array()){
+            $source=json_decode(array_keys($source)[0])?((array)json_decode(array_keys($source)[0])):$source;
             foreach($items as $item=>$rules){
                 foreach($rules as $rule=>$rvalue){
 
@@ -50,6 +51,8 @@
                                     if(!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $source[$rvalue])){
                                         $this->addError("{$item} " . $this->lang->url);
                                     }
+
+                                    break;
                             case "unique":
                                 $check=$this->_db->get($rvalue)->where(array($item,'=',$value))->result();
                                 if(count($check)>0){
