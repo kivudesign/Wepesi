@@ -40,7 +40,7 @@
         $len=count($check_NameSpace_separator);//count how much namescpace exist  
         $n_class= $check_NameSpace_separator[$len-1]; // get the last name with is the reel class name
         $class=str_replace("\\", DIRECTORY_SEPARATOR, $n_class);
-        $dirs = getSubDirectories("class");
+        $dirs = getSubDirectories("src");
         foreach($dirs as $dir){
             $file= $dir."/".str_replace('\\', '/', check_file_extention($class));
             if (is_file($file)) { // check if the file exist
