@@ -7,7 +7,7 @@
     const LANG = "fr";
     include("./lang/" . checkFileExtension(LANG));
     // load configguration
-    $ini_array =(object) parse_ini_file("./core/config.ini", true);
+    $ini_array =(object) parse_ini_file("config.ini", true);
     $db_conf= (object)$ini_array->db_conf;
 
     // database configuration setup
