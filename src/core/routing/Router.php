@@ -79,10 +79,10 @@ use Exception;
         {
             try{
                 if(!isset($this->_nameRoute[$name])){
-                    throw new Exception('No route match');
+                    throw new \Exception('No route match');
                 }
                 return  $this->_nameRoute[$name]->geturl($params);
-            }catch(Exception $ex){
+            }catch(\Exception $ex){
                 return $ex->getMessage();
             }
         }
@@ -93,7 +93,7 @@ use Exception;
         function run(){
             try{
                 if(!isset($this->routes[$_SERVER['REQUEST_METHOD']])){
-                    throw new Exception('Request method is not defined ');
+                    throw new \Exception('Request method is not defined ');
                 }
                 $routesRequestMethod= $this->routes[$_SERVER['REQUEST_METHOD']];
                 $i=0;
@@ -107,7 +107,7 @@ use Exception;
                 if(count($routesRequestMethod)===$i){
                     new View();
                 }
-            }catch(Exception $ex){
+            }catch(\Exception $ex){
                 echo $ex->getMessage();
             }
         }        

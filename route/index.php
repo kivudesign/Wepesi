@@ -1,6 +1,9 @@
 <?php
-    use Demo\View;
-    $route=new Router();
+
+use Wepesi\App\Core\Router;
+use Wepesi\App\Core\View;
+
+$route=new Router();
     // setup get started pages index
     $route->get('/', function () {
         new View('index');

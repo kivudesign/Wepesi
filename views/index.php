@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
+
+    use Wepesi\App\Core\Bundles;
+
     Bundles::insertCSS('w3');
     ?>
     <title>Welcom</title>
@@ -12,10 +15,9 @@
 
 <body>
     <div class="w3-container w3-center">
-        <h2 class="w3-green">Welcom to library</h2>
+        <h2 class="w3-green">Welcom to Wepesi</h2>
         <p>The Simple Php MVC platform to develop quickly a php application</p>
         <p class="w3-text-gray">you can find the simple example here: <a class="w3-text-blue" href="https://github.com/bim-g/library-exemple">example</a> </p>
-
     </div>
     <?php
         if (isset($result)) {?>
