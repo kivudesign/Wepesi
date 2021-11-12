@@ -29,6 +29,5 @@
     define('TIMEZONE','Africa/Kigali');
 
     //define default domain
-    define("DEFAULT_DOMAIN","http://doctawetu");
-//    define("DEFAULT_DOMAIN","https://doctawetu.com");
-    define("APP_DOMAIN","doctawetu.com");
+
+    define("APP_DOMAIN",$_SERVER['http_domain']);
