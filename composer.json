@@ -1,0 +1,18 @@
+{
+    "name": "wepesi/wepesi",
+    "description": "a light way php framework to create simple web application",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Wepesi\\Wepesi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "bim-g",
+            "email": "ibmussafb@gmail.com"
+        }
+    ],
+    "require": {}
+}
