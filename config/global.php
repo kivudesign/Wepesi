@@ -30,4 +30,4 @@
 
     //define default domain
 
-    define("APP_DOMAIN",$_SERVER['http_domain']);
+    define("APP_DOMAIN",$_SERVER['HTTP_HOST']);
