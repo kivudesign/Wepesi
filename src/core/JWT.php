@@ -26,11 +26,12 @@ class JWT
     }
 
     /**
-     * @param array $data
+     * @param array $data data to be encrypted with two specific key `expired`: can be time in second or a datetime `data`: data to be encrypted
      * @param string|null $cypherkey
+     * @param bool $isDate specify if the expired value is a date ex: 2021-12-19
      * @return array|string
      */
-    function generate(array $data, string $cypherkey=null)
+    function generate(array $data, string $cypherkey=null,bool $isDate=false)
     {
         try{
             if(!isset($data["data"]) && empty($data["data"])){
@@ -39,6 +40,10 @@ class JWT
             $this->encryption_key = $cypherkey ?bin2hex($cypherkey): $this->decryption_key;
             $expired= $data["expired"] ?? 3600;
             $time=strtotime("now + $expired second");
+            //from this p
+            if($isDate){
+                $time=strtotime($data["expired"]);
+            }
             $data["time"]=$time;
             return bin2hex($this->app_encryption_iv).".".$this->cryptData($data, $this->encryption_key).".". $this->encryption_key;
         }catch(\Exception $ex){
