@@ -12,14 +12,21 @@ class Media{
         $this->_target_dir= $target_dir;
     }
     function uploadImg($file){
-        $target_file = $this->_target_dir . basename($file["name"]);
-        $filetype = pathinfo($target_file, PATHINFO_EXTENSION);
-        $fileExt = array('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG');
-        if (!in_array($filetype, $fileExt)) {
-            $this->exception();
-        }
-        if($res=$this->upload($file,("photos/".$filetype),$filetype)){
-            return $res;
+        try{
+            if (!isset($file["name"])) {
+                throw new \Exception("try to access to key `name` witch dos not exist");
+            }
+            $target_file = $this->_target_dir . basename($file["name"]);
+            $filetype = pathinfo($target_file, PATHINFO_EXTENSION);
+            $fileExt = array('jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG');
+            if (!in_array($filetype, $fileExt)) {
+                $this->exception();
+            }
+            if ($res = $this->upload($file, ("photos/" . $filetype), $filetype)) {
+                return $res;
+            }
+        }catch (\Exception $ex){
+            return ["exception"=>$ex->getMessage()];
         }
     }
     private function upload($file,$formatFile, $filetype){
@@ -60,15 +67,22 @@ class Media{
         return array($img, $store);
     }
     function uploadSingleFile($file,string $extension_file=null){
-        $target_file = $this->_target_dir . basename($file["name"]);
-        $filetype = pathinfo($target_file, PATHINFO_EXTENSION);
-        if($extension_file ){
-            if($filetype!=$extension_file){
-                return $this->exception();
+        try{
+            if(!isset($file["name"])){
+                throw new \Exception("try to access to key `name` witch dos not exist");
             }
-            return $this->upload($file,("$extension_file/".$filetype),$filetype);
-        }else{
-            return $this->upload($file,("media/".$filetype),$filetype);
+            $target_file = $this->_target_dir . basename($file["name"]);
+            $filetype = pathinfo($target_file, PATHINFO_EXTENSION);
+            if ($extension_file) {
+                if ($filetype != $extension_file) {
+                    return $this->exception();
+                }
+                return $this->upload($file, ("$extension_file/" . $filetype), $filetype);
+            } else {
+                return $this->upload($file, ("media/" . $filetype), $filetype);
+            }
+        }catch (\Exception $ex){
+            return ["exception"=>$ex->getMessage()];
         }
     }
     private function thumbnail($imageToConvert, $source, $dest,$format)
@@ -108,6 +122,8 @@ class Media{
         switch ($src_error){
             case 1: $message="error thumbnail";
                 break;
+            case 5: $message="try to access to key `name` witch dos not exist";
+            break;
             case 20: $message="unable to upload the file";
                 break;
         }
