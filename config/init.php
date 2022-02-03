@@ -28,18 +28,18 @@
     }
 
     // will load all class from the class folder
-    spl_autoload_register(function($class){
-        $dirs = getSubDirectories("src");
-        $class_arr=explode("\\",$class);
-        $len=count($class_arr);
-        $classFile=$class_arr[($len-1)];
-        foreach($dirs as $dir){
-            $file=$dir."/". checkFileExtension($classFile);
-            if (is_file($file)) { // check if the file exist
-                require_once($file); // incluse the file request if it exist
-            }
-        }
-    });
+//    spl_autoload_register(function($class){
+//        $dirs = getSubDirectories("src");
+//        $class_arr=explode("\\",$class);
+//        $len=count($class_arr);
+//        $classFile=$class_arr[($len-1)];
+//        foreach($dirs as $dir){
+//            $file=$dir."/". checkFileExtension($classFile);
+//            if (is_file($file)) { // check if the file exist
+//                require_once($file); // incluse the file request if it exist
+//            }
+//        }
+//    });
 /**
  * @param $fileName
  * @return mixed|string

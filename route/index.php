@@ -1,7 +1,7 @@
 <?php
 
-use Wepesi\App\Core\Router;
-use Wepesi\App\Core\View;
+use Wepesi\Core\Routing\Router;
+use Wepesi\Core\View;
 
 $route=new Router();
     // setup get started pages index

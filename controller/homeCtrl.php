@@ -1,6 +1,6 @@
 <?php
 
-use Wepesi\App\Core\View;
+use Wepesi\Core\View;
 
 class homeCtrl{
         function __construct()

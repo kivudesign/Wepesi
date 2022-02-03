@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
 
-    use Wepesi\App\Core\Bundles;
+    use Wepesi\Core\Bundles;
 
     Bundles::insertCSS('w3');
     $home="w3-green";
