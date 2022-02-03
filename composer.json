@@ -3,16 +3,44 @@
     "description": "a light way php framework to create simple web application",
     "type": "project",
     "license": "MIT",
+    "time": "2021-11-12",
     "autoload": {
         "psr-4": {
-            "Wepesi\\Wepesi\\": "src/"
+            "Wepesi\\": "src/"
         }
     },
+    "keywords": [
+        "wepesi","framework","wepesi library",
+        "wepesi framework","wepesi quick",
+        "wepesi orm","quick orm","light orm",
+        "router","routing","route",
+        "validaion","mvc","php mvc"
+    ],
+    "homepage": "https://github.com/kivudesign/Wepesi-Quick/issues",
+    "support": {
+        "email": "ibmussa7@gmail.com",
+        "issues": "https://github.com/kivudesign/Wepesi-Quick/issues",
+        "forum": "https://github.com/kivudesign/Wepesi-Quick",
+        "wiki": "https://github.com/kivudesign/Wepesi-Quick",
+        "docs": "https://github.com/kivudesign/Wepesi-Quick",
+        "source": "https://github.com/kivudesign/Wepesi-Quick"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/kivudesign/Wepesi-Quick"
+        }
+    ],
+    "include-path": ["lib/"],
     "authors": [
         {
             "name": "bim-g",
-            "email": "ibmussafb@gmail.com"
+            "email": "ibmussafb@gmail.com",
+            "homepage": "https://github.com/bim-g",
+            "role": "Developer"
         }
     ],
-    "require": {}
+    "require": {
+        "php" : ">=7.4"
+    }
 }
