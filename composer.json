@@ -6,7 +6,7 @@
     "time": "2021-11-12",
     "autoload": {
         "psr-4": {
-            "Wepesi\\App\\Core\\": "src/"
+            "Wepesi\\": "src/"
         }
     },
     "keywords": [
@@ -36,7 +36,7 @@
         {
             "name": "bim-g",
             "email": "ibmussafb@gmail.com",
-            "homepage": "https://www.naderman.de",
+            "homepage": "https://github.com/bim-g",
             "role": "Developer"
         }
     ],
