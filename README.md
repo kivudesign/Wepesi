@@ -4,6 +4,7 @@
 all fonctionnality available on `Wepesi library` are available. there is nothing different apart from that, with `wepsi Quick` you are not able to benefit all advantage of the namespace available on `Wepesi library`.
 *whith the simple donwn on you can start using it without wasting your time.* 
 This a simple php library that will help design an mvc application and work in OOP.
+you can find project directly on : https://packagist.org/packages/wepesi/
 
 # Intoduction
 Wepesi is a simple Web libray that help you devellop simple web application, and benefit advantage of php framework like
