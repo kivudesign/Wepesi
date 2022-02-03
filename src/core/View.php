@@ -4,19 +4,18 @@ namespace Wepesi\App\Core;
 
     class View{
         private $data=[];
-        private $render=false;
+        const ERROR=ROOT."views/404.php";
+        private string $render=self::ERROR;
 
-        function __construct($filename=404)
+        function __construct(string $filename=null)
         {
             $file= checkFileExtension($filename);
-            if (is_file(ROOT . "views/" . $file)) { 
+            if (is_file(ROOT . "views/" . $file)) {
                 $this->render=ROOT . "views/" . $file; 
-            }else{
-                $this->render=ROOT . "error/$filename.php";
             }
         }
 
-        function assign($variable,$value){
+        function assign(string $variable,$value){
             $this->data[$variable]=$value;
         }
         function __destruct()

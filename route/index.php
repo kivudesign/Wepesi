@@ -9,6 +9,7 @@ $route=new Router();
         new View('index');
     });
     $route->get('/home', "homeCtrl#home");
+    $route->get('/contact', [homeCtrl::class,"contact"]);
 
     $route->run();
 ?>
