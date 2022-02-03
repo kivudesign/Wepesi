@@ -14,10 +14,11 @@ namespace Wepesi\App\Core;
         }
 
         /**
+         * 
          * @param string $filename
          * @return void
          */
-        static function useController(string $filename){
+        static function match_Controller(string $filename){
             $directories = getSubDirectories("controller");
             foreach($directories as $dir){
                 $file=$dir."/". checkFileExtension($filename);
