@@ -5,12 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php
+        use Wepesi\Core\Bundles;
 
-    use Wepesi\Core\Bundles;
-
-    Bundles::insertCSS('w3');
-    $home="w3-green";
-    $contact="";
+        Bundles::insertCSS('w3');
+        $home="w3-blue-gray";
+        $contact="";
     ?>
     <title>Welcom</title>
 </head>
@@ -19,12 +18,10 @@
 
     <?php
         include ("views/header.php");
+        ?>
 
-        if (isset($result)) {?>
-        <div class="w3-padding w3-margin w3-blue">        
-        <?=print_r($result);?>        
-        </div>
-    <?php }?>
+    <H2 class="w3-text-blue-gray w3-padding">Home Pages</H2>
+
 </body>
 
 </html>

@@ -9,7 +9,7 @@
         use Wepesi\Core\Bundles;
         Bundles::insertCSS('w3');
     $home="";
-    $contact="w3-green";
+    $contact="w3-blue-gray";
     ?>
     <title>Contact</title>
 </head>

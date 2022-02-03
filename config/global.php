@@ -5,7 +5,7 @@
      * they declare as global tho to be accessible from anywhere in the project
      */
     const LANG = "fr";
-    include("./lang/" . checkFileExtension(LANG));
+    include("./lang/".LANG."/language.php");
     // load configguration
     $ini_array =(object) parse_ini_file("config.ini", true);
     $db_conf= (object)$ini_array->db_conf;
@@ -18,7 +18,6 @@
 
     // inlude language file according to your configuraiton
     define("LANG_VALIDATE", $validation);
-    define("LANG_BOX_MESSAGE", $boxMessage);
 
     //web root configaration
 
@@ -29,5 +28,8 @@
     define('TIMEZONE','Africa/Kigali');
 
     //define default domain
+    $server_name=$_SERVER['SERVER_NAME'];
+    $protocol=$_SERVER['REQUEST_SCHEME'];
 
-    define("APP_DOMAIN",$_SERVER['HTTP_HOST']);
+    define("DEFAULT_DOMAIN","$protocol://$server_name");
+    define("APP_DOMAIN",$server_name);
