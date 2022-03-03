@@ -7,15 +7,10 @@
     const LANG = "fr";
     include("./lang/".LANG."/language.php");
     // load configguration
-    $ini_array =(object) parse_ini_file("config.ini", true);
-    $db_conf= (object)$ini_array->db_conf;
+    $ini_array =(object) parse_ini_file("./config/config.ini", true);
 
-    // database configuration setup
-    define("HOST", $db_conf->host);
-    define("DATABASE", $db_conf->database);
-    define("USER", $db_conf->user);
-    define("PASSWORD", $db_conf->password);
-
+    //include database Globale configuration
+    include ("db.php");
     // inlude language file according to your configuraiton
     define("LANG_VALIDATE", $validation);
 
