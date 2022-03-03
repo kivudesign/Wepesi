@@ -4,7 +4,9 @@ namespace Wepesi\Core\Orm;
 use PDOException;
 use PDO;
 use FFI\Exception;
-    class DB
+use Wepesi\Core\Config;
+
+class DB
     {
         private static $_instance = null;
         private $_pdo,
