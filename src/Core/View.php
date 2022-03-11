@@ -6,6 +6,7 @@ namespace Wepesi\Core;
         private array $data=[];
         const ERROR=ROOT."views/404.php";
         private string $render=self::ERROR;
+        private $i18n;
 
         function __construct(string $filename=null)
         {
@@ -21,6 +22,10 @@ namespace Wepesi\Core;
         function __destruct()
         {
             extract($this->data);
-            include($this->render);
+            if (is_file($this->render)) {
+                include($this->render);
+            }else{
+                print_r(["exception"=>"file path is not correct.?"]);
+            }
         }
     }
