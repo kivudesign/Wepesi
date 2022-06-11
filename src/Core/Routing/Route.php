@@ -55,7 +55,7 @@ class Route{
                 }
                 $classController=$params[0];
                 $class_method=$params[1];
-                Controller::match_Controller($classController);
+//                Controller::match_Controller($classController);
                 if (!class_exists($classController,true)) {
                     throw new Exception("class : <b> $classController</b> is not defined. on controller folder");
                 }

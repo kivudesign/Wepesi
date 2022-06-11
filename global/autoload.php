@@ -5,15 +5,23 @@
  * it speed and support event namespaces.
  * but it not support for external module install via composer.
  */
-    spl_autoload_register(function($class){
-        $dirs = getSubDirectories("src");
-        $class_arr=explode("\\",$class);
-        $len=count($class_arr);
-        $classFile=$class_arr[($len-1)];
-        foreach($dirs as $dir){
-            $file=$dir."/". checkFileExtension($classFile);
-            if (is_file($file)) { // check if the file exist
-                require_once($file); // incluse the file request if it exist
+    $config = $GLOBALS["config"];
+    $autoload =["src"];
+    if(isset($config["autoload"])){
+        $autoload=is_string($config['autoload'])?[$config['autoload']]:$config['autoload'];
+    }
+
+    spl_autoload_register(function($class) use ($autoload) {
+        foreach ($autoload as $src){
+            $dirs = getSubDirectories($src);
+            $class_arr = explode("\\",$class);
+            $len = count($class_arr);
+            $classFile = $class_arr[($len-1)];
+            foreach($dirs as $dir){
+                $file = $dir."/". checkFileExtension($classFile);
+                if ( is_file($file) ) {
+                    require_once($file);
+                }
             }
         }
     });
