@@ -64,7 +64,7 @@ class Input
         return null;
     }
 
-    private static function body(){
+    static function body(){
         return isset($_POST) && !empty($_POST) ? $_POST : self::put();
     }
     private static function extractFromFormData($file_input){

@@ -20,7 +20,7 @@ class Validate {
     function __construct(array $_source=[]) {
         $this->_errors=[];
         $this->_passed = false;
-        $this->source=count($_source)?$_source:$this->getResourceDate();
+        $this->source= $_source;
         $this->stringValue=null;
         $this->db=DB::getInstance();
         $this->lang= (object)LANG_VALIDATE;
@@ -90,9 +90,10 @@ class Validate {
     /**
      * @param string $tring_key
      * @return VString
-     * when whant to validate string value use this module
+     * when want to validate string value use this module
      */
-    function string(string $tring_key){
+    function string(string $tring_key)
+    {
         return new VString($this->source,$tring_key);
     }
 
@@ -102,7 +103,8 @@ class Validate {
      * when want to validate numbers use this module;
      *
      */
-    function number(string $tring_key){
+    function number(string $tring_key): VNumber
+    {
         return new VNumber($this->source,$tring_key);
     }
     /**
@@ -119,7 +121,8 @@ class Validate {
      * @return VDate
      * while want to validate a date, this module will do the things
      */
-    function date(string $tring_key){
+    function date(string $tring_key): VDate
+    {
         return new VDate($this->source,$tring_key);
     }
 
@@ -127,7 +130,8 @@ class Validate {
      * @param string $tring_key
      * @return VFile
      */
-    function file(string $tring_key){
+    function file(string $tring_key): VFile
+    {
         return new VFile($this->source,$tring_key);
     }
     /**
@@ -135,7 +139,8 @@ class Validate {
      * @return VTime
      * while want to validate a time, this module will be helpfull
      */
-    function time(string $tring_key){
+    function time(string $tring_key): VTime
+    {
         return new VTime($this->source,$tring_key,$this->source[$tring_key]);
     }
 
@@ -143,21 +148,24 @@ class Validate {
      * @param array $value
      * @return array
      */
-    private function addError(array $value){
+    private function addError(array $value): array
+    {
        return $this->_errors[]=$value;
     }
 
     /**
      * @return array[]
      */
-    function errors(){
+    function errors(): array
+    {
         return ["error"=>$this->_errors];
     }
     /**
      * 
      * @returns boolean [true,false]
      */
-    function passed(){
+    function passed(): bool
+    {
         return $this->_passed;
     }
 }

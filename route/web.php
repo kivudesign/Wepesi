@@ -11,5 +11,5 @@ use Wepesi\Core\View;
     });
     $route->get('/home', [homeController::class,"home"]);
     //
-    $route->post("/change-lang",[homeController::class,"changeLang"]);
+    $route->post("/change-lang",[homeController::class,"changeLang"])->middleware([\wepesi\Validation\HomeValidation::class, "changeLang"]);
     $route->run();

@@ -16,14 +16,14 @@ class VString extends ABIValidation {
     private object $lang;
     private ?DB $db;
 
-    function __construct(array $source,string $string_item=null) {
+    function __construct(array $source,string $item=null) {
         $this->db=DB::getInstance();
         $this->lang= (object)LANG_VALIDATE;
-        if(!isset($source[$string_item])){
-            return $this->checkExist($string_item);
+        if(!isset($source[$item])){
+            return $this->checkExist($item);
         }
-        $this->string_value=$source[$string_item];
-        $this->string_item=$string_item;
+        $this->string_value=$source[$item];
+        $this->string_item=$item;
         $this->source_data=$source;
         $this->_max= $this->_min=0;
     }
@@ -36,7 +36,7 @@ class VString extends ABIValidation {
         if (strlen($this->string_value) < $rule_values) {
             $message=[
                 "type"=>"string.min",
-                "message"=> "`{$this->string_item}` {$this->lang->string_min} `{$rule_values}` characters",
+                "message"=> "`{$this->string_item}` {$this->lang->min} `{$rule_values}` characters",
                 "label"=>$this->string_item,
                 "limit"=>$rule_values
             ];
@@ -53,7 +53,7 @@ class VString extends ABIValidation {
         if (strlen($this->string_value) > $rule_values) {
             $message = [
                 "type" => "string.max",
-                "message" => "`{$this->string_item}` {$this->lang->string_max} `{$rule_values}` characters",
+                "message" => "`{$this->string_item}` {$this->lang->max} `{$rule_values}` characters",
                 "label" => $this->string_item,
                 "limit" => $rule_values
             ];

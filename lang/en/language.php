@@ -11,5 +11,6 @@ $validation=[
     "email"=>"invalid email address",
     "url"=>"invalid url",
     "file"=>"should be a file",
-    "unique"=>"already exist."
+    "unique"=>"already exist.",
+    "unknown"=>"unknown"
 ];
