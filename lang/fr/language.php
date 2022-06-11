@@ -6,6 +6,8 @@ $language=[
     "A Simple Php MVC platform to develop quickly a php application"=>"Une plateforme Simple Php MVC pour développer rapidement une application web",
     "Home"=>"Acceuill",
     "contact"=>"contact",
+    "Translate"=>"Traduire",
+    "Change the language"=>"Changez de langue"
 ];
 $validation=[
     "required"=> "est obligatoire",
