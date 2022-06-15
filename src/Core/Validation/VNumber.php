@@ -8,39 +8,30 @@
 
 namespace Wepesi\Core\Validation;
 
-use Wepesi\Core\Orm\DB;
-
 /**
  * Description of VNumber
  *
  * @author Lenovo
  */
-class VNumber extends ABIValidation {
+class VNumber {
     //put your code here
     private $string_value;
-    private string $string_item;
-    private array $source_data;
-    private int $_min,$_max;
-    private object $lang;
-    private ?DB $db;
-
+    private $string_item;
+    private $source_data;
+    private $_errors;
+    private $_min;
+    private $_max;
+    
     function __construct(array $source,string $string_item) {
-        $this->db=DB::getInstance();
-        $this->lang= (object)LANG_VALIDATE;
-        if(!isset($source[$string_item])){
-            return $this->checkExist($string_item);
-        }
         $this->source_data=$source;
-        $this->string_value=isset($source[$string_item])?(int)$source[$string_item]:"";
+        $this->string_value=(int)$source[$string_item];
         $this->string_item=$string_item;
         $this->_max= $this->_min=0;
+        $this->db=DB::getInstance();
+        $this->lang= (object)LANG_VALIDATE;
+        $this->checkExist();
     }
-
-    /**
-     * @param int $min_values
-     * @return $this
-     */
-    function min(int $min_values=0){
+    function min(int $min_values){
         if ((int) $this->string_value < $min_values) {
             $message=[
                 "type"=>"number.min",
@@ -52,13 +43,8 @@ class VNumber extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @param int $maximum_value
-     * @return $this
-     */
-    function max(int $maximum_value=1){
-        if ((int)$this->string_value > $maximum_value) {
+    function max(int $maximum_value){
+        if ($this->string_value > $maximum_value) {
             $message=[
                 "type"=>"number.max",
                 "message"=> "`{$this->string_item}` {$this->lang->number_max}  `{$maximum_value}`",
@@ -69,10 +55,6 @@ class VNumber extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @return $this
-     */
     function positive(){
         if ($this->string_value < 1) {
             $message=[
@@ -85,11 +67,6 @@ class VNumber extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @param string $table_name
-     * @return void
-     */
     function unique(string $table_name){
         $check_uniq=$this->db->get($table_name)->where([$this->string_item,'=',$this->string_value])->result();
         if(count($check_uniq)){
@@ -101,15 +78,11 @@ class VNumber extends ABIValidation {
             $this->addError($message);
         }
     }
-
-    /**
-     * @return $this
-     */
     function required(){
         $required_value= $this->string_value;
         if (empty($required_value) && $required_value!=0) {
             $message = [
-                "type"=> "number.required",
+                "type"=> "any.required",
                 "message" => "`{$this->string_item}` {$this->lang->required}",
                 "label" => $this->string_item
             ];
@@ -117,13 +90,9 @@ class VNumber extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @param string|null $itemKey
-     * @return bool
-     */
+//    
     private function checkExist(string $itemKey=null){
-        $item_to_check=$itemKey??$this->string_item;
+        $item_to_check=$itemKey?$itemKey:$this->string_item;
         $regex_string="#[a-zA-Z]#";
         if (!isset($this->source_data[$item_to_check])) {
             $message = [
@@ -134,5 +103,11 @@ class VNumber extends ABIValidation {
             $this->addError($message);
         }
         return true;
+    }
+    private function addError(array $value){
+       return $this->_errors[]=$value;
+    }
+    function check(){
+        return  $this->_errors;
     }
 }

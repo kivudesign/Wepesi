@@ -7,64 +7,52 @@ use Wepesi\Core\Orm\DB;
  *
  * @author Ibrahim
  */
-class VString extends ABIValidation {
+class VString implements IValidation{
     private $string_value;
-    private ?string $string_item;
-    private array $source_data;
-    private int $_min,$_max;
+    private $string_item;
+    private $source_data;
+    private $_errors;
+    private $_min;
+    private $_max;
     //put your code here
-    private object $lang;
-    private ?DB $db;
-
-    function __construct(array $source,string $item=null) {
-        $this->db=DB::getInstance();
-        $this->lang= (object)LANG_VALIDATE;
-        if(!isset($source[$item])){
-            return $this->checkExist($item);
-        }
-        $this->string_value=$source[$item];
-        $this->string_item=$item;
+    function __construct(array $source,string $string_item=null) {
+        $this->string_value=$source[$string_item];
+        $this->string_item=$string_item;
         $this->source_data=$source;
         $this->_max= $this->_min=0;
+        $this->db=DB::getInstance();
+        $this->lang= (object)LANG_VALIDATE;
+        $this->checkExist();
     }
-
-    /**
-     * @param int $rule_values
-     * @return $this
-     */
     function min(int $rule_values=0){
-        if (strlen($this->string_value) < $rule_values) {
+        $min=is_integer($rule_values)? ((int)$rule_values>0?(int)$rule_values:0):0;
+        if (strlen($this->string_value) < $min) {
             $message=[
                 "type"=>"string.min",
-                "message"=> "`{$this->string_item}` {$this->lang->min} `{$rule_values}` characters",
+                "message"=> "`{$this->string_item}` {$this->lang->string_min} `{$min}` characters",
                 "label"=>$this->string_item,
-                "limit"=>$rule_values
+                "limit"=>$min
             ];
             $this->addError($message);
         }
         return $this;
     }
-
-    /**
-     * @param int $rule_values
-     * @return $this
-     */
+    
     function max(int $rule_values=1){
-        if (strlen($this->string_value) > $rule_values) {
+        $max = is_integer($rule_values) ? ((int)$rule_values > 0 ? (int)$rule_values : 0):0;
+        $this->_max=$max; 
+        if (strlen($this->string_value) > $max) {
             $message = [
                 "type" => "string.max",
-                "message" => "`{$this->string_item}` {$this->lang->max} `{$rule_values}` characters",
+                "message" => "`{$this->string_item}` {$this->lang->string_max} `{$max}` characters",
                 "label" => $this->string_item,
-                "limit" => $rule_values
+                "limit" => $max
             ];
             $this->addError($message);
         }
         return $this;
     }
 
-    /**
-     * @return $this
-     */
     function email(){
         if (!filter_var($this->string_value, FILTER_VALIDATE_EMAIL)) {
             $message = [
@@ -76,10 +64,6 @@ class VString extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @return $this
-     */
     function url(){
         if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $this->string_value)) {
             $message = [
@@ -91,11 +75,6 @@ class VString extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @param string $key_tomatch
-     * @return $this
-     */
     function match(string $key_tomatch){
         $this->checkExist($key_tomatch);
         if (isset($this->source_data[$key_tomatch]) && (strlen($this->string_value)!= strlen($this->source_data[$key_tomatch])) && ($this->string_value!=$this->source_data[$key_tomatch])) {
@@ -125,30 +104,21 @@ class VString extends ABIValidation {
         }
         return $this;
     }
-
-    /**
-     * @param string $table_name
-     * @return $this
-     */
     function unique(string $table_name){
         $check_uniq=$this->db->get($table_name)->where([$this->string_item,'=',$this->string_value])->result();
         if(count($check_uniq)){
             $message = [
                 "type"=> "string.unique",
-                "message" => "`{$this->string_item}` {$this->lang->unique}",
+                "message" => "`{$this->string_item}`= `{$this->string_value}` {$this->lang->unique}",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
         }
         return $this;
     }
-
-    /**
-     * @param string|null $itemKey
-     * @return bool
-     */
+//    private methode
     private function checkExist(string $itemKey=null){
-        $item_to_check=$itemKey??$this->string_item;
+        $item_to_check=$itemKey?$itemKey:$this->string_item;
         $regex="#[a-zA-Z0-9]#";
         if (!isset($this->source_data[$item_to_check])) {
             $message = [
@@ -166,5 +136,11 @@ class VString extends ABIValidation {
                 $this->addError($message);
         }
         return true;
+    }
+    private function addError(array $value){
+       return $this->_errors[]=$value;
+    }
+    function check(){
+        return  $this->_errors;
     }
 }
