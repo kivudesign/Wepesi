@@ -3,9 +3,6 @@
 
 namespace Wepesi\Core\Validation;
 
-
-use mysql_xdevapi\Exception;
-
 class VDate extends ABIValidation
 {
     private $date_value;

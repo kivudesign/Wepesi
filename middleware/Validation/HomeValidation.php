@@ -9,8 +9,6 @@ use Wepesi\Core\Validation\Validate;
 class HomeValidation
 {
     function changeLang(){
-        if(Input::get("token")=="fr"){
-            Session::put("errors","Middleware validation error");
-        }
+        // implement your validation middleware for language params
     }
 }
