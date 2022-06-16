@@ -4,23 +4,21 @@
 namespace Wepesi\Core\Validation;
 
 
-class VTime extends ABIValidation
+class VTime implements IValidation
 {
     private $time_value;
-    private string $string_item;
-    private array $source_data;
-    private int $_min, $_max;
-    private object $lang;
-
+    private $string_item;
+    private $source_data;
+    private $_errors;
+    private $_min;
+    private $_max;
     function __construct(array $source,string $string_item) {
-        $this->lang= (object)LANG_VALIDATE;
-        if(!isset($source[$string_item])){
-            return $this->checkExist($string_item);
-        }
         $this->time_value=$source[$string_item];
         $this->string_item=$string_item;
         $this->source_data=$source;
         $this->_max= $this->_min=0;
+        $this->lang= (object)LANG_VALIDATE;
+        $this->checkExist();
     }
 
     /**
@@ -178,5 +176,11 @@ class VTime extends ABIValidation
             $this->addError($message);
         }
         return true;
+    }
+    private function addError(array $value){
+        return $this->_errors[]=$value;
+    }
+    function check(){
+        return  $this->_errors;
     }
 }

@@ -13,9 +13,13 @@ class Input
         }
     }
 
+    /**
+     * @param $item
+     * @return mixed|null
+     */
     static function get($item)
     {
-        $object_data = self::_put();
+        $object_data = self::put();
         if (isset($_POST[$item])) {
             return $_POST[$item];
         } else if (isset($_GET[$item])) {
@@ -23,42 +27,47 @@ class Input
         } else if (isset($object_data[$item])) {
             return $object_data[$item];
         }
-        return "";
+        return null;
     }
 
+    /**
+     * Extract header data information
+     * @param $item
+     * @return mixed|null
+     */
     static function header($item)
     {
         $headers = getallheaders();
         if (isset($headers[$item])) {
             return $headers[$item];
         }
-        return false;
+        return null;
     }
 
-    private static function _put()
+    /**
+     * extract data submitted as json on POST or PUT or PATCH method
+     * @return array|null
+     */
+    private static function put(): ?array
     {
-        if (file_get_contents("php://input")) {
-            parse_str(file_get_contents("php://input"),$file_input);
-            if($file_input) return (array)$file_input;
+        if (file_get_contents('php://input')) {
+            parse_str(file_get_contents('php://input'), $file_input);
+            if ($file_input) return (array)$file_input;
             //
-            $file_input = file_get_contents("php://input");
+            $file_input = file_get_contents('php://input');
             if (json_decode($file_input)) {
                 return (array)json_decode($file_input, TRUE);
             } else {
-                return extractFormData($file_input);
+                return self::extractFromFormData($file_input);
             }
         }
-        return false;
-    }
-
-    static function put(){
-        return self::_put();
+        return null;
     }
 
     static function body(){
-        return isset($_POST) && !empty($_POST) ? $_POST : self::_put();
+        return isset($_POST) && !empty($_POST) ? $_POST : self::put();
     }
-    private function extractFormData($file_input){
+    private static function extractFromFormData($file_input){
         $fragma = [];
         $explode = explode("\r", implode("\r", explode("\n", $file_input)));
         $len_Arr = count($explode);

@@ -6,12 +6,10 @@
      */
     const LANG = "fr";
     include("./lang/".LANG."/language.php");
-    // load configguration
-    $ini_array =(object) parse_ini_file("./config/config.ini", true);
 
-    //include database Globale configuration
-    include ("db.php");
-    // inlude language file according to your configuraiton
+
+
+    // include language file according to your configuration
     define("LANG_VALIDATE", $validation);
 
     //web root configaration
@@ -20,7 +18,7 @@
     define('ROOT', str_replace('index.php', '', $_SERVER['SCRIPT_FILENAME']));
 
     // default timezone
-    define('TIMEZONE','Africa/Kigali');
+    const TIMEZONE = 'Africa/Kigali';
 
     //define default domain
     $server_name=$_SERVER['SERVER_NAME'];

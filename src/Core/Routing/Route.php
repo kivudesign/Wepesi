@@ -1,120 +1,142 @@
 <?php
 
 namespace Wepesi\Core\Routing;
-use Wepesi\Core\Controller;
+
 use Exception;
 
 class Route{
-    private $_path;
+    private string $_path;
     private $callable;
-    private $_matches=[];
-    private $_params=[];
-    private $_get_params=[];
+    private array $_matches;
+    private array $_params;
+    private array $_get_params, $middleware_tab;
+    private bool $middleware_exist;
 
-    function __construct($path,$callable){
-        $this->_path=trim($path,"/");
-        $this->callable= $callable;
+    function __construct($path, $callable)
+    {
+        $this->_path = trim($path, '/');
+        $this->callable = $callable;
+        $this->_matches = [];
+        $this->_params = [];
+        $this->_get_params = [];
+        $this->middleware_tab = [];
+        $this->middleware_exist = false;
     }
 
     /**
-     * This module help to recover all information from the $_GET method or url
      * @param $url
      * @return bool
      */
-    function match($url):bool{
-        $url = trim($url,"/");
-        $path = preg_replace_callback('#:([\w]+)#',[$this,'paramMatch'],$this->_path);
+    function match($url): bool
+    {
+        $url = trim($url, '/');
+        $path = preg_replace_callback('#:([\w]+)#', [$this, 'paramMatch'], $this->_path);
         $regex = "#^$path$#i";
-        if(!preg_match($regex,$url,$matches)){
+        if (!preg_match($regex, $url, $matches)) {
             return false;
         }
         // remove the url path on the array key
         array_shift($matches);
         array_shift($_GET);
         $this->_matches = $matches;
-        foreach ($matches as $key => $val){
+        foreach ($matches as $key => $val) {
             $_GET[$this->_get_params[$key]] = $val;
         }
         return true;
     }
 
     /**
-     * This module Help to determine
-     * if we going to call a callable function or controller class
      * @throws Exception
      */
-    function call(){
-        try{
-            /**
-             * check if callable either is a string or an array
-             */
-            if (is_string($this->callable) || is_array($this->callable)) {
-                $params = is_string($this->callable)?explode("#", $this->callable):$this->callable;
-                if(count($params) != 2){
-                    throw new Exception("Error on class or method is not well defined");
+    function call()
+    {
+        try {
+            if (count($this->middleware_tab) > 0) {
+                $this->middleware_exist = false;
+                foreach ($this->middleware_tab as $middleware) {
+                    $this->controllerMiddleware($middleware, true);
                 }
-                $classController=$params[0];
-                $class_method=$params[1];
-                Controller::match_Controller($classController);
-                if (!class_exists($classController,true)) {
-                    throw new Exception("class : <b> $classController</b> is not defined. on controller folder");
-                }
-                $class_instance = new $classController;
-                if(!method_exists($class_instance,$class_method)) {
-                    throw new Exception("method :<b> $class_method</b> does not belong the class : <b> $classController</b>.");
-                }
-                call_user_func_array([$class_instance, $class_method], $this->_matches);
-            } else {
-                if(isset($this->callable) && is_callable($this->callable, true)){
-                    return call_user_func_array($this->callable, $this->_matches);
-                }
+                $this->middleware_tab = [];
             }
-        }catch(Exception $ex){
+            $this->controllerMiddleware($this->callable);
+        } catch (\Exception $ex) {
             echo $ex->getMessage();
         }
     }
 
     /**
-     * This module will help to verify is the params define on the routing
-     * match with the data pass throughout the route call
      * @param $match
      * @return string
      */
-    private function paramMatch($match):string{
-        //
-        if(isset($this->_params[$match[1]])){
-            return "(".$this->_params[$match[1]].")";
-        }
-        array_push($this->_get_params,$match[1]);
-        return "([^/]+)";
-    }
-    /*
-     * 
-     */
-    function with($param,$regex): Route
+    private function paramMatch($match): string
     {
-        $this->_params[$param]=str_replace('(','(?:',$regex);
+        //
+        if (isset($this->_params[$match[1]])) {
+            return '(' . $this->_params[$match[1]] . ')';
+        }
+        array_push($this->_get_params, $match[1]);
+        return '([^/]+)';
+    }
+
+    function with($param, $regex): \Wepesi\App\Core\Route
+    {
+        $this->_params[$param] = str_replace('(', '(?:', $regex);
         return $this;
     }
 
     /**
      * @return array
      */
-    function getmatch():array{
+    function getmatch(): array
+    {
         return $this->_matches;
     }
 
-    /**
-     * Get all the url define on the route
-     * 
-     * @param $params
-     * @return array|string|string[]
-     */
-    function geturl($params){
-        $path=$this->_path;
-        foreach($params as $k=>$v){
-            $path=str_replace(":$k",$v,$path);
+    function getUrl($params)
+    {
+        $path = $this->_path;
+        foreach ($params as $k => $v) {
+            $path = str_replace(":$k", $v, $path);
         }
         return $path;
+    }
+
+    function middleware($middleware): Route
+    {
+        $this->middleware_tab[] = $middleware;
+        return $this;
+    }
+
+    private function controllerMiddleware($callable, bool $is_middleware = false): void
+    {
+        $controller = !$is_middleware ? 'controller' : 'middleware';
+        try {
+            if (is_string($callable) || is_array($callable)) {
+                $params = is_string($callable) ? explode('#', $callable) : $callable;
+                if (count($params) != 2) {
+                    throw new Exception("Error : on `$controller` class/method is not well defined");
+                }
+                $classCallable = $params[0];
+                $class_method = $params[1];
+                $is_middleware ? MiddleWare::get($classCallable) : Controller::get($classCallable);
+                if (!class_exists($classCallable, true)) {
+                    throw new Exception("$classCallable class not defined, not a valid $controller");
+                }
+                $class_instance = new $classCallable;
+                if (!method_exists($class_instance, $class_method)) {
+                    throw new Exception("method : $class_method does not belong the class : $classCallable.");
+                }
+                call_user_func_array([$class_instance, $class_method], $this->_matches);
+            } else {
+                $closure = !$is_middleware ? $this->callable : $callable;
+                if (isset($closure) && is_callable($closure, true)) {
+                    call_user_func_array($closure, $this->_matches);
+                }
+            }
+            return;
+        } catch (Exception $ex) {
+            print_r($ex->getMessage());
+            die();
+        }
     }
 }

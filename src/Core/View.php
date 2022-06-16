@@ -5,17 +5,29 @@ namespace Wepesi\Core;
     class View{
         private array $data=[];
         const ERROR=ROOT."views/404.php";
-        private string $render=self::ERROR;
-        private $i18n;
+        private string $render;
 
-        function __construct(string $filename=null)
+        function __construct()
         {
-            $file= checkFileExtension($filename);
-            if (is_file(ROOT . "views/" . $file)) {
-                $this->render=ROOT . "views/" . $file; 
+            $this->render=self::ERROR;
+        }
+
+        /**
+         * call this method to display file content
+         * @param string $file_name
+         */
+        function display(string $file_name){
+            $file = checkFileExtension($file_name);
+            if (is_file(ROOT . 'views/' . $file)) {
+                $this->render = ROOT . 'views/' . $file;
             }
         }
 
+        /**
+         * assign variables data to be displayed on file_page
+         * @param string $variable
+         * @param $value
+         */
         function assign(string $variable,$value){
             $this->data[$variable]=$value;
         }

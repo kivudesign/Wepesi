@@ -13,7 +13,7 @@ namespace Wepesi\Core;
                 }else if(strpos($location, ".php")){
                     header('Location:'.$location);
                 }else{
-                    header('Location:'.WEB_ROOT. $location);
+                    header('Location:'. $location);
                 }
                 exit();
             }

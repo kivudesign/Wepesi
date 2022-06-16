@@ -9,33 +9,19 @@ use Wepesi\Core\Orm\DB;
  * @author Lenovo
  */
 class Validate {
-    private bool $_passed;
-    private array $_errors;
+    private $_passed;
+    private $_errors;
     private $stringValue;
     private $source;
+    private $query;
     //put your code here
-    private ?DB $db;
-    private object $lang;
-
     function __construct(array $_source=[]) {
         $this->_errors=[];
         $this->_passed = false;
-        $this->source=count($_source)?$_source:$this->getResourceDate();
+        $this->source=(isset($_POST) && !empty($_POST))?$_POST:((isset($_GET) && !empty($_GET))?$_GET:$_source);
         $this->stringValue=null;
         $this->db=DB::getInstance();
         $this->lang= (object)LANG_VALIDATE;
-    }
-
-    /**
-     * @return array|void|null
-     */
-    private function getResourceDate(){
-        switch($_SERVER["REQUEST_METHOD"]){
-            case  "POST": return !empty($_POST)?$_POST:null;
-            case  "DELETE":
-            case  "GET": return $_GET;
-            case  "PUT": return array_merge_recursive($_GET,Input::put());
-        }
     }
     /**
      * @param array $source: from where to check
@@ -66,12 +52,6 @@ class Validate {
             $this->_passed = true;
         }
     }
-
-    /**
-     * @param array $source
-     * @param array $items
-     * @return void
-     */
     private function check_undefined_Object_key(array $source,array $items){
         $diff_array_key= array_diff_key($source,$items);
         $source_key= array_keys($diff_array_key);
@@ -103,7 +83,7 @@ class Validate {
      *
      */
     function number(string $tring_key){
-        return new VNumber($this->source,$tring_key);
+        return new VNumber($this->source,$tring_key,$this->source[$tring_key]);
     }
     /**
      *
@@ -120,16 +100,9 @@ class Validate {
      * while want to validate a date, this module will do the things
      */
     function date(string $tring_key){
-        return new VDate($this->source,$tring_key);
+        return new VDate($this->source,$tring_key,$this->source[$tring_key]);
     }
 
-    /**
-     * @param string $tring_key
-     * @return VFile
-     */
-    function file(string $tring_key){
-        return new VFile($this->source,$tring_key);
-    }
     /**
      * @param string $tring_key
      * @return VTime
@@ -138,18 +111,34 @@ class Validate {
     function time(string $tring_key){
         return new VTime($this->source,$tring_key,$this->source[$tring_key]);
     }
-
-    /**
-     * @param array $value
-     * @return array
-     */
+//
+//  /**
+//     *
+//     * @param array $source
+//     * @param array $items
+//     * @return boolean
+//     */
+//    private function check_undefined_Object_key(array $source,array $items){
+//        $diff_array_key= array_diff_key($source,$items);
+//        $source_key= array_keys($diff_array_key);
+//        $status_key=false;
+//        if(count($source_key)>0){
+//            foreach($source_key as $key){
+//                $message=[
+//                    "type" => "object.undefined",
+//                    "message" => "`{$key}` is not defined",
+//                    "label" => $key,
+//                ];
+//                $this->addError($message);
+//                $status_key=true;
+//            }
+//        }
+//        return $status_key;
+//    }
     private function addError(array $value){
        return $this->_errors[]=$value;
     }
-
-    /**
-     * @return array[]
-     */
+    
     function errors(){
         return ["error"=>$this->_errors];
     }
