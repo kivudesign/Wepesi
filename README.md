@@ -1,20 +1,31 @@
-# Wepesi Quick
+# Wepesi
 * Wepesi library
-`wepesi quick` is the quick version of wepesi that doesn not required composer.
-all fonctionnality available on `Wepesi library` are available. there is nothing different apart from that, with `wepsi Quick` you are not able to benefit all advantage of the namespace available on `Wepesi library`.
-*whith the simple donwn on you can start using it without wasting your time.* 
-This a simple php library that will help design an mvc application and work in OOP.
-you can find project directly on : https://packagist.org/packages/wepesi/
+`wepesi` is the quick ans simple framework the help you devellop simple web application with php and design OOP concept,
+it has been design by following most off principle for big framework but make it simple for develloper.
+
+## Installation
+The installation of the application does not require somuch thing;
+- In you are familliar with `composer` to install :
+You can find project directly on packagest on : https://packagist.org/packages/wepesi/wepesi
+```shell
+ composer create-project wepesi/wepesi
+```
+and it will create a project for You.
+
+- In case you are not familliar with `composer` you can donwload it directly the source code on github on :https://github.com/kivudesign/Wepesi, no nee of extra module to start workin on the project.
 
 # Intoduction
-Wepesi is a simple Web libray that help you devellop simple web application, and benefit advantage of php framework like
+Wepesi is a simple Web framework that help you devellop simple web application, and benefit advantage of large php framework like
 - routing
 - controller
 - simple ORM *without migration
 - MVC design patern
 - OOP
+- Middleware
+- Validation
+- View
 
-all required is just the basic on php, and php class and you are done.
+All module are built-id, its has been design to give to make the framework flexible, you can restructure everything as you want and be able to add more module.
 
 # Integration
 no need to know about composer, the simple way is to download the all the project and place on the server side devellopenent.
