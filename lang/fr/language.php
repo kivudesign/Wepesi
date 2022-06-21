@@ -1,7 +1,7 @@
 <?php
 $language=[
-    "Welcom"=>"Bienvenu",
-    "Welcom to Wepesi"=>"Bienvenu chez Wepesi",
+    "Welcome"=>"Bienvenu",
+    "Welcome to Wepesi"=>"Bienvenu chez Wepesi",
     "you can find the simple example here"=>"Vous pouvez trouvez un exemple ici",
     "A Simple Php MVC platform to develop quickly a php application"=>"Une plateforme Simple Php MVC pour développer rapidement une application web",
     "Home"=>"Acceuill",
