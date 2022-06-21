@@ -18,22 +18,20 @@ class DBCreateMultiple
     {
         try{
             if (count($fields) ) {
-                $myKeysFields=[];
                 if(isset($fields[0]) && is_array($fields[0])){
-                    foreach ($fields[0] as $field=>$value){
-                        array_push($myKeysFields, trim($field));
-                    }
-                    $prepared_field_keys ="(". implode(',', $myKeysFields).")" ;
+                    $extracted_field_key= array_keys($fields[0]);
+
+                    $prepared_field_keys ="(". implode(',', $extracted_field_key).")" ;
                     $expected_prepared_params="";
                     $y=0;
                     $value_prepared_params=[];
-                    foreach ($fields as $elements){
+                    foreach ($fields as $data_elements){
                         $prepared_params="";
                         $x=0;
-                        foreach ($elements as $element=>$field){
-                            array_push($value_prepared_params,$field);
+                        foreach ($data_elements as $element=>$field){
+                            $value_prepared_params[]=$field;
                             $prepared_params .= "? ";
-                            if ($x < count($elements)-1) {
+                            if ($x < count($data_elements)-1) {
                                 $prepared_params .= ', ';
                             }
                             $x++;
@@ -67,12 +65,37 @@ class DBCreateMultiple
      */
     private function query($sql, array $params = [])
     {
-        $q = new DBQeury($this->_pdo, $sql, $params);
+        $q = new DBQuery($this->_pdo, $sql, $params);
         $this->_error = $q->getError();
         $this->_lastid = $q->lastId();
         return $this;
     }
 
+    private function checkFieldKeyExist(array $source_data){
+        $fieldKey=[];
+        $source_data=(isset($source_data[0]) && is_array($source_data[0]))?$source_data:[$source_data];
+        if(isset($source_data[0]) && is_array($source_data[0])){
+            $fieldKey=array_keys($source_data[0]);
+        }
+        $extracted_key=array_keys($source_data);
+        if(count($extracted_key)!=count($fieldKey)) return false;
+        foreach ($fieldKey as $key){
+            if(!isset($source_data[$key])) return false;
+        }
+        return $this->formatFieldData($fieldKey,$source_data);
+    }
+    private function formatFieldData(array $fieldKey,array $source_data): array
+    {
+        $new_formated_row=[];
+        foreach ($source_data as $rows){
+            $new_formated_data=[];
+            foreach ($fieldKey as $key){
+                $new_formated_data[$key]=$rows[$key];
+            }
+            $new_formated_row[]=$new_formated_data;
+        }
+        return $new_formated_row;
+    }
     /**
      * @return bool
      * use this module to create new record
