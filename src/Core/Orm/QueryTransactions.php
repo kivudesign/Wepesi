@@ -3,22 +3,26 @@
 namespace Wepesi\Core\Orm;
     class QueryTransactions
     {
-        private $table, $action, $_pdo;
+        private \PDO $_pdo;
+        private string $table;
         private $_where, $_fields;
-        private  $_error,
-            $_results = false,
-            $_count = 0,
-           $_lastid;
-        function __construct(\PDO $pdo, string $table, string $action)
+        private  $_error,$_results = false,$_count = 0;
+        function __construct(\PDO $pdo, string $table)
         {
             $this->table = $table;
-            $this->action = $action;
             $this->_pdo = $pdo;
         }
-
+        /**
+         * TODO make where function more expressive and easy to use with a better structure. on v3
+         * be able to make a where with field name as a kye
+         * [
+         * "field"=>"field_name",
+         * "Op"=>"or,and,=,>,<,<>,.."
+         * "value"=>"field_value"
+         * ]
+        **/
         function where(array $where = [])
         {
-            // select where <> update where
             /**
              * select WHERE format
              * [
@@ -28,9 +32,6 @@ namespace Wepesi\Core\Orm;
              *  ["name","=","john","and"]
              * ]
              */
-            if ($this->action == "insert") {
-                throw new \Exception("This method try to access undefined method");
-            }
             if (count($where)) {
                 $params = [];
                 /**
@@ -85,7 +86,7 @@ namespace Wepesi\Core\Orm;
         // 
         function field(array $fields = [])
         {
-            if (count($fields) && !$this->_fields && ($this->action != "insert" || $this->action != "update")) {
+            if (count($fields) && !$this->_fields) {
                 $keys = $fields;
 //                $values = null;
                 $params = $keys;
@@ -99,25 +100,21 @@ namespace Wepesi\Core\Orm;
                         $values .= ', ';
                     }
                     //remove white space around the collum name
-                    array_push($_trim_key,trim($keys[($x-1)]));
+                    $_trim_key[]=trim($keys[($x-1)]);
                     $x++;
                 }
                 $keys=$_trim_key;
-                $implode_keys= "`" . implode('`,`', $keys) . "`";
-                if($this->action=="update"){
-                    $implode_keys= "`" . implode('`= ?,`', $keys) . "`";
-                    $implode_keys.="=?";
-                }
+                //
+                $implode_keys= "`" . implode('`= ?,`', $keys) . "`";
+                $implode_keys.="=?";
+                //
                 $this->_fields = [
                     "keys" => $implode_keys,
                     "values" => $values,
                     "params" => $params
                 ];
-                return $this;
-            }else{
-                throw new \Exception("This method try to access undefined method");
             }
-
+            return $this;
         }
 
         /**
@@ -128,46 +125,12 @@ namespace Wepesi\Core\Orm;
          */
         private function query($sql, array $params = [])
         {
-            $q = new DBQeury($this->_pdo, $sql, $params);
+            $q = new DBQuery($this->_pdo, $sql, $params);
             $this->_results = $q->result();
             $this->_count = $q->rowCount();
             $this->_error = $q->getError();
-            $this->_lastid = $q->lastId();
-            return $this;
         }
 
-        /**
-         * @return bool
-         * use this module to create new record
-         */
-        private function insert()
-        {
-           if (isset($this->_fields['keys']) && isset($this->_fields['values']) && isset($this->_fields['params'])){
-                $fields = $this->_fields['keys'];
-                $values =  $this->_fields['values'];
-                $params = $this->_fields['params'];
-                $sql = "INSERT INTO $this->table ($fields) VALUES ($values)";
-                if (!$this->query($sql, $params)->error()) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /**
-         * @return bool
-         * use this module to detele and existing row record
-         */
-        private function delete()
-        {
-            $where = $this->_where['field'] ?? null;
-            $params = $this->_where['params'] ?? [];
-            $sql = "DELETE FROM $this->table $where";
-            if (!$this->query($sql, $params)->error()) {
-                return true;
-            }
-          return false;
-        }
         // update module
         private function update(){
             $where = $this->_where['field'] ?? null;
@@ -177,31 +140,7 @@ namespace Wepesi\Core\Orm;
             $params=array_merge($field_params, $where_params);
             //generate the sql query to be execute
             $sql = "UPDATE $this->table SET $fields  $where";
-            if (!$this->query($sql, $params)->error()) {
-                return true;
-            }
-            return false;
-        }
-
-        /**
-         *
-         */
-        private function build():void
-        {
-            switch ($this->action) {
-                case 'insert':
-                    $this->insert();
-                    break;
-                case 'update':
-                    $this->update();
-                    break;
-                case 'delete':
-                    $this->delete();
-                    break;
-                case 'count':
-                    $this->count();
-                    break;
-            }
+            return $this->query($sql, $params);
         }
 
         /**
@@ -210,7 +149,7 @@ namespace Wepesi\Core\Orm;
          */
         function result()
         {
-            $this->build();
+            $this->update();
             return $this->_results;
         }
         // return an error status when an error occure while doing an querry
@@ -226,14 +165,5 @@ namespace Wepesi\Core\Orm;
         function count()
         {
             return $this->_count;
-        }
-
-        /**
-         * @return mixed
-         * access the last id record after creating a new record
-         */
-        function lastId()
-        {
-            return $this->_lastid;
         }
     }

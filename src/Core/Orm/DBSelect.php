@@ -143,6 +143,11 @@ namespace Wepesi\Core\Orm;
             if ($order) $this->orderBy = " order by ($order)";
             return $this;
         }
+        function random()
+        {
+            $this->orderBy = " order by RAND()";
+            return $this;
+        }
         /**
          * 
          * @return $this
@@ -258,10 +263,10 @@ namespace Wepesi\Core\Orm;
         private function select()
         {
             $fields = isset($this->_fields['keys']) ? $this->_fields['keys'] : "*";
-            // 
+            //
             $WHERE = isset($this->_where['field']) ? $this->_where['field'] : "";
             $params = isset($this->_where['value']) ? $this->_where['value'] : [];
-            // 
+            //
             $sortedASC_DESC = $this->_asc ? $this->_asc : ($this->_dsc ? $this->_dsc : null);
             //$_jointure=$this->_leftJoin.$this->_rightJoin.$this->_join;
             $_jointure="";
@@ -286,7 +291,7 @@ namespace Wepesi\Core\Orm;
          */
         private function query(string $sql, array $params = [])
         {
-            $q = new DBQeury($this->_pdo, $sql, $params);
+            $q = new DBQuery($this->_pdo, $sql, $params);
             $this->_results = $q->result();
             $this->_count = $q->rowCount();
             $this->_error = $q->getError();
@@ -309,7 +314,7 @@ namespace Wepesi\Core\Orm;
         function result()
         {
             $this->build();
-            return $this->action=="count"?$this->_results[0]->count:$this->_results;
+            return $this->_results && $this->action=="count"?$this->_results[0]->count:$this->_results;
         }
         /**
          * 

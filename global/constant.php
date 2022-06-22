@@ -21,8 +21,8 @@
     const TIMEZONE = 'Africa/Kigali';
 
     //define default domain
-    $server_name=$_SERVER['SERVER_NAME'];
-    $protocol=$_SERVER['REQUEST_SCHEME'];
+    $server_name=$_SERVER['SERVER_NAME']??"wepesi.com";
+    $protocol=$_SERVER['REQUEST_SCHEME']??"http";
 
     define("DEFAULT_DOMAIN","$protocol://$server_name");
     define("APP_DOMAIN",$server_name);

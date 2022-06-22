@@ -16,20 +16,22 @@ $language = new I18n($lang);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= $language->translate('Welcome') ?></title>
+
+    <!-- Favicons -->
+    <link href='assets/img/favicon.ico' rel='icon'>
+    <link href='assets/img/logo.jpg' rel='wepesi-icon'>
     <?php
         Bundles::insertCSS('w3');
     ?>
-    <title>Welcome Home</title>
 </head>
 
 <body>
-
     <div class='w3-container w3-center'>
-        <h2 class='w3-blue-gray'><?= $language->translate('Welcom to Wepesi') ?></h2>
-
+        <h2 class='w3-blue-gray'><?= $language->translate('Welcome to Wepesi') ?></h2>
         <p><?= $language->translate('A Simple Php MVC platform to develop quickly a php application') ?></p>
-        <p class="w3-text-gray"><?= $language->translate('you can find the simple example here') ?>: <a class="w3-text-blue"
-                                                                                                        href="https://github.com/bim-g/library-exemple">example</a>
+        <p class="w3-text-gray">
+            <?= $language->translate('you can find the simple example here') ?>: <a class="w3-text-blue" href="https://github.com/bim-g/library-exemple">example</a>
         </p>
         <H2 class="w3-text-blue-gray w3-padding">Home Pages</H2>
         <?php if($errors) {?>
@@ -52,7 +54,5 @@ $language = new I18n($lang);
             </form>
         </div>
     </div>
-
 </body>
-
 </html>
