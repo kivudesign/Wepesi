@@ -6,10 +6,12 @@ namespace Wepesi\Core;
         private array $data=[];
         const ERROR=ROOT."views/404.php";
         private string $render;
+        private $folder_name;
 
-        function __construct()
+        function __construct($folder="/")
         {
             $this->render=self::ERROR;
+            $this->folder_name=$folder;
         }
 
         /**
@@ -18,8 +20,9 @@ namespace Wepesi\Core;
          */
         function display(string $file_name){
             $file = checkFileExtension($file_name);
-            if (is_file(ROOT . 'views/' . $file)) {
-                $this->render = ROOT . 'views/' . $file;
+            $file_source = substr($file, 0) == '/' ? $this->folder_name . $file : $this->folder_name . '/' . $file;
+            if (is_file(ROOT . 'views' . $file_source)) {
+                $this->render = ROOT . 'views' . $file_source;
             }
         }
 
