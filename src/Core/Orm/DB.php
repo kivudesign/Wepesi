@@ -4,7 +4,9 @@ namespace Wepesi\Core\Orm;
 use PDOException;
 use PDO;
 use FFI\Exception;
-    class DB
+use Wepesi\Core\Config;
+
+class DB
     {
         private static ?DB $_instance;
         private $queryResult;
@@ -20,8 +22,8 @@ use FFI\Exception;
         {
             try {
                 $this->initialisation();
-                $this->pdoObject = new PDO("mysql:host=" . Config::get('mysql/host') . ";dbname=" . Config::get('mysql/db').";charset=utf8mb4", Config::get('mysql/username'), Config::get('mysql/password'),$this->option);
-            } catch (PDOException $ex) {
+                $this->pdoObject = new \PDO("mysql:host=" . Config::get('mysql/host') . ";dbname=" . Config::get('mysql/db').";charset=utf8mb4", Config::get('mysql/username'), Config::get('mysql/password'),$this->option);
+            } catch (\PDOException $ex) {
                 die($ex->getMessage());
             }
         }
@@ -32,9 +34,9 @@ use FFI\Exception;
         private function initialisation(){
             $this->_results=[];
             $this->option = [
-                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
-                PDO::ATTR_EMULATE_PREPARES => false,
-                PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+                \PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                \PDO::ATTR_EMULATE_PREPARES => false,
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
             ];
             $this->_count=0;
             $this->_lastid=0;
