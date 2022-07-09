@@ -33,7 +33,7 @@ class VDate implements IValidation
         if ($date_value_time > $min_date_time) {
             $message=[
                 "type"=>"date.now",
-                "message"=> "`{$this->string_item}` {$this->lang->date_now} ",
+                "message"=> "`{$this->string_item}` should be this moment ",
                 "label"=>$this->string_item,
                 "limit"=>$min_date
             ];
@@ -55,7 +55,7 @@ class VDate implements IValidation
         if ($date_value_time > $min_date_time) {
             $message=[
                 "type"=>"date.now",
-                "message"=> "`{$this->string_item}` {$this->lang->date_today} ",
+                "message"=> "`{$this->string_item}` should be today ",
                 "label"=>$this->string_item,
                 "limit"=>$min_date
             ];
@@ -81,7 +81,7 @@ class VDate implements IValidation
         if ($minimum_date>$date_value_time) {
             $message=[
                 "type"=>"date.min",
-                "message"=> "`{$this->string_item}` {$this->lang->date_min} `{$min_date_value}`",
+                "message"=> "`{$this->string_item}` must be a minimum of `{$min_date_value}`",
                 "label"=>$this->string_item,
                 "limit"=>$min_date_value
             ];
@@ -105,7 +105,7 @@ class VDate implements IValidation
         if ($maximum_value<$date_value_time) {
             $message = [
                 "type" => "date.max",
-                "message" => "`{$this->string_item}` {$this->lang->date_max} `{$date_max}`",
+                "message" => "`{$this->string_item}` must be a maximum of `{$date_max}`",
                 "label" => $this->string_item,
                 "limit" => $date_max
             ];
@@ -122,7 +122,7 @@ class VDate implements IValidation
         if (empty($required_value) || strlen($required_value)==0) {
             $message = [
                 "type"=> "any.required",
-                "message" => "`{$this->string_item}` {$this->lang->required}",
+                "message" => "`{$this->string_item}` is required",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -136,14 +136,14 @@ class VDate implements IValidation
         if (!isset($this->source_data[$item_to_check])) {
             $message = [
                 "type"=> "any.unknown",
-                "message" => "`{$item_to_check}` {$this->lang->unknown}",
+                "message" => "`{$item_to_check}` is unknow",
                 "label" => $item_to_check,
             ];
             $this->addError($message);
         }else if(!preg_match($regex,$this->source_data[$item_to_check]) || strlen(trim($this->source_data[$item_to_check]))==0){
             $message=[
                 "type" => "date.unknown",
-                "message" => "`{$item_to_check}` {$this->lang->string_unknown}",
+                "message" => "`{$item_to_check}` is unknow",
                 "label" => $item_to_check,
             ];
             $this->addError($message);

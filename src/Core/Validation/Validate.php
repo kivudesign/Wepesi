@@ -13,7 +13,6 @@ class Validate {
     private $_errors;
     private $stringValue;
     private $source;
-    private $query;
     //put your code here
     function __construct(array $_source=[]) {
         $this->_errors=[];

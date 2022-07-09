@@ -35,7 +35,7 @@ class VNumber {
         if ((int) $this->string_value < $min_values) {
             $message=[
                 "type"=>"number.min",
-                "message"=> "`{$this->string_item}` {$this->lang->number_min}  `{$min_values}`",
+                "message"=> "`{$this->string_item}` must be a minimum of `{$min_values}`",
                 "label"=>$this->string_item,
                 "limit"=>$min_values
             ];
@@ -47,7 +47,7 @@ class VNumber {
         if ($this->string_value > $maximum_value) {
             $message=[
                 "type"=>"number.max",
-                "message"=> "`{$this->string_item}` {$this->lang->number_max}  `{$maximum_value}`",
+                "message"=> "`{$this->string_item}` must be a maximum of  `{$maximum_value}`",
                 "label"=>$this->string_item,
                 "limit"=>$maximum_value
             ];
@@ -59,7 +59,7 @@ class VNumber {
         if ($this->string_value < 1) {
             $message=[
                 "type"=>"number.positive",
-                "message"=> "`{$this->string_item}` {$this->lang->number_positive}",
+                "message"=> "`{$this->string_item}` should be positive",
                 "label"=>$this->string_item,
                 "minimum"=>1
             ];
@@ -72,7 +72,7 @@ class VNumber {
         if(count($check_uniq)){
             $message = [
                 "type"=> "numer.unique",
-                "message" => "`{$this->string_item}` {$this->lang->unique}",
+                "message" => "`{$this->string_item}` already exist,it should be unique",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -83,7 +83,7 @@ class VNumber {
         if (empty($required_value) && $required_value!=0) {
             $message = [
                 "type"=> "any.required",
-                "message" => "`{$this->string_item}` {$this->lang->required}",
+                "message" => "`{$this->string_item}` is required",
                 "label" => $this->string_item
             ];
             $this->addError($message);
@@ -97,7 +97,7 @@ class VNumber {
         if (!isset($this->source_data[$item_to_check])) {
             $message = [
                 "type"=> "any.unknown",
-                "message" => "`{$item_to_check}` {$this->lang->unknown}",
+                "message" => "`{$item_to_check}` is unknown",
                 "label" => $item_to_check,
             ];
             $this->addError($message);
