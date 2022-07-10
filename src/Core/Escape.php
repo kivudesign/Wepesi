@@ -33,7 +33,7 @@ class Escape{
         $sub_string = substr($link, 0, 1);
         $new_link = substr($link, 1);
         if ($sub_string == '/') {
-            $link = self::addSlaches($new_link);
+            $link = substr(self::addSlaches($new_link),1);
         }
         return $link == '' ? $link : '/' . $link;
     }
