@@ -23,7 +23,7 @@ class VFile extends ABIValidation
         if (!isset($this->source_data[$this->file_name])) {
             $message = [
                 "type"=> "any.unknown",
-                "message" => "`{$this->file_name}` {$this->lang->unknown}",
+                "message" => "`{$this->file_name}` is uknown",
                 "label" => $this->file_name,
             ];
             $this->addError($message);
@@ -34,7 +34,7 @@ class VFile extends ABIValidation
         if (count($this->source_data)==0 || !isset($this->source_data[$this->file_name])) {
             $message = [
                 "type"=> "number.required",
-                "message" => "`{$this->file_name}` {$this->lang->required}",
+                "message" => "`{$this->file_name}` is required",
                 "label" => $this->file_name
             ];
             $this->addError($message);

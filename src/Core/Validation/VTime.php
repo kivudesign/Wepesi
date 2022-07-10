@@ -58,7 +58,7 @@ class VTime implements IValidation
         if ($time_value_time < $min_time) {
             $message=[
                 "type"=>"date.min",
-                "message"=> "`{$this->string_item}` {$this->lang->date_min} `{$min_time}`",
+                "message"=> "`{$this->string_item}` must be a minimum of `{$min_time}`",
                 "label"=>$this->string_item,
                 "limit"=>$min_time
             ];
@@ -82,7 +82,7 @@ class VTime implements IValidation
         if ($max_date_time<$date_value_time) {
             $message = [
                 "type" => "date.max",
-                "message" => "`{$this->string_item}` {$this->lang->date_max} `{$max_date}`",
+                "message" => "`{$this->string_item}` must be a maximum of `{$max_date}`",
                 "label" => $this->string_item,
                 "limit" => $max_date
             ];
@@ -122,7 +122,7 @@ class VTime implements IValidation
         if ($time_now>=$time_value_to_check) {
             $message = [
                 "type"=> "any.required",
-                "message" => "`{$this->string_item}` {$this->lang->time_greater} {$time_now}",
+                "message" => "`{$this->string_item}` should be greater than {$time_now}",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -145,7 +145,7 @@ class VTime implements IValidation
         if ($time_now<=$time_value_to_check) {
             $message = [
                 "type"=> "any.required",
-                "message" => "`{$this->string_item}` {$this->lang->time_greater} {$time_now}",
+                "message" => "`{$this->string_item}` should be less than {$time_now}",
                 "label" => $this->string_item,
             ];
             $this->addError($message);

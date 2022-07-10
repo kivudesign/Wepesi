@@ -15,13 +15,13 @@ class VString implements IValidation{
     private $_min;
     private $_max;
     //put your code here
-    function __construct(array $source,string $string_item=null) {
-        $this->string_value=$source[$string_item];
-        $this->string_item=$string_item;
-        $this->source_data=$source;
-        $this->_max= $this->_min=0;
-        $this->db=DB::getInstance();
-        $this->lang= (object)LANG_VALIDATE;
+    function __construct(array $source,string $string_item="null") {
+        $this->string_value = $source[$string_item] ?? null;
+        $this->string_item = $string_item;
+        $this->source_data = $source;
+        $this->_max = $this->_min=0;
+        $this->db = DB::getInstance();
+        $this->lang = (object)LANG_VALIDATE;
         $this->checkExist();
     }
     function min(int $rule_values=0){
@@ -29,7 +29,7 @@ class VString implements IValidation{
         if (strlen($this->string_value) < $min) {
             $message=[
                 "type"=>"string.min",
-                "message"=> "`{$this->string_item}` {$this->lang->string_min} `{$min}` characters",
+                "message"=> "`{$this->string_item}` must be a minimum of `{$min}` characters",
                 "label"=>$this->string_item,
                 "limit"=>$min
             ];
@@ -44,7 +44,7 @@ class VString implements IValidation{
         if (strlen($this->string_value) > $max) {
             $message = [
                 "type" => "string.max",
-                "message" => "`{$this->string_item}` {$this->lang->string_max} `{$max}` characters",
+                "message" => "`{$this->string_item}` must be a maximum of `{$max}` characters",
                 "label" => $this->string_item,
                 "limit" => $max
             ];
@@ -57,7 +57,7 @@ class VString implements IValidation{
         if (!filter_var($this->string_value, FILTER_VALIDATE_EMAIL)) {
             $message = [
                 "type" => "string.email",
-                "message" => "`{$this->string_item}` {$this->lang->email}",
+                "message" => "`{$this->string_item}` must be an email",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -80,7 +80,7 @@ class VString implements IValidation{
         if (isset($this->source_data[$key_tomatch]) && (strlen($this->string_value)!= strlen($this->source_data[$key_tomatch])) && ($this->string_value!=$this->source_data[$key_tomatch])) {
             $message = [
                 "type" => "string.match",
-                "message" => "`{$this->string_item}` {$this->lang->matches} {$key_tomatch}",
+                "message" => "`{$this->string_item}` must match {$key_tomatch}",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -97,7 +97,7 @@ class VString implements IValidation{
         if (empty($required_value) || strlen($required_value)==0) {
             $message = [
                 "type"=> "any.required",
-                "message" => "`{$this->string_item}` {$this->lang->required}",
+                "message" => "`{$this->string_item}` is required",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -109,7 +109,7 @@ class VString implements IValidation{
         if(count($check_uniq)){
             $message = [
                 "type"=> "string.unique",
-                "message" => "`{$this->string_item}`= `{$this->string_value}` {$this->lang->unique}",
+                "message" => "`{$this->string_item}` = `{$this->string_value}` already exist,it should be unique",
                 "label" => $this->string_item,
             ];
             $this->addError($message);
@@ -130,7 +130,7 @@ class VString implements IValidation{
         }else if(!preg_match($regex,$this->source_data[$item_to_check]) || strlen(trim($this->source_data[$item_to_check]))==0){
             $message=[
                     "type" => "string.unknown",
-                    "message" => "`{$item_to_check}` {$this->lang->string_unknown}",
+                    "message" => "`{$item_to_check}` is unknown",
                     "label" => $item_to_check,
                 ];
                 $this->addError($message);
