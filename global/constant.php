@@ -4,10 +4,6 @@
      * for database and the connection
      * they declare as global tho to be accessible from anywhere in the project
      */
-    const LANG = "fr";
-    include("./lang/".LANG."/language.php");
-
-
 
     // include language file according to your configuration
     define("LANG_VALIDATE", $validation);

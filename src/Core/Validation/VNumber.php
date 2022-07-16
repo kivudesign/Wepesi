@@ -8,6 +8,8 @@
 
 namespace Wepesi\Core\Validation;
 
+use Wepesi\Core\Orm\DB;
+
 /**
  * Description of VNumber
  *
