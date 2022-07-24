@@ -14,10 +14,10 @@ class homeController{
         }
 
         function home(){
-            Redirect::to(WEB_ROOT);
+            Redirect::to("/");
         }
         function changeLang(){
             Session::put('lang', Input::get("lang"));
-            Redirect::to(WEB_ROOT);
+            Redirect::to("/");
         }
     }
