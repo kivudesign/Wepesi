@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * Wepesi Validation
+ */
 
 namespace Wepesi\Core\Validation;
 
@@ -8,25 +10,21 @@ class VDate implements IValidation
 {
     private $date_value;
     private $string_item;
-    private $source_data;
-    private $_errors;
-    private $_min;
-    private $_max;
-//    private $_mois=["Janviers","Fevrier","Mars","Avril","Mai","Juin","Jouillet","Aout","Septenbre","Octobre","Novembre","Decembre"];
-    //put your code here
+    private array $source_data;
+    private array $_errors;
+
     function __construct(array $source,string $string_item=null) {
         $this->date_value=$source[$string_item];
         $this->string_item=$string_item;
         $this->source_data=$source;
-        $this->_max= $this->_min=0;
-        $this->lang= (object)LANG_VALIDATE;
         $this->checkExist();
     }
 
     /**
      * @return $this
      */
-    function now(){
+    function now(): VDate
+    {
         $min_date_time=strtotime("now");
         $min_date=date("d/F/Y",$min_date_time);
         $date_value_time= strtotime($this->date_value);
@@ -47,7 +45,8 @@ class VDate implements IValidation
      * @return $this
      * while trying to get day validation use this module
      */
-    function today(string $times=null){
+    function today(string $times=null): VDate
+    {
         $regeg="#+[0-9]h:[0-9]min:[0-9]sec#";
         $min_date_time=strtotime("now {$times}");
         $min_date=date("d/F/Y",$min_date_time);
@@ -68,7 +67,8 @@ class VDate implements IValidation
      * @return $this
      * get the min date control from the given date
      */
-    function min(string $rule_values="now"){
+    function min(string $rule_values="now"): VDate
+    {
         $regex= "#[a-zA-Z]#";
         $time= preg_match($regex,$rule_values);
 //        $con=!$time?$time:(int)$time;
@@ -95,7 +95,8 @@ class VDate implements IValidation
      * @return $this
      * while try to check maximum date of a defined period use this module
      */
-    function max(int $rule_values=1){
+    function max(int $rule_values=1): VDate
+    {
         $regex= "#[a-zA-Z]#";
         $time= preg_match($regex,$rule_values);
 //        $con=!$time?$time:(int)$time;
@@ -117,7 +118,8 @@ class VDate implements IValidation
      * @return $this
      * call this module is the input is requied and should not be null or empty
      */
-    function required(){
+    function required(): VDate
+    {
         $required_value= trim($this->date_value);
         if (empty($required_value) || strlen($required_value)==0) {
             $message = [
@@ -150,10 +152,11 @@ class VDate implements IValidation
         }
         return true;
     }
-    private function addError(array $value){
-        return $this->_errors[]=$value;
+    private function addError(array $value):void{
+        $this->_errors[]=$value;
     }
-    function check(){
+    function check(): array
+    {
         return  $this->_errors;
     }
 }

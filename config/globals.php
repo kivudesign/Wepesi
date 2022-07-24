@@ -19,5 +19,6 @@
         'controller'=>WEB_ROOT,
         'middleware'=>WEB_ROOT,
         'vendor'=>false,
+        'lang' => 'en',
         'autoload'=>["src","controller","middleware"]
     ];

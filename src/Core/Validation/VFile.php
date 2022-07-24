@@ -6,10 +6,8 @@ class VFile extends ABIValidation
 {
     private string $file_name;
     private array $source_data;
-    private object $lang;
 
     function __construct(array $source,string $file){
-        $this->lang= (object)LANG_VALIDATE;
         $this->file_name=$file;
         $this->source_data=$source;
         if(!isset($this->source_data[$file])){
@@ -19,7 +17,8 @@ class VFile extends ABIValidation
     /**
      * @return bool
      */
-    private function check_file_existe(){
+    private function check_file_existe(): bool
+    {
         if (!isset($this->source_data[$this->file_name])) {
             $message = [
                 "type"=> "any.unknown",
@@ -30,7 +29,8 @@ class VFile extends ABIValidation
         }
         return true;
     }
-    function required(){
+    function required(): VFile
+    {
         if (count($this->source_data)==0 || !isset($this->source_data[$this->file_name])) {
             $message = [
                 "type"=> "number.required",

@@ -10,11 +10,12 @@
         }
     },
     "keywords": [
-        "wepesi","framework","wepesi library",
+        "framework","library","orm","router","jwt",
+        "metadata","view","validation","hash","Token",
+        "quick framework","quick library",
         "wepesi framework","wepesi quick",
         "wepesi orm","quick orm","light orm",
-        "router","routing","route",
-        "validaion","mvc","php mvc"
+        "php mvc","mvc","API"
     ],
     "homepage": "https://github.com/kivudesign/Wepesi-Quick/issues",
     "support": {

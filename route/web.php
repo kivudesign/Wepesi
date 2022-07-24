@@ -7,7 +7,7 @@ use Wepesi\Core\View;
     $route=new Router();
     // setup get started pages index
     $route->get('/', function () {
-        (new View)->display('home');
+        (new View)->display('/home');
     });
     $route->get('/home', [homeController::class,"home"]);
     //

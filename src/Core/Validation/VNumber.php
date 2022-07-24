@@ -8,6 +8,8 @@
 
 namespace Wepesi\Core\Validation;
 
+use Wepesi\Core\Orm\DB;
+
 /**
  * Description of VNumber
  *
@@ -15,23 +17,26 @@ namespace Wepesi\Core\Validation;
  */
 class VNumber {
     //put your code here
-    private $string_value;
-    private $string_item;
-    private $source_data;
-    private $_errors;
-    private $_min;
-    private $_max;
-    
+    private int $string_value;
+    private string $string_item;
+    private array $source_data;
+    private array $_errors;
+    private ?DB $db;
+
     function __construct(array $source,string $string_item) {
         $this->source_data=$source;
         $this->string_value=(int)$source[$string_item];
         $this->string_item=$string_item;
-        $this->_max= $this->_min=0;
         $this->db=DB::getInstance();
-        $this->lang= (object)LANG_VALIDATE;
         $this->checkExist();
     }
-    function min(int $min_values){
+
+    /**
+     * @param int $min_values
+     * @return $this
+     */
+    function min(int $min_values): VNumber
+    {
         if ((int) $this->string_value < $min_values) {
             $message=[
                 "type"=>"number.min",
@@ -43,7 +48,13 @@ class VNumber {
         }
         return $this;
     }
-    function max(int $maximum_value){
+
+    /**
+     * @param int $maximum_value
+     * @return $this
+     */
+    function max(int $maximum_value): VNumber
+    {
         if ($this->string_value > $maximum_value) {
             $message=[
                 "type"=>"number.max",
@@ -55,7 +66,8 @@ class VNumber {
         }
         return $this;
     }
-    function positive(){
+    function positive(): VNumber
+    {
         if ($this->string_value < 1) {
             $message=[
                 "type"=>"number.positive",
@@ -67,6 +79,11 @@ class VNumber {
         }
         return $this;
     }
+
+    /**
+     * @param string $table_name
+     * @throws \Exception
+     */
     function unique(string $table_name){
         $check_uniq=$this->db->get($table_name)->where([$this->string_item,'=',$this->string_value])->result();
         if(count($check_uniq)){
@@ -78,7 +95,8 @@ class VNumber {
             $this->addError($message);
         }
     }
-    function required(){
+    function required(): VNumber
+    {
         $required_value= $this->string_value;
         if (empty($required_value) && $required_value!=0) {
             $message = [
@@ -91,7 +109,8 @@ class VNumber {
         return $this;
     }
 //    
-    private function checkExist(string $itemKey=null){
+    private function checkExist(string $itemKey=null): bool
+    {
         $item_to_check=$itemKey?$itemKey:$this->string_item;
         $regex_string="#[a-zA-Z]#";
         if (!isset($this->source_data[$item_to_check])) {
@@ -104,10 +123,11 @@ class VNumber {
         }
         return true;
     }
-    private function addError(array $value){
-       return $this->_errors[]=$value;
+    private function addError(array $value):void{
+       $this->_errors[]=$value;
     }
-    function check(){
+    function check(): array
+    {
         return  $this->_errors;
     }
 }

@@ -13,7 +13,14 @@
  */
 
 $vendor = isset($GLOBALS["config"]) ? (isset($GLOBALS["config"]["vendor"]) ?$GLOBALS["config"]["vendor"]: false) : false;
-
+/**
+ *
+ */
+$lang = $GLOBALS['config']['lang']??'en';
+$_SESSION['lang'] = $lang;
+/**
+ *
+ */
 if( !$vendor ){
     include "autoload.php";
 }else{
