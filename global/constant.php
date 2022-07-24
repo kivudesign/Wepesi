@@ -6,7 +6,6 @@
      */
 
     // include language file according to your configuration
-    define("LANG_VALIDATE", $validation);
 
     //web root configaration
 
