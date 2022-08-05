@@ -5,13 +5,13 @@ namespace Wepesi\Core;
 class View
 {
     private array $data = [];
-    const ERROR = ROOT . 'views/404.php';
+    const ERROR_VIEW = ROOT . 'views/404.php';
     private string $render;
     private string $folder_name;
 
     function __construct(string $folder_name = '/')
     {
-        $this->render = self::ERROR;
+        $this->render = self::ERROR_VIEW;
         $this->folder_name = Escape::addSlaches($folder_name);
     }
 
