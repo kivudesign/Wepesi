@@ -9,18 +9,19 @@ use Wepesi\Core\Orm\DB;
  * @author Lenovo
  */
 class Validate {
-    private $_passed;
-    private $_errors;
+    private bool $_passed;
+    private array $_errors;
     private $stringValue;
-    private $source;
+    private array $source;
     //put your code here
+    private ?DB $db;
+
     function __construct(array $_source=[]) {
         $this->_errors=[];
         $this->_passed = false;
         $this->source=(isset($_POST) && !empty($_POST))?$_POST:((isset($_GET) && !empty($_GET))?$_GET:$_source);
         $this->stringValue=null;
         $this->db=DB::getInstance();
-        $this->lang= (object)LANG_VALIDATE;
     }
     /**
      * @param array $source: from where to check
@@ -51,6 +52,11 @@ class Validate {
             $this->_passed = true;
         }
     }
+
+    /**
+     * @param array $source
+     * @param array $items
+     */
     private function check_undefined_Object_key(array $source,array $items){
         $diff_array_key= array_diff_key($source,$items);
         $source_key= array_keys($diff_array_key);
@@ -71,7 +77,8 @@ class Validate {
      * @return VString
      * when whant to validate string value use this module
      */
-    function string(string $tring_key){
+    function string(string $tring_key): VString
+    {
         return new VString($this->source,$tring_key);
     }
 
@@ -81,12 +88,14 @@ class Validate {
      * when want to validate numbers use this module;
      *
      */
-    function number(string $tring_key){
+    function number(string $tring_key): VNumber
+    {
         return new VNumber($this->source,$tring_key,$this->source[$tring_key]);
     }
+
     /**
      *
-     * @param string $tring_key
+     * @param string|null $tring_key
      * @return type
      */
     function any(string $tring_key=null){
@@ -107,34 +116,17 @@ class Validate {
      * @return VTime
      * while want to validate a time, this module will be helpfull
      */
-    function time(string $tring_key){
+    function time(string $tring_key): VTime
+    {
         return new VTime($this->source,$tring_key,$this->source[$tring_key]);
     }
-//
-//  /**
-//     *
-//     * @param array $source
-//     * @param array $items
-//     * @return boolean
-//     */
-//    private function check_undefined_Object_key(array $source,array $items){
-//        $diff_array_key= array_diff_key($source,$items);
-//        $source_key= array_keys($diff_array_key);
-//        $status_key=false;
-//        if(count($source_key)>0){
-//            foreach($source_key as $key){
-//                $message=[
-//                    "type" => "object.undefined",
-//                    "message" => "`{$key}` is not defined",
-//                    "label" => $key,
-//                ];
-//                $this->addError($message);
-//                $status_key=true;
-//            }
-//        }
-//        return $status_key;
-//    }
-    private function addError(array $value){
+
+    /**
+     * @param array $value
+     * @return array
+     */
+    private function addError(array $value): array
+    {
        return $this->_errors[]=$value;
     }
     
@@ -145,7 +137,8 @@ class Validate {
      * 
      * @returns boolean [true,false]
      */
-    function passed(){
+    function passed(): bool
+    {
         return $this->_passed;
     }
 }

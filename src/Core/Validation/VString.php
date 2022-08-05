@@ -19,6 +19,7 @@ class VString implements IValidation
 
     function __construct(array $source, string $string_item = 'null')
     {
+        $this->_errors = [];
         $this->string_value = $source[$string_item] ?? null;
         $this->string_item = $string_item;
         $this->source_data = $source;
@@ -26,6 +27,10 @@ class VString implements IValidation
         $this->checkExist();
     }
 
+    /**
+     * @param int $rule_values
+     * @return $this
+     */
     function min(int $rule_values = 0): VString
     {
         $min = is_integer($rule_values) ? ((int)$rule_values > 0 ? (int)$rule_values : 0) : 0;
@@ -41,6 +46,10 @@ class VString implements IValidation
         return $this;
     }
 
+    /**
+     * @param int $rule_values
+     * @return $this
+     */
     function max(int $rule_values = 1): VString
     {
         $max = is_integer($rule_values) ? ((int)$rule_values > 0 ? (int)$rule_values : 0) : 0;
@@ -56,6 +65,9 @@ class VString implements IValidation
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     function email(): VString
     {
         if (!filter_var($this->string_value, FILTER_VALIDATE_EMAIL)) {
@@ -69,6 +81,9 @@ class VString implements IValidation
         return $this;
     }
 
+    /**
+     * @return $this
+     */
     function url(): VString
     {
         if (!preg_match('/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i', $this->string_value)) {
@@ -82,6 +97,10 @@ class VString implements IValidation
         return $this;
     }
 
+    /**
+     * @param string $key_to_match
+     * @return $this
+     */
     function match(string $key_to_match): VString
     {
         $this->checkExist($key_to_match);
@@ -98,7 +117,7 @@ class VString implements IValidation
 
     /**
      * @return $this
-     * call this module is the input is requied and should not be null or empty
+     * call this module is the input is required and should not be null or empty
      */
     function required(): VString
     {
@@ -114,6 +133,11 @@ class VString implements IValidation
         return $this;
     }
 
+    /**
+     * @param string $table_name
+     * @return $this
+     * @throws \Exception
+     */
     function unique(string $table_name): VString
     {
         $check_uniq = $this->db->get($table_name)->where([$this->string_item, '=', $this->string_value])->result();
@@ -128,10 +152,13 @@ class VString implements IValidation
         return $this;
     }
 
-//    private methode
-    private function checkExist(string $itemKey = null): bool
+    /**
+     * @param string|null $itemKey
+     * @return bool
+     */
+    private function checkExist(string $itemKey = null)
     {
-        $item_to_check = $itemKey ?? $this->string_item;
+        $item_to_check = $itemKey ? $itemKey : $this->string_item;
         $regex = '#[a-zA-Z0-9]#';
         $message = [
             'message' => "`{$item_to_check}` is unknown",
@@ -139,10 +166,11 @@ class VString implements IValidation
         ];
         if (!isset($this->source_data[$item_to_check])) {
             $message ['type'] = 'any.unknown';
+            $this->addError($message);
         } else if (!preg_match($regex, $this->source_data[$item_to_check]) || strlen(trim($this->source_data[$item_to_check])) == 0) {
             $message ['type'] = 'string.unknown';
+            $this->addError($message);
         }
-        $this->addError($message);
         return true;
     }
 
