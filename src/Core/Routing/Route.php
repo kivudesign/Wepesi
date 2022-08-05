@@ -2,8 +2,6 @@
 
 namespace Wepesi\Core\Routing;
 
-use Exception;
-
 class Route{
     private string $_path;
     private $callable;
@@ -12,7 +10,7 @@ class Route{
     private array $_get_params, $middleware_tab;
     private bool $middleware_exist;
 
-    function __construct($path, $callable)
+    function __construct(string $path, $callable)
     {
         $this->_path = trim($path, '/');
         $this->callable = $callable;
@@ -24,10 +22,10 @@ class Route{
     }
 
     /**
-     * @param $url
+     * @param string|null $url
      * @return bool
      */
-    function match($url): bool
+    function match(?string $url): bool
     {
         $url = trim($url, '/');
         $path = preg_replace_callback('#:([\w]+)#', [$this, 'paramMatch'], $this->_path);
@@ -46,7 +44,7 @@ class Route{
     }
 
     /**
-     * @throws Exception
+     *
      */
     function call()
     {
@@ -65,12 +63,11 @@ class Route{
     }
 
     /**
-     * @param $match
+     * @param array $match
      * @return string
      */
-    private function paramMatch($match): string
+    private function paramMatch(array $match): string
     {
-        //
         if (isset($this->_params[$match[1]])) {
             return '(' . $this->_params[$match[1]] . ')';
         }
@@ -78,7 +75,12 @@ class Route{
         return '([^/]+)';
     }
 
-    function with($param, $regex): \Wepesi\App\Core\Route
+    /**
+     * @param $param
+     * @param $regex
+     * @return $this
+     */
+    function with($param, $regex): Route
     {
         $this->_params[$param] = str_replace('(', '(?:', $regex);
         return $this;
@@ -92,6 +94,10 @@ class Route{
         return $this->_matches;
     }
 
+    /**
+     * @param $params
+     * @return array|string|string[]
+     */
     function getUrl($params)
     {
         $path = $this->_path;
@@ -101,12 +107,20 @@ class Route{
         return $path;
     }
 
+    /**
+     * @param  $middleware
+     * @return $this
+     */
     function middleware($middleware): Route
     {
         $this->middleware_tab[] = $middleware;
         return $this;
     }
 
+    /**
+     * @param $callable
+     * @param bool $is_middleware
+     */
     private function controllerMiddleware($callable, bool $is_middleware = false): void
     {
         $controller = !$is_middleware ? 'controller' : 'middleware';
@@ -114,17 +128,17 @@ class Route{
             if (is_string($callable) || is_array($callable)) {
                 $params = is_string($callable) ? explode('#', $callable) : $callable;
                 if (count($params) != 2) {
-                    throw new Exception("Error : on `$controller` class/method is not well defined");
+                    throw new \Exception("Error : on `$controller` class/method is not well defined");
                 }
                 $classCallable = $params[0];
                 $class_method = $params[1];
                 $is_middleware ? MiddleWare::get($classCallable) : Controller::get($classCallable);
                 if (!class_exists($classCallable, true)) {
-                    throw new Exception("$classCallable class not defined, not a valid $controller");
+                    throw new \Exception("$classCallable class not defined, not a valid $controller");
                 }
                 $class_instance = new $classCallable;
                 if (!method_exists($class_instance, $class_method)) {
-                    throw new Exception("method : $class_method does not belong the class : $classCallable.");
+                    throw new \Exception("method : $class_method does not belong the class : $classCallable.");
                 }
                 call_user_func_array([$class_instance, $class_method], $this->_matches);
             } else {
@@ -134,9 +148,9 @@ class Route{
                 }
             }
             return;
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             print_r($ex->getMessage());
-            die();
+            exit();
         }
     }
 }
