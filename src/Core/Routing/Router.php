@@ -13,26 +13,10 @@ class  Router
 
     function __construct()
     {
-        $this->baseRoute="";
-        $this->routes=[];
-        $this->_nameRoute=[];
-        $this->_url=$this->getMethodeUrl();
-    }
-
-    /**
-     * scan for url to match
-     * @return mixed|void
-     */
-    private function getMethodeUrl(){
-        foreach($_GET as $url) return $url;
-    }
-
-    /**
-     * get created url
-     * @return mixed|void
-     */
-    function getUrl(){
-        return $this->_url;
+        $this->baseRoute = "";
+        $this->routes = [];
+        $this->_nameRoute = [];
+        $this->_url = $_SERVER['REQUEST_URI'];
     }
 
     /**
