@@ -25,7 +25,7 @@ class Route{
      * @param string|null $url
      * @return bool
      */
-    function match(?string $url): bool
+    protected function match(?string $url): bool
     {
         $url = trim($url, '/');
         $path = preg_replace_callback('#:([\w]+)#', [$this, 'paramMatch'], $this->_path);
@@ -46,7 +46,7 @@ class Route{
     /**
      *
      */
-    function call()
+    protected function call()
     {
         try {
             if (count($this->middleware_tab) > 0) {
