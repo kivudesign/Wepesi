@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Wepesi\Models;
+namespace Models;
 
 
 class Client

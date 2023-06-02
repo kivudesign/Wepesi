@@ -1,5 +1,5 @@
 <?php
-namespace wepesi\Validation;
+namespace Wepesi\Middleware\Validation;
 
 use Wepesi\Core\Validation\Validate;
 
@@ -22,7 +22,7 @@ class HomeValidation
 
         $valid->check($_POST,$schema);
         if(!$valid->passed()){
-            var_dump($valid->errors());
+            dumper($valid->errors());
             die();
         }
     }
