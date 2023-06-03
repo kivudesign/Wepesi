@@ -4,6 +4,7 @@
  */
 
 $GLOBALS['config'] = [
+    'database' => false,
     'reminder' => [],
     'controller' => WEB_ROOT,
     'middleware' => WEB_ROOT,

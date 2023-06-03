@@ -14,7 +14,6 @@ require_once $ROOT_DIR. '/config/globals.php';
 /**
  * Project General built-in Functions
  */
-require_once $ROOT_DIR. '/config/load_init_config.php';
 require_once $ROOT_DIR. '/config/function.php';
 
 /**

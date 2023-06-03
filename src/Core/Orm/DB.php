@@ -1,30 +1,64 @@
 <?php
+/*
+ * Copyright (c) 2023. Wepesi.
+ */
 
 namespace Wepesi\Core\Orm;
-use PDOException;
-use PDO;
-use FFI\Exception;
+
 use Wepesi\Core\Config;
 
+/**
+ *
+ */
 class DB
     {
-        private static ?DB $_instance;
-        private $queryResult;
-        private ?DBSelect $select_db_query;
-        private ?string $_error;
-        private ?array $_results;
-        private int  $_lastid;
-        private PDO $pdoObject;
-        private array $option;
-        private int $_count;
+    /**
+     * @var DB|null
+     */
+    private static ?DB $_instance;
+    /**
+     * @var
+     */
+    private $queryResult;
+    /**
+     * @var DBSelect|null
+     */
+    private ?DBSelect $select_db_query;
+    /**
+     * @var string|null
+     */
+    private ?string $_error;
+    /**
+     * @var array|null
+     */
+    private ?array $_results;
+    /**
+     * @var int
+     */
+    private int  $_lastid;
+    /**
+     * @var \PDO
+     */
+    private \PDO $pdoObject;
+    /**
+     * @var array
+     */
+    private array $option;
+    /**
+     * @var int
+     */
+    private int $_count;
 
-        private function __construct()
+    /**
+     *
+     */
+    private function __construct()
         {
             try {
                 $this->initialisation();
-                $this->pdoObject = new \PDO("mysql:host=" . Config::get('mysql/host') . ";dbname=" . Config::get('mysql/db').";charset=utf8mb4", Config::get('mysql/username'), Config::get('mysql/password'),$this->option);
+                $this->pdoObject = new \PDO("mysql:host=" . Config::get('mysql/host') . ";port=" . Config::get('mysql/port') . ";dbname=" . Config::get('mysql/db').";charset=utf8mb4", Config::get('mysql/username'), Config::get('mysql/password'),$this->option);
             } catch (\PDOException $ex) {
-                die($ex->getMessage());
+                dumper($ex->getMessage());
             }
         }
 
@@ -42,7 +76,11 @@ class DB
             $this->_lastid=0;
             self::$_instance=null;
         }
-        static function getInstance(): ?DB
+
+    /**
+     * @return DB|null
+     */
+    static function getInstance(): ?DB
         {
             if(!isset(self::$_instance)){
                 self::$_instance=new DB();
@@ -56,7 +94,7 @@ class DB
          * @return QueryTransactions
          * @throws \Exception
          */
-        private function queryOperation(string $table_name, string  $actions)
+        private function queryOperation(string $table_name, string  $actions): QueryTransactions
         {
             if (strlen($table_name) < 1) {
                 throw new \Exception("table name should be a string");
@@ -66,7 +104,7 @@ class DB
 
         /**
          * @string :$table =>this is the name of the table where to get information
-         * this method allow to do a select field from  a $table with all the conditions defined ;
+         * this method allows doing a select field from a $table with all the conditions defined ;
          * @throws \Exception
          */
         function get(string $table_name): ?DBSelect
@@ -76,7 +114,7 @@ class DB
 
         /**
          * @string :$table =>this is the name of the table where to get information
-         * this method allow to do a count the number of field on a $table with all the possible condition
+         * this method allow to do a count the number of fields on a $table with all the possible condition
          * @throws \Exception
          */
         function count(string $table_name): DBSelect
@@ -116,7 +154,7 @@ class DB
         }
 
         /**
-         * @param string $table :  this is the name of the table where to get information
+         * @param string $table  this is the name of the table where to get information
          * @return DBDelete
          * @throws \Exception
          * this method will help delete row data information
@@ -128,17 +166,23 @@ class DB
         //
 
         /**
-         * @param string $table : this is the name of the table where to get information
+         * @param string $table  this is the name of the table where to get information
          * @return DBUpdate
          * @throws \Exception
-         * this methode will help update row informations of a selected tables
+         * this methode will help update row information of a selected tables
          */
         function update(string $table): DBUpdate
         {
             return $this->queryResult = new DBUpdate($this->pdoObject,$table);
         }
         //
-        function query($sql, array $params = []): DB
+
+    /**
+     * @param $sql
+     * @param array $params
+     * @return $this
+     */
+    function query($sql, array $params = []): DB
         {
             $q = new DBQuery($this->pdoObject, $sql, $params);
             $this->_results = $q->result();
@@ -147,13 +191,17 @@ class DB
             $this->_lastid = $q->lastId();
             return $this;
         }
-        // return the last id after an insert operation query
-        function lastId(): ?int
+
+    /**
+     * return the last id after an insert operation query
+     * @return int|null
+     */
+    function lastId(): ?int
         {
             return isset($this->queryResult) ? $this->queryResult->lastId() : $this->_lastid;
         }
         /**
-         * return an error status when an error occur while doing an query
+         * return an error status when an error occurs while doing a query
          */
         function error()
         {
@@ -161,11 +209,11 @@ class DB
                 return $this->queryResult->error();
             }else{
                 /**
-                 * if it was written query, it will return the error, if it exist.
+                 * if it was a written query, it will return the error if it exists.
                  * otherwise, it will return false
                  */
                 return $this->_error;
-            } 
+            }
         }
 
         /**
