@@ -10,7 +10,7 @@
  * and can be adapted for external module installed via composer.
  */
 $config = $GLOBALS['config'];
-$autoload = ['class'];
+$autoload = ['src'];
 if (isset($config['autoload'])) {
     $autoload = is_string($config['autoload']) ? [$config['autoload']] : $config['autoload'];
 }

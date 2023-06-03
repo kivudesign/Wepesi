@@ -2,13 +2,16 @@
 /*
  * Copyright (c) 2023. Wepesi.
  */
-$db_conf = $load_init_config['db_conf'];
+
+use Wepesi\Core\DotEnv;
+
+(new DotEnv(dirname(__DIR__).'/.env'))->load();
 
 $GLOBALS['config'] ['mysql'] =
     [
-        'host' => $db_conf['host'],
-        'db' => $db_conf['database'],
-        'username' => $db_conf['user'],
-        'password' => $db_conf['password'],
-        'port' => $db_conf['port']
+        'host' => getenv('DB_HOST'),
+        'db' => getenv('DB_NAME'),
+        'username' => getenv('DB_USER'),
+        'password' => getenv('DB_PASSWORD'),
+        'port' => getenv('DB_PORT')
     ];
