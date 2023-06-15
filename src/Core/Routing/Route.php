@@ -1,43 +1,53 @@
 <?php
+/*
+ * Copyright (c) 2023. wepesi dev framework
+ */
 
 namespace Wepesi\Core\Routing;
 
+use Wepesi\Core\Routing\Traits\routeBuilder;
+
 class Route{
-    private string $_path;
+    private string $pattern;
     private $callable;
     private array $_matches;
     private array $_params;
-    private array $_get_params, $middleware_tab;
-    private bool $middleware_exist;
+    private array $_get_params,$middleware_tab;
 
-    function __construct(string $path, $callable)
-    {
-        $this->_path = trim($path, '/');
+    /**
+     *
+     */
+    use routeBuilder;
+
+    /**
+     * @param $path
+     * @param $callable
+     */
+    function __construct($path,$callable,$middleware = null){
+        $this->pattern = trim($path, '/');
         $this->callable = $callable;
         $this->_matches = [];
         $this->_params = [];
         $this->_get_params = [];
-        $this->middleware_tab = [];
-        $this->middleware_exist = false;
+        $this->middleware_tab = $middleware ?? [];
     }
 
     /**
-     * @param string|null $url
+     * @param $url
      * @return bool
      */
-    function match(?string $url): bool
-    {
+    function match($url):bool{
         $url = trim($url, '/');
-        $path = preg_replace_callback('#:([\w]+)#', [$this, 'paramMatch'], $this->_path);
+        $path = preg_replace_callback('#:([\w]+)#',[$this,'paramMatch'],$this->pattern);
         $regex = "#^$path$#i";
-        if (!preg_match($regex, $url, $matches)) {
+        if(!preg_match($regex,$url,$matches)){
             return false;
         }
         // remove the url path on the array key
         array_shift($matches);
         array_shift($_GET);
         $this->_matches = $matches;
-        foreach ($matches as $key => $val) {
+        foreach ($matches as $key => $val){
             $_GET[$this->_get_params[$key]] = $val;
         }
         return true;
@@ -46,32 +56,30 @@ class Route{
     /**
      *
      */
-    function call()
-    {
-        try {
+    public function call(){
+        try{
             if (count($this->middleware_tab) > 0) {
-                $this->middleware_exist = false;
                 foreach ($this->middleware_tab as $middleware) {
-                    $this->controllerMiddleware($middleware, true);
+                    $this->routeFunctionCall($middleware, true,$this->_matches);
                 }
                 $this->middleware_tab = [];
             }
-            $this->controllerMiddleware($this->callable);
-        } catch (\Exception $ex) {
+            $this->routeFunctionCall($this->callable,false,$this->_matches);
+        }catch (\Exception $ex){
             echo $ex->getMessage();
         }
     }
 
     /**
-     * @param array $match
+     * @param $match
      * @return string
      */
-    private function paramMatch(array $match): string
-    {
-        if (isset($this->_params[$match[1]])) {
-            return '(' . $this->_params[$match[1]] . ')';
+    private function paramMatch($match):string{
+        //
+        if(isset($this->_params[$match[1]])){
+            return '(' .$this->_params[$match[1]]. ')';
         }
-        array_push($this->_get_params, $match[1]);
+        $this->_get_params[] = $match[1];
         return '([^/]+)';
     }
 
@@ -80,77 +88,46 @@ class Route{
      * @param $regex
      * @return $this
      */
-    function with($param, $regex): Route
+    public function with($param,$regex): Route
     {
-        $this->_params[$param] = str_replace('(', '(?:', $regex);
+        $this->_params[$param] = str_replace('(','(?:',$regex);
         return $this;
     }
 
     /**
      * @return array
      */
-    function getmatch(): array
-    {
+    public function getMatch():array{
         return $this->_matches;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPattern(): string
+    {
+        return $this->pattern;
     }
 
     /**
      * @param $params
      * @return array|string|string[]
      */
-    function getUrl($params)
-    {
-        $path = $this->_path;
-        foreach ($params as $k => $v) {
-            $path = str_replace(":$k", $v, $path);
+    public function getUrl($params){
+        $path = $this->pattern;
+        foreach($params as $k => $v){
+            $path = str_replace(":$k",$v,$path);
         }
         return $path;
     }
 
     /**
-     * @param  $middleware
+     * @param $middleware
      * @return $this
      */
-    function middleware($middleware): Route
+    public function middleware($middleware): Route
     {
         $this->middleware_tab[] = $middleware;
         return $this;
-    }
-
-    /**
-     * @param $callable
-     * @param bool $is_middleware
-     */
-    private function controllerMiddleware($callable, bool $is_middleware = false): void
-    {
-        $controller = !$is_middleware ? 'controller' : 'middleware';
-        try {
-            if (is_string($callable) || is_array($callable)) {
-                $params = is_string($callable) ? explode('#', $callable) : $callable;
-                if (count($params) != 2) {
-                    throw new \Exception("Error : on `$controller` class/method is not well defined");
-                }
-                $classCallable = $params[0];
-                $class_method = $params[1];
-                $is_middleware ? MiddleWare::get($classCallable) : Controller::get($classCallable);
-                if (!class_exists($classCallable, true)) {
-                    throw new \Exception("$classCallable class not defined, not a valid $controller");
-                }
-                $class_instance = new $classCallable;
-                if (!method_exists($class_instance, $class_method)) {
-                    throw new \Exception("method : $class_method does not belong the class : $classCallable.");
-                }
-                call_user_func_array([$class_instance, $class_method], $this->_matches);
-            } else {
-                $closure = !$is_middleware ? $this->callable : $callable;
-                if (isset($closure) && is_callable($closure, true)) {
-                    call_user_func_array($closure, $this->_matches);
-                }
-            }
-            return;
-        } catch (\Exception $ex) {
-            print_r($ex->getMessage());
-            exit();
-        }
     }
 }

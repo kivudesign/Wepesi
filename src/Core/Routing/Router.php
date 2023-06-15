@@ -1,147 +1,211 @@
 <?php
+/*
+ * Copyright (c) 2023. wepesi dev framework
+ */
 
 namespace Wepesi\Core\Routing;
 
-use Wepesi\Core\View;
+use Wepesi\Core\Application;
+use Wepesi\Core\CoreException\RoutingException;
+use Wepesi\Core\Response;
+use Wepesi\Core\Routing\Traits\routeBuilder;
 
 class  Router
 {
-    private  ?string $_url;
-    private  array $routes;
-    private  array $_nameRoute;
+    protected ?array $baseMiddleware;
+    private ?string $url;
+    private array $routes;
+    private array $_nameRoute;
     private string $baseRoute;
+    private $notFoundCallback;
 
+    use routeBuilder;
+
+    /**
+     *
+     */
     function __construct()
     {
-        $this->baseRoute = "";
+        $this->baseRoute = '';
+        $this->url = $this->getMethodeUrl();
         $this->routes = [];
         $this->_nameRoute = [];
-        $this->_url = $_SERVER['REQUEST_URI'];
+        $this->notFoundCallback = null;
+        $this->baseMiddleware = null;
     }
 
     /**
-     * GET method
-     * @param string $path
+     * @return mixed|void
+     */
+    protected function getMethodeUrl()
+    {
+        foreach ($_GET as $url) return $url;
+    }
+
+    /**
+     * @param $path
+     * @param $callable
+     * @param null $name
+     * @return Route
+     */
+    public function get($path, $callable, $name = null): Route
+    {
+        return $this->add($path, $callable, $name, 'GET');
+    }
+
+    /**
+     * @param string $pattern
      * @param $callable
      * @param string|null $name
+     * @param string $methode
      * @return Route
      */
-    function get(string $path, $callable,?string $name=null): Route
+    private function add(string $pattern, $callable, ?string $name, string $methode): Route
     {
-        return $this->add($path,$callable, 'GET',$name);
+        $pattern = $this->baseRoute . '/' . trim($pattern, '/');
+        $pattern = $this->baseRoute ? rtrim($pattern, '/') : $pattern;
+        $route = new Route($pattern, $callable, $this->baseMiddleware);
+        $this->routes[$methode][] = $route;
+
+        if ($name == null && is_string($callable)) {
+            $name = $callable;
+        }
+
+        if ($name) {
+            $this->_nameRoute[$name] = $route;
+        }
+        $this->baseMiddleware = null;
+        return $route;
     }
 
     /**
-     * POST method
-     * @param string $path
-     * @param  $callable
-     * @param string|null $name
-     * @return Route
-     */
-    function post(string $path, $callable,?string $name=null): Route
-    {
-       return $this->add($path,$callable, 'POST',$name);
-    }
-
-    /**
-     * DELETE method
-     * @param string $path
+     * @param $path
      * @param $callable
-     * @param string|null $name
+     * @param null $name
      * @return Route
      */
-    function delete(string $path, $callable,?string $name=null): Route
+    public function post($path, $callable, $name = null): Route
     {
-       return $this->add($path,$callable, 'DELETE',$name);
+        return $this->add($path, $callable, $name, 'POST');
     }
 
     /**
-     * PUT method
-     * @param string $path
-     * @param $callable
-     * @param string|null $name
-     * @return Route
+     * The group method help to group a collection of routes in to a sub-route pattern.
+     * The sub-route pattern is prefixed into all following routes defined in the scope.
+     * @param string $base_route be a string or used as array to defined middleware for the group routing
+     * @param array|string $callable a callable method can be a controller method or an anonymous callable method
      */
-    function put(string $path, $callable,?string $name=null): Route
+    public function group(string $base_route, $callable)
     {
-       return $this->add($path,$callable, 'PUT',$name);
-    }
-
-    /**
-     * @param string $base_route
-     * @param callable $callable
-     */
-    function group(string $base_route,callable $callable):void{
+        $pattern = $base_route;
+        if (is_array($base_route)) {
+            $pattern = $base_route['pattern'] ?? '/';
+            if (isset($base_route['middleware'])) {
+                $this->baseMiddleware = $this->validateMiddleware($base_route['middleware']);
+            }
+        }
         $cur_base_route = $this->baseRoute;
-        $this->baseRoute.= $base_route;
+        $this->baseRoute .= $pattern;
         call_user_func($callable);
         $this->baseRoute = $cur_base_route;
     }
 
     /**
-     * @param string $path
-     * @param $callable $callable
-     * @param string|null $name
-     * @param string $method
-     * @return Route
-     */
-    private function add(string $path, $callable, string $method, ?string $name=null): Route
-    {
-        $path = $this->baseRoute . '/' . trim($path, '/');
-        $path = $this->baseRoute ? rtrim($path, '/') : $path;
-
-        $route = new Route($path, $callable);
-        $this->routes[$method][] = $route;
-
-        if(is_string($callable) && $name==null){
-            $name=$callable;
-        }
-
-        if($name){
-            $this->_nameRoute[$name]=$route;
-        }
-        return $route;
-    }
-
-    /**
-     * @param string $name
+     * @param $name
      * @param array $params
      * @return string
      */
-    function url(string $name, array $params=[]): string
+    public function url($name, array $params = []): string
     {
-        try{
-            if(!isset($this->_nameRoute[$name])){
-                throw new \Exception('No route match');
+        try {
+            if (!isset($this->_nameRoute[$name])) {
+                throw new RoutingException('No route match');
             }
-            return  $this->_nameRoute[$name]->geturl($params);
-        }catch(\Exception $ex){
+            return $this->_nameRoute[$name]->geturl($params);
+        } catch (RoutingException $ex) {
             return $ex->getMessage();
         }
     }
 
     /**
-     * @return mixed
+     * @return mixed|void
      */
-    function run(){
-        try{
-            if(!isset($this->routes[$_SERVER['REQUEST_METHOD']])){
-                throw new \Exception('Request method is not defined ');
+    protected function getUrl()
+    {
+        return $this->url;
+    }
+
+    /**
+     * Set the 404 handling function.
+     *
+     * @param object|callable|string $match_fn The function to be executed
+     * @param $callable
+     */
+    public function set404($match_fn, $callable = null)
+    {
+        if (!$callable) {
+            $this->notFoundCallback = $match_fn;
+        } else {
+            $this->notFoundCallback = $callable;
+        }
+    }
+
+    /**
+     * @return void
+     */
+    public function run()
+    {
+        try {
+            if (!isset($this->routes[$_SERVER['REQUEST_METHOD']])) {
+                throw new RoutingException('Request method is not defined ', 501);
             }
-            $routesRequestMethod= $this->routes[$_SERVER['REQUEST_METHOD']];
-            $i=0;
-            foreach($routesRequestMethod as $route){
-                if($route->match($this->_url)){
+            $routesRequestMethod = $this->routes[$_SERVER['REQUEST_METHOD']];
+            $i = 0;
+            foreach ($routesRequestMethod as $route) {
+                if ($route->match($this->url)) {
                     return $route->call();
-                }else{
+                } else {
                     $i++;
                 }
             }
-            if(count($routesRequestMethod)===$i){
-                new View();
+            if (count($routesRequestMethod) === $i) {
+                $this->trigger404($this->notFoundCallback);
             }
-        }catch(\Exception $ex){
-            echo $ex->getMessage();
+        } catch (RoutingException $ex) {
+            Application::dumper($ex);
+            exit;
         }
+    }
+
+    /**
+     * @return void
+     */
+    protected function trigger404($match = null)
+    {
+        if ($match) {
+            $this->routeFunctionCall($match);
+        } else {
+            header('HTTP/1.1 404 Not Found');
+            header('Content-Type: application/json');
+            $result = [
+                'status' => '404',
+                'message' => 'route not defined'
+            ];
+            Response::send($result, 404);
+        }
+    }
+
+    /**
+     * validate middleware data structure
+     * @param $middleware
+     * @return callable[]
+     */
+    private function validateMiddleware($middleware): array
+    {
+        $valid_middleware = $middleware;
+        if ((is_array($middleware) && count($middleware) == 2 && is_string($middleware[0]) && is_string($middleware[1])) || is_callable($middleware)) {
+            $valid_middleware = [$middleware];
+        }
+        return $valid_middleware;
     }
 }
