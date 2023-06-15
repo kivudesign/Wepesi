@@ -1,8 +1,9 @@
 <?php
+/*
+ * Copyright (c) 2023. wepesi dev framework
+ */
 
-namespace Wepesi\Core\Routing;
-
-use Wepesi\Core\Config;
+namespace Wepesi\Core;
 
 class Controller{
     /**

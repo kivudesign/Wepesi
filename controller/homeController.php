@@ -1,4 +1,8 @@
 <?php
+/*
+ * Copyright (c) 2023. wepesi dev framework
+ */
+
 /**
  * Wepesi Home Controller
  *
@@ -9,13 +13,17 @@ use Wepesi\Core\Redirect;
 use Wepesi\Core\Session;
 
 class homeController{
-        function __construct()
-        {
-        }
 
+    /**
+     * @return void
+     */
         function home(){
             Redirect::to("/");
         }
+
+    /**
+     * @return void
+     */
         function changeLang(){
             Session::put('lang', Input::get("lang"));
             Redirect::to("/");
