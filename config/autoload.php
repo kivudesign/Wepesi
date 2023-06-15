@@ -14,8 +14,12 @@ $autoload = ['src'];
 if (isset($config['autoload'])) {
     $autoload = is_string($config['autoload']) ? [$config['autoload']] : $config['autoload'];
 }
-autoIndexFolder();
+// check project is still on development.
+if (! APP_DEV){
+    autoIndexFolder();
+}
 
+// builtin autoload
 spl_autoload_register(function ($class) use ($autoload) {
     $app_root = appDirSeparator(dirname(__DIR__));
     foreach ($autoload as $src){
