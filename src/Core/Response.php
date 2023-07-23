@@ -25,10 +25,10 @@ class Response
     }
 
     /**
-     * @param $status_code
+     * @param int $status_code
      * @return void
      */
-    public static function setStatusCode($status_code)
+    public static function setStatusCode(int $status_code)
     {
         http_response_code($status_code);
     }
