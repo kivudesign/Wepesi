@@ -10,6 +10,9 @@ use Wepesi\Core\CoreException\RoutingException;
 use Wepesi\Core\Response;
 use Wepesi\Core\Routing\Traits\routeBuilder;
 
+/**
+ *  Wepesi API Router provider
+ */
 class  Router
 {
     protected ?array $baseMiddleware;
@@ -27,7 +30,7 @@ class  Router
     function __construct()
     {
         $this->baseRoute = '';
-        $this->url = $this->getMethodeUrl();
+        $this->url = $_SERVER['REQUEST_URI'];
         $this->routes = [];
         $this->_nameRoute = [];
         $this->notFoundCallback = null;
@@ -39,7 +42,7 @@ class  Router
      */
     protected function getMethodeUrl()
     {
-        foreach ($_GET as $url) return $url;
+        return $_SERVER['REQUEST_URI'];
     }
 
     /**
@@ -48,7 +51,7 @@ class  Router
      * @param null $name
      * @return Route
      */
-    public function get($path, $callable, $name = null): Route
+    public function get(string $path, $callable, $name = null): Route
     {
         return $this->add($path, $callable, $name, 'GET');
     }
@@ -84,7 +87,7 @@ class  Router
      * @param null $name
      * @return Route
      */
-    public function post($path, $callable, $name = null): Route
+    public function post(string $path, $callable, $name = null): Route
     {
         return $this->add($path, $callable, $name, 'POST');
     }
@@ -92,10 +95,10 @@ class  Router
     /**
      * The group method help to group a collection of routes in to a sub-route pattern.
      * The sub-route pattern is prefixed into all following routes defined in the scope.
-     * @param string $base_route be a string or used as array to defined middleware for the group routing
+     * @param $base_route can be a string or an array to defined middleware for the group routing
      * @param array|string $callable a callable method can be a controller method or an anonymous callable method
      */
-    public function group(string $base_route, $callable)
+    public function group($base_route, $callable)
     {
         $pattern = $base_route;
         if (is_array($base_route)) {
@@ -111,11 +114,36 @@ class  Router
     }
 
     /**
+     * API base group routing
+     * @param $base_route
+     * @param $callable
+     * @return null
+     */
+    public function api($base_route, $callable){
+        $api_pattern = '/api';
+        if (is_array($base_route)) {
+            $base_route['pattern'] = $api_pattern . (isset($base_route['pattern']) ? $this->trimPath($base_route['pattern']) : '');
+        } else {
+
+            $base_route = $api_pattern . $this->trimPath($base_route);
+        }
+        return $this->group($base_route,$callable);
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    private function trimPath(string $path) :string {
+        $trim_path = trim($path,'/');
+        return strlen($trim_path) > 0 ? '/' . $trim_path : '';
+    }
+    /**
      * @param $name
      * @param array $params
      * @return string
      */
-    public function url($name, array $params = []): string
+    public function url(string $name, array $params = []) :string
     {
         try {
             if (!isset($this->_nameRoute[$name])) {
