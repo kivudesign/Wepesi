@@ -1,14 +1,14 @@
 <?php
 namespace Wepesi\Middleware\Validation;
 
+use Wepesi\Core\MiddleWare;
 use Wepesi\Core\Validation\Validate;
 
-class HomeValidation
+class HomeValidation extends MiddleWare
 {
     function changeLang(){
-        $valid = new Validate();
-        $schema = [
-            "token" => $valid->string("token")
+        $rules = [
+            "token" => $this->schema->string("token")
                 ->min(1)
                 ->max(2)
                 ->required()
@@ -20,9 +20,9 @@ class HomeValidation
                 ->check()
         ];
 
-        $valid->check($_POST,$schema);
-        if(!$valid->passed()){
-            dumper($valid->errors());
+        $this->validate->check($_POST,$rules);
+        if(!$this->validate->passed()){
+            dumper($this->validate->errors());
             die();
         }
     }
