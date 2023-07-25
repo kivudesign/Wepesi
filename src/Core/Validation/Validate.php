@@ -1,144 +1,120 @@
 <?php
-namespace Wepesi\Core\Validation;
-use Wepesi\Core\Orm\DB;
-
-/**
- * Description of validation
- * this will allow to validate input value
- *
- * @author Lenovo
+/*
+ * Copyright (c) 2022.  Wepesi validation.
+ *  @author Boss Ibrahim Mussa
  */
-class Validate {
-    private bool $_passed;
-    private array $_errors;
-    private $stringValue;
-    private array $source;
-    //put your code here
-    private ?DB $db;
 
-    function __construct(array $_source=[]) {
-        $this->_errors=[];
-        $this->_passed = false;
-        $this->source=(isset($_POST) && !empty($_POST))?$_POST:((isset($_GET) && !empty($_GET))?$_GET:$_source);
-        $this->stringValue=null;
-        $this->db=DB::getInstance();
-    }
+namespace Wepesi\Core\Validation;
+
+use Wepesi\Core\Resolver\OptionsResolver;
+use Wepesi\Core\Resolver\Option;
+/**
+ *
+ */
+class Validate
+{
     /**
-     * @param array $source: from where to check
-     * @param array $items: model for validation
+     * @var array
+     */
+    private array $errors;
+    /**
+     * @var bool
+     */
+    private bool $passed;
+    private MessageErrorGenerator $message;
+    /**
      *
-     * this module help to check if there are define module but does not be defined to be checked     *
      */
-    function check(array $source,array $items=[]):void{
-        $this->_errors=[];
-        $this->check_undefined_Object_key($source,$items);
-        foreach($items as $item=>$response){
-            if(isset($source[$item])) {
-                if($response){
-                    foreach ($response as $key=>$value){
-                        $this->addError($value);                    
-                    }                    
-                }
-            }else{
-                $message=[
-                    "type" => "object.unknown",
-                    "message" => "`{$item}` does not exist",
-                    "label" => $item,
-                ];
-                $this->addError($message);
-            }            
-        }
-        if (count($this->_errors) == 0) {
-            $this->_passed = true;
-        }
+    function __construct()
+    {
+        $this->errors = [];
+        $this->passed = false;
+        $this->message = new MessageErrorGenerator();
     }
 
     /**
-     * @param array $source
-     * @param array $items
+     * @param array $resource data source where the information will be extracted;
+     * @param array $schema data schema
+     * @return void
      */
-    private function check_undefined_Object_key(array $source,array $items){
-        $diff_array_key= array_diff_key($source,$items);
-        $source_key= array_keys($diff_array_key);
-        if(count($source_key)>0){
-            foreach($source_key as $key){
-                $message=[
-                    "type" => "object.undefined",
-                    "message" => "`{$key}` is not defined",
-                    "label" => $key,
-                ];
-                $this->addError($message);
+    function check(array $resource, array $schema)
+    {
+        try {
+            $this->errors = [];
+            $option_resolver = [];
+            /**
+             * use of Option resolver to catch all undefined key
+             * on the source data
+             */
+            foreach ($resource as $item => $response) {
+                $option_resolver[] = new Option($item);
             }
+            $resolver = new OptionsResolver($option_resolver);
+            $options = $resolver->resolve($schema);
+
+            $exceptions = isset($options['exception']) || isset($options['InvalidArgumentException']) ?? false;
+            if ($exceptions) {
+                $this->message
+                    ->type('object.unknown')
+                    ->message($options['exception'] ?? $options['InvalidArgumentException'])
+                    ->label('exception');
+                $this->addError($message);
+            } else {
+                foreach ($schema as $item => $rules) {
+                    if (!is_array($rules) && is_object($rules)) {
+                        if(!$rules->generate()){
+                            throw new \Exception("Schema rule is not a valid schema! method generate does not exist");
+                        }
+                        $rules = $rules->generate();
+                    }
+                    $class_namespace = array_keys($rules)[0];
+                    if ($class_namespace == "any") continue;
+                    $validator_class = str_replace("Schema", "Validator", $class_namespace);
+                    $reflexion = new \ReflectionClass($validator_class);
+
+                    $instance = $reflexion->newInstance($item, $resource);
+
+                    foreach ($rules[$class_namespace] as $method => $params) {
+                        if (method_exists($instance, $method)) {
+                            call_user_func_array([$instance, $method], [$params]);
+                        }
+                    }
+                    $result = $instance->result();
+                    if (count($result) > 0) {
+                        $this->errors = array_merge($this->errors, $result);
+                    }
+                }
+                if (count($this->errors) == 0) {
+                    $this->passed = true;
+                }
+            }
+        } catch (\Exception $ex) {
+            die($ex);
         }
     }
 
     /**
-     * @param string $tring_key
-     * @return VString
-     * when whant to validate string value use this module
+     * @param array $item
+     * @return void
      */
-    function string(string $tring_key): VString
+    private function addError(MessageErrorGenerator $item)
     {
-        return new VString($this->source,$tring_key);
+        $this->errors[] = $item->generate();
     }
 
     /**
-     * @param string $tring_key
-     * @return VNumber
-     * when want to validate numbers use this module;
-     *
-     */
-    function number(string $tring_key): VNumber
-    {
-        return new VNumber($this->source,$tring_key,$this->source[$tring_key]);
-    }
-
-    /**
-     *
-     * @param string|null $tring_key
-     * @return type
-     */
-    function any(string $tring_key=null){
-        return $this->check_undefined_Object_key($this->source,[$tring_key]);
-    }
-
-    /**
-     * @param string $tring_key
-     * @return VDate
-     * while want to validate a date, this module will do the things
-     */
-    function date(string $tring_key){
-        return new VDate($this->source,$tring_key,$this->source[$tring_key]);
-    }
-
-    /**
-     * @param string $tring_key
-     * @return VTime
-     * while want to validate a time, this module will be helpfull
-     */
-    function time(string $tring_key): VTime
-    {
-        return new VTime($this->source,$tring_key,$this->source[$tring_key]);
-    }
-
-    /**
-     * @param array $value
      * @return array
      */
-    private function addError(array $value): array
+    public function errors(): array
     {
-       return $this->_errors[]=$value;
+        return $this->errors;
     }
-    
-    function errors(){
-        return ["error"=>$this->_errors];
-    }
+
     /**
-     * 
-     * @returns boolean [true,false]
+     * @return bool
      */
-    function passed(): bool
+    public function passed(): bool
     {
-        return $this->_passed;
+        return $this->passed;
     }
 }
