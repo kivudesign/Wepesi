@@ -6,7 +6,7 @@
 
 namespace Wepesi\Core\Validation\Providers;
 
-use Wepesi\Core\Validation\MessageErrorGenerator;
+use Wepesi\Core\Validation\MessageErrorBuilder;
 use Wepesi\Core\Validation\Providers\Contracts\Contracts;
 
 /**
@@ -31,9 +31,9 @@ abstract class ValidatorProvider implements Contracts
      */
     protected $field_value;
     /**
-     * @var MessageErrorGenerator
+     * @var MessageErrorBuilder
      */
-    protected MessageErrorGenerator $messageItem;
+    protected MessageErrorBuilder $messageItem;
     /**
      *
      */
@@ -41,7 +41,7 @@ abstract class ValidatorProvider implements Contracts
     function __construct()
     {
         $this->errors = [];
-        $this->messageItem = new MessageErrorGenerator();
+        $this->messageItem = new MessageErrorBuilder();
     }
 
     /**
@@ -99,7 +99,7 @@ abstract class ValidatorProvider implements Contracts
      * @param array $value
      * @return void
      */
-    public function addError(MessageErrorGenerator $item): void
+    public function addError(MessageErrorBuilder $item): void
     {
         $this->errors[] = $item->generate();
     }

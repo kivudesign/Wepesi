@@ -6,16 +6,16 @@
 
 namespace Wepesi\Core\Validation;
 
-use Wepesi\App\Schema\ArraySchema;
-use Wepesi\App\Schema\BooleanSchema;
-use Wepesi\App\Schema\DateSchema;
-use Wepesi\App\Schema\NumberSchema;
-use Wepesi\App\Schema\StringSchema;
+use Wepesi\Core\Validation\Schema\ArraySchema;
+use Wepesi\Core\Validation\Schema\BooleanSchema;
+use Wepesi\Core\Validation\Schema\DateSchema;
+use Wepesi\Core\Validation\Schema\NumberSchema;
+use Wepesi\Core\Validation\Schema\StringSchema;
 
 /**
  *
  */
-class Schema
+final class Schema
 {
 
     /**

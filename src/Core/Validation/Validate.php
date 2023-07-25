@@ -11,7 +11,7 @@ use Wepesi\Core\Resolver\Option;
 /**
  *
  */
-class Validate
+final class Validate
 {
     /**
      * @var array
@@ -21,7 +21,7 @@ class Validate
      * @var bool
      */
     private bool $passed;
-    private MessageErrorGenerator $message;
+    private MessageErrorBuilder $message;
     /**
      *
      */
@@ -29,7 +29,7 @@ class Validate
     {
         $this->errors = [];
         $this->passed = false;
-        $this->message = new MessageErrorGenerator();
+        $this->message = new MessageErrorBuilder();
     }
 
     /**
@@ -97,7 +97,7 @@ class Validate
      * @param array $item
      * @return void
      */
-    private function addError(MessageErrorGenerator $item)
+    private function addError(MessageErrorBuilder $item)
     {
         $this->errors[] = $item->generate();
     }

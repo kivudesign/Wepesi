@@ -2,12 +2,6 @@
 
 namespace Wepesi\Core;
 
-use Wepesi\Core\Application;
-use Wepesi\Core\MetaData;
-use Wepesi\Core\Bundles;
-use Wepesi\Core\Escape;
-use Wepesi\Core\Response;
-
 class View
 {
     const ERROR_VIEW = '';
@@ -65,11 +59,11 @@ class View
     }
 
     /**
-     * @param BundleMetaData $metadata
+     * @param MetaData $metadata
      *
      * @return void
      */
-    public static function setMetaData(BundleMetaData $metadata)
+    public static function setMetaData(MetaData $metadata)
     {
         self::$metadata = $metadata->build();
     }

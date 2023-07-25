@@ -15,11 +15,29 @@ use Wepesi\Core\Routing\Traits\routeBuilder;
  */
 class  Router
 {
+    /**
+     * @var array|null
+     */
     protected ?array $baseMiddleware;
+    /**
+     * @var string|mixed|null
+     */
     private ?string $url;
+    /**
+     * @var array
+     */
     private array $routes;
+    /**
+     * @var array
+     */
     private array $_nameRoute;
+    /**
+     * @var string
+     */
     private string $baseRoute;
+    /**
+     * @var null
+     */
     private $notFoundCallback;
 
     use routeBuilder;
@@ -27,7 +45,7 @@ class  Router
     /**
      *
      */
-    function __construct()
+    public function __construct()
     {
         $this->baseRoute = '';
         $this->url = $_SERVER['REQUEST_URI'];
