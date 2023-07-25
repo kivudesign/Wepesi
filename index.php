@@ -24,6 +24,6 @@ $configuration = $appConfiguration
 
 $app = new Application($ROOT_DIR, $configuration);
 
-require_once Application::$ROOT_DIR . '/route/route.php';
+require_once Application::$ROOT_DIR . '/router/route.php';
 
 $app->run();

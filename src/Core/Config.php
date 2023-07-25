@@ -4,8 +4,15 @@
  */
 
 namespace Wepesi\Core;
+/**
+ *
+ */
 class Config
 {
+    /**
+     * @param $path
+     * @return false|mixed|string
+     */
     static function get($path = null)
     {
         if ($path) {
