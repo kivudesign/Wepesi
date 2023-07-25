@@ -5,6 +5,9 @@
 
 namespace Wepesi\Core;
 
+/**
+ *
+ */
 class Response
 {
     /**
@@ -12,7 +15,7 @@ class Response
      * @param int $status
      * @return void
      */
-    static function send($data, int $status = 200)
+    public static function send($data, int $status = 200)
     {
         header('Content-Type:application/json;charset=utf-8');
         self::setStatusCode($status);

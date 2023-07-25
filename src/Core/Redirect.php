@@ -3,8 +3,15 @@
 namespace Wepesi\Core;
 use Wepesi\Core\Validation\Validate;
 
+/**
+ *
+ */
 class Redirect
 {
+    /**
+     * @param $location
+     * @return void
+     */
     static function to($location = null)
     {
         $validate = new Validate();

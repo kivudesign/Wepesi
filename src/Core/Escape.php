@@ -2,7 +2,14 @@
 
 namespace Wepesi\Core;
 
+/**
+ *
+ */
 class Escape{
+    /**
+     * @param string $input
+     * @return string
+     */
     static function encode(string $input)
     {
         $text = $input;
@@ -12,11 +19,19 @@ class Escape{
         return $text;
     }
 
+    /**
+     * @param string $input
+     * @return string
+     */
     static function decode(string $input)
     {
         return html_entity_decode($input, ENT_QUOTES, 'UTF-8');
     }
 
+    /**
+     * @param int $length
+     * @return string
+     */
     static function randomString(int $length = 8)
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -28,6 +43,10 @@ class Escape{
         return $randomString;
     }
 
+    /**
+     * @param string $link
+     * @return string
+     */
     static function addSlaches(string $link): string
     {
         $sub_string = substr($link, 0, 1);
@@ -38,6 +57,10 @@ class Escape{
         return $link == '' ? $link : '/' . $link;
     }
 
+    /**
+     * @param $fileName
+     * @return mixed|string
+     */
     static function checkFileExtension($fileName)
     {
         $file_parts = pathinfo($fileName);
