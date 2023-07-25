@@ -1,13 +1,20 @@
 <?php
 
 namespace Wepesi\Core;
+/**
+ *
+ */
 class Input
 {
-    static function exists($type = "POST")
+    /**
+     * @param $type
+     * @return bool
+     */
+    public static function exists($type = "POST")
     {
         switch ($type) {
             case "POST":
-                return !empty($_POST) || self::_put()||!empty($_FILES);
+                return !empty($_POST) || self::_put() || !empty($_FILES);
             default:
                 return false;
         }
@@ -26,20 +33,6 @@ class Input
             return $_GET[$item];
         } else if (isset($object_data[$item])) {
             return $object_data[$item];
-        }
-        return null;
-    }
-
-    /**
-     * Extract header data information
-     * @param $item
-     * @return mixed|null
-     */
-    static function header($item)
-    {
-        $headers = getallheaders();
-        if (isset($headers[$item])) {
-            return $headers[$item];
         }
         return null;
     }
@@ -64,10 +57,12 @@ class Input
         return null;
     }
 
-    static function body(){
-        return isset($_POST) && !empty($_POST) ? $_POST : self::put();
-    }
-    private static function extractFromFormData($file_input){
+    /**
+     * @param $file_input
+     * @return array|string[]
+     */
+    private static function extractFromFormData($file_input)
+    {
         $fragma = [];
         $explode = explode("\r", implode("\r", explode("\n", $file_input)));
         $len_Arr = count($explode);
@@ -88,5 +83,27 @@ class Input
             }
         }
         return $object;
+    }
+
+    /**
+     * Extract header data information
+     * @param $item
+     * @return mixed|null
+     */
+    public static function header($item)
+    {
+        $headers = getallheaders();
+        if (isset($headers[$item])) {
+            return $headers[$item];
+        }
+        return null;
+    }
+
+    /**
+     * @return array|null
+     */
+    public static function body()
+    {
+        return isset($_POST) && !empty($_POST) ? $_POST : self::put();
     }
 }

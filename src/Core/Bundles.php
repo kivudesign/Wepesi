@@ -2,7 +2,7 @@
 
 namespace Wepesi\Core;
 
-use Wepesi\Core\BundleMetaData;
+use Wepesi\Core\MetaData;
 
 /**
  *
@@ -17,8 +17,8 @@ class Bundles
      */
     static function insertCSS(string $file)
     {
-        if (is_file(ROOT . 'asset/style/' . $file . '.css')) {
-            $href = WEB_ROOT . "asset/style/$file.css";
+        if (is_file(Application::$ROOT_DIR . '/assets/css/' . $file . '.css')) {
+            $href = WEB_ROOT . "assets/css/$file.css";
             $link = <<<EOF
                     <link rel="stylesheet" type="text/css" href="$href"/>
                 EOF;
@@ -29,9 +29,9 @@ class Bundles
     /**
      * help to manage metadata
      * @param array $meta_data
-     * @return BundleMetaData
+     * @return MetaData
      */
-    static function metaData(array $meta_data = []): BundleMetaData
+    static function metaData(array $meta_data = []): MetaData
     {
         return new MetaData();
     }

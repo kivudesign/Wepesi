@@ -7,6 +7,9 @@ namespace Wepesi\Core;
 
 use Wepesi\Core\Routing\Router;
 
+/**
+ *
+ */
 class Application
 {
     /**
@@ -14,11 +17,33 @@ class Application
      * @var string
      */
     public static string $ROOT_DIR;
+    /**
+     * @var string
+     */
     public static string $APP_DOMAIN;
+    /**
+     * @var string|mixed
+     */
     public static string $APP_LANG;
+    /**
+     * @var string|mixed|null
+     */
     public static ?string $APP_TEMPLATE;
+    /**
+     * @var string
+     */
+    public static string $LAYOUT_CONTENT;
+    /**
+     * @var string|null
+     */
     public static ?string $LAYOUT = null;
+    /**
+     * @var array
+     */
     private static array $params = [];
+    /**
+     * @var Router
+     */
     private Router $router;
 
     /**
@@ -35,6 +60,7 @@ class Application
         self::$APP_TEMPLATE = self::$params['app_template'] ?? null;
         self::$APP_LANG = self::$params['lang'] ?? 'fr';
         $this->router = new Router();
+        self::$LAYOUT_CONTENT = 'layout_content';
     }
 
     /**
@@ -100,6 +126,9 @@ class Application
         return $this->router;
     }
 
+    /**
+     * @return void
+     */
     public function run()
     {
         $this->router->run();

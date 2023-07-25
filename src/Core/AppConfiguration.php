@@ -37,26 +37,6 @@ class AppConfiguration
         return $this;
     }
 
-//    /**
-//     * @param string $template
-//     * @return $this
-//     */
-//    public function webTemplatePath(string $template): AppConfiguration
-//    {
-//        $this->params['web_template'] = $template;
-//        return $this;
-//    }
-
-    /**
-     * @param string $template
-     * @return $this
-     */
-    public function appTemplatePath(string $template): AppConfiguration
-    {
-        $this->params['app_template'] = $template;
-        return $this;
-    }
-
     /**
      * @param string $path
      * @return $this

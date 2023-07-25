@@ -10,4 +10,4 @@ $router->get('/home', 'homeController#home');
 $router->post('/changelang', [\Wepesi\Controller\homeController::class, 'changeLang'])
     ->middleware([\Wepesi\Middleware\Validation\HomeValidation::class, 'changeLang']);
 
-include \Wepesi\Core\Application::$ROOT_DIR . './route/api.php';
+include \Wepesi\Core\Application::$ROOT_DIR . './router/api.php';

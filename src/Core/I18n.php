@@ -3,12 +3,25 @@
 
 namespace Wepesi\Core;
 
+/**
+ *
+ */
 class I18n
 {
+    /**
+     * @var string
+     */
     private string $lang;
 
-    function __construct(string $lang="en"){
-        $this->lang=$lang;
+    /**
+     * @param string $lang
+     */
+    function __construct(string $lang = "en")
+    {
+        if (!Session::exists('lang')) {
+            Session::put('lang', $lang);
+        }
+        $this->lang = Session::get('lang');
     }
 
     /**
@@ -20,18 +33,19 @@ class I18n
      * @param array $data : data to be injected on the translation text
      * @return string
      */
-    function translate(string $message,array $data=[]):string{
-        $file=ROOT."lang/".$this->lang."/language.php";
-        if(!is_file($file) && !file_exists($file)){
-            $file=ROOT."lang/en/language.php";
+    function translate(string $message, array $data = []): string
+    {
+        $file = ROOT . "lang/" . $this->lang . "/language.php";
+        if (!is_file($file) && !file_exists($file)) {
+            $file = ROOT . "lang/en/language.php";
         }
         include($file);
-        $message_key=!isset($language[$message])?$message:$language[$message];
-        if(count($data)>0){
-            $key_value=!isset($language[$message])?null:$language[$message];
-            $message_key=$key_value!=null?vsprintf($key_value,$data):vsprintf($message,$data);
+        $message_key = !isset($language[$message]) ? $message : $language[$message];
+        if (count($data) > 0) {
+            $key_value = !isset($language[$message]) ? null : $language[$message];
+            $message_key = $key_value != null ? vsprintf($key_value, $data) : vsprintf($message, $data);
         }
-        return  $message_key;
+        return $message_key;
     }
     //TODO add methode that will help to analyse all content off each file and add missing key to the other files to have the same key in all the app.
 }
