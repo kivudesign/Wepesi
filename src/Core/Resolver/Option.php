@@ -37,6 +37,7 @@ final class Option
     {
         $this->hasDefaultValue = false;
         $this->name = $name;
+        $this->validator = null;
     }
 
     public function getName(): string

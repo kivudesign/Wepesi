@@ -9,9 +9,8 @@ namespace Wepesi\Core\Validation;
 /**
  *
  */
-final class MessageErrorGenerator
+final class MessageErrorBuilder
 {
-
     /**
      * @var array
      */
@@ -28,7 +27,7 @@ final class MessageErrorGenerator
      * @param string $value
      * @return $this
      */
-    public function type(string $value): MessageErrorGenerator
+    public function type(string $value): MessageErrorBuilder
     {
         $this->items['type'] = $value;
         return $this;
@@ -38,7 +37,7 @@ final class MessageErrorGenerator
      * @param string $value
      * @return $this
      */
-    public function message(string $value): MessageErrorGenerator
+    public function message(string $value): MessageErrorBuilder
     {
         $this->items['message'] = $value;
         return $this;
@@ -48,7 +47,7 @@ final class MessageErrorGenerator
      * @param string $value
      * @return $this
      */
-    public function label(string $value): MessageErrorGenerator
+    public function label(string $value): MessageErrorBuilder
     {
         $this->items['label'] = $value;
         return $this;
@@ -58,7 +57,7 @@ final class MessageErrorGenerator
      * @param string $value
      * @return $this
      */
-    public function limit(string $value): MessageErrorGenerator
+    public function limit(string $value): MessageErrorBuilder
     {
         $this->items['limit'] = $value;
         return $this;

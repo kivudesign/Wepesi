@@ -8,8 +8,13 @@ namespace Wepesi\Core;
 use Wepesi\Core\Validation\Schema;
 use Wepesi\Core\Validation\Validate;
 
-class MiddleWare
+abstract class MiddleWare
 {
     protected Validate $validate;
     protected Schema $schema;
+
+    public function __construct(){
+        $this->schema = new Schema();
+        $this->validate = new Validate();
+    }
 }

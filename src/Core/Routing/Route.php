@@ -7,11 +7,32 @@ namespace Wepesi\Core\Routing;
 
 use Wepesi\Core\Routing\Traits\routeBuilder;
 
+/**
+ *
+ */
 class Route{
+    /**
+     * @var string
+     */
     private string $pattern;
+    /**
+     * @var
+     */
     private $callable;
+    /**
+     * @var array
+     */
     private array $_matches;
+    /**
+     * @var array
+     */
     private array $_params;
+    /**
+     * @var array
+     */
+    /**
+     * @var array|mixed
+     */
     private array $_get_params,$middleware_tab;
 
     /**

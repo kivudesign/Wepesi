@@ -2,6 +2,7 @@
 
 namespace Wepesi\Core;
 use Wepesi\Core\Validation\Validate;
+use Wepesi\Core\Validation\Schema;
 
 /**
  *
@@ -14,12 +15,13 @@ class Redirect
      */
     static function to($location = null)
     {
+        $schema = new Schema();
         $validate = new Validate();
-        $schema = ['link' => $validate->string('link')->url()->check()];
+        $rules = ['link' => $schema->string()->url()];
         $source = ['link' => $location];
         if ($location) {
             // check if the location is an url
-            $validate->check($source, $schema);
+            $validate->check($source, $rules);
             if ($validate->passed()) {
                 // Redirect a url
                 header('Location:' . $location, true, 301);

@@ -18,7 +18,6 @@ if (isset($config['autoload'])) {
 if (! APP_DEV){
     autoIndexFolder();
 }
-
 // builtin autoload
 spl_autoload_register(function ($class) use ($autoload) {
     $app_root = appDirSeparator(dirname(__DIR__));
@@ -29,8 +28,8 @@ spl_autoload_register(function ($class) use ($autoload) {
         foreach ($dirs as $dir) {
             $file = $dir . '/' . checkFileExtension($classFile);
             if (is_file($file)) {
-                require_once "autoload.php";
+                require_once "$file";
             }
         }
     }
-});
+},true);

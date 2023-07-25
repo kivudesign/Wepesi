@@ -5,6 +5,6 @@
 
 namespace Wepesi\Core;
 
-class Controller{
+abstract class Controller{
     protected View $view;
 }
