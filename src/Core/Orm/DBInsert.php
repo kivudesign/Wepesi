@@ -73,7 +73,7 @@ class DBInsert extends DbProvider
     public function result(): array
     {
         $this->insert();
-        return $this->_results;
+        return $this->result;
     }
 
     /**

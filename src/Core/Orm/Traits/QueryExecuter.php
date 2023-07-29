@@ -25,7 +25,7 @@ trait QueryExecuter
             $data_result = [
                 'result' => [],
                 'lastID' => -1,
-                'count' => null,
+                'count' => 0,
                 'error' => "",
             ];
             $query = $pdo->prepare($sql);
@@ -48,12 +48,14 @@ trait QueryExecuter
                         break;
                     case 'insert' :
                         $data_result['lastID'] = $pdo->lastInsertId();
+                        $data_result['count'] = $query->rowCount();
                         break;
                     case 'update':
                         $data_result['count'] = $query->rowCount();
                         break;
                     case 'delete':
-                        $data_result['result'] = ['delete' => true];
+                        $data_result['result'] = ['delete' => $query->rowCount() > 0];
+                        $data_result['count'] = $query->rowCount();
                         break;
                 }
             }

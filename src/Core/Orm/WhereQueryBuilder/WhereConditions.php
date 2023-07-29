@@ -2,26 +2,29 @@
 
 namespace Wepesi\Core\Orm\WhereQueryBuilder;
 
+use PhpParser\Node\Expr\Cast\Object_;
+
 /**
  *
  */
 final class WhereConditions
 {
     /**
-     * @var array
+     * @var object
      */
-    private array $field_condition;
+    private object $field_condition;
 
     /**
      * @param string $field
      */
     public function __construct(string $field)
     {
-        $this->field_condition = [
+        $this->field_condition = (Object)[
             'field_name' => $field,
             'comparison' => null,
-            'field_value' => null
-        ];;
+            'field_value' => null,
+            'operator' => ' AND '
+        ];
     }
 
     /**
@@ -30,7 +33,7 @@ final class WhereConditions
      */
     public function isGreaterThan($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '>';
+        $this->field_condition->comparison = '>';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -41,7 +44,7 @@ final class WhereConditions
      */
     public function isGreaterEqualThan($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '>=';
+        $this->field_condition->comparison = '>=';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -52,7 +55,7 @@ final class WhereConditions
      */
     public function isLessThan($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '<';
+        $this->field_condition->comparison = '<';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -63,7 +66,7 @@ final class WhereConditions
      */
     public function isLessEqualThan($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '<=';
+        $this->field_condition->comparison = '<=';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -74,7 +77,7 @@ final class WhereConditions
      */
     public function isEqualto($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '=';
+        $this->field_condition->comparison = '=';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -85,7 +88,7 @@ final class WhereConditions
      */
     public function isDifferentTo($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '<>';
+        $this->field_condition->comparison = '<>';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -96,7 +99,7 @@ final class WhereConditions
      */
     public function isNotEqualTo($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = '!=';
+        $this->field_condition->comparison = '!=';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -107,7 +110,7 @@ final class WhereConditions
      */
     public function isLike($field_comparison): WhereConditions
     {
-        $this->field_condition['comparison'] = 'like';
+        $this->field_condition->comparison = 'like';
         $this->conditionIsString($field_comparison);
         return $this;
     }
@@ -115,7 +118,7 @@ final class WhereConditions
     /**
      * @return array
      */
-    public function getCondition(): array
+    public function getCondition(): object
     {
         return $this->field_condition;
     }
@@ -126,6 +129,6 @@ final class WhereConditions
      */
     private function conditionIsString($field_value)
     {
-        $this->field_condition['field_value'] = is_numeric($field_value) ? $field_value : "'" . $field_value . "'";
+        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "'" . $field_value . "'";
     }
 }

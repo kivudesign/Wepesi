@@ -18,7 +18,7 @@ class DBUpdate extends DbProvider
     /**
      * @var array
      */
-    private array $_where;
+    private array $where;
     /**
      * @var array
      */
@@ -36,19 +36,18 @@ class DBUpdate extends DbProvider
     public function __construct(\PDO $pdo, string $table)
     {
         $this->table = $table;
-        $this->_pdo = $pdo;
+        $this->pdo = $pdo;
         $this->_fields = [];
     }
 
     /**
-     * @param array $where
+     * @param WhereBuilder $where_builder
      * @return $this
      */
     public function where(WhereBuilder $where_builder): DBUpdate
     {
-        $this->_where = $this->condition($where_builder->generate());
+        $this->where = $this->condition($where_builder);
         return $this;
-
     }
 
     /**
@@ -95,7 +94,7 @@ class DBUpdate extends DbProvider
     public function result(): array
     {
         $this->update();
-        return $this->_results;
+        return $this->result;
     }
 
     /**
@@ -103,22 +102,13 @@ class DBUpdate extends DbProvider
      */
     private function update()
     {
-        $where = $this->_where['field'] ?? null;
-        $where_params = $this->_where['params'] ?? [];
+        $where = $this->where['field'] ?? null;
+        $where_params = $this->where['params'] ?? [];
         $fields = $this->_fields['keys'];
         $field_params = $this->_fields['params'] ?? [];
         $params = array_merge($field_params, $where_params);
         //generate the sql query to be execute
         $sql = "UPDATE $this->table SET $fields  $where";
         $this->query($sql, $params);
-    }
-
-    /**
-     * @return int
-     * return counted rows of a select query
-     */
-    public function count(): int
-    {
-        return $this->_count;
     }
 }

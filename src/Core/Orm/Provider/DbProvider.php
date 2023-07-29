@@ -29,9 +29,9 @@ abstract class DbProvider Implements DbContract
     /**
      * @var int
      */
-    protected int $_count;
+    protected int $_count = 0;
 
-    use BuildQuery;
+    use QueryExecuter;
 
     /**
      * @return string
@@ -54,6 +54,15 @@ abstract class DbProvider Implements DbContract
         $this->_error = $q['error'] ?? '';
         $this->lastID = $q['lastID'] ?? 0;
         $this->_count = $q['count'] ?? 0;
+    }
+
+    /**
+     * @return int
+     * return counted rows of a select query
+     */
+    public function count(): int
+    {
+        return $this->_count;
     }
     abstract function result(): array;
 }

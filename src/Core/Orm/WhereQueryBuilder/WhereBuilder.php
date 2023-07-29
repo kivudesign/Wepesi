@@ -24,7 +24,7 @@ final class WhereBuilder
     public function orOption(WhereConditions $where_condition): WhereBuilder
     {
         $condition = $where_condition->getCondition();
-        $condition['operator'] = 'OR';
+        $condition->operator = ' OR ';
         $this->operator[] = $condition;
         return $this;
     }
@@ -35,9 +35,7 @@ final class WhereBuilder
      */
     public function andOption(WhereConditions $where_condition): WhereBuilder
     {
-        $condition = $where_condition->getCondition();
-        $condition['operator'] = 'AND';
-        $this->operator[] = $condition;
+        $this->operator[] = $where_condition->getCondition();;
         return $this;
     }
 

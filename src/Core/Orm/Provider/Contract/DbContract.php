@@ -6,4 +6,5 @@ interface DbContract
 {
     function error() : string;
     function result() : array;
+    function count() : int;
 }

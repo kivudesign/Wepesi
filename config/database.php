@@ -13,5 +13,6 @@ $GLOBALS['config'] ['mysql'] =
         'db' => getenv('DB_NAME'),
         'username' => getenv('DB_USER'),
         'password' => getenv('DB_PASSWORD'),
-        'port' => getenv('DB_PORT')
+        'port' => getenv('DB_PORT'),
+        'usable' => true
     ];
