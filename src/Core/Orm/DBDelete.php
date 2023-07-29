@@ -29,7 +29,7 @@ class DBDelete extends DbProvider
      * @param \PDO $pdo
      * @param string $table
      */
-    function __construct(\PDO $pdo, string $table)
+    public function __construct(\PDO $pdo, string $table)
     {
         $this->table = $table;
         $this->pdo = $pdo;
@@ -39,12 +39,12 @@ class DBDelete extends DbProvider
     }
 
     /**
-     * @param array $where
+     * @param WhereBuilder $where_builder
      * @return $this
      */
     function where(WhereBuilder $where_builder): DBDelete
     {
-        $this->where = $this->condition($where_builder->generate());
+        $this->where = $this->condition($where_builder);
         return $this;
     }
 
@@ -55,7 +55,7 @@ class DBDelete extends DbProvider
     function result(): array
     {
         $this->delete();
-        return $this->_results;
+        return $this->result;
     }
 
     /**

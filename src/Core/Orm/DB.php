@@ -4,6 +4,9 @@ namespace Wepesi\Core\Orm;
 
 use Wepesi\Core\Config;
 use Wepesi\Core\Orm\Traits\QueryExecuter;
+use Wepesi\Core\Resolver\Option;
+use Wepesi\Core\Resolver\OptionsResolver;
+
 /**
  *
  */
@@ -53,18 +56,18 @@ class DB
     private function __construct(string $host, string $port, string $db_name, string $user_name, string $password)
     {
         try {
-            if (Config::get('mysql/usable')) {
-                $this->initialisation();
-                $this->db_name = Config::get('mysql/db');
-                $this->pdoObject = new \PDO('mysql:host=' . Config::get('mysql/host') . ';port=' . $port . ';dbname=' . Config::get('mysql/db') . ';charset=utf8mb4', Config::get('mysql/username'), Config::get('mysql/password'));
-                $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
-                $this->pdoObject->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-                $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_FOUND_ROWS, true);
-                $this->pdoObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+            if (!Config::get('mysql/usable')) {
+                throw new \Exception('you should authorized user database on config file.');
             }
+            $this->initialisation();
+            $this->db_name = $db_name;
+            $this->pdoObject = new \PDO('mysql:host=' . $host . ';port=' . $port . ';dbname=' . $db_name . ';charset=utf8mb4', $user_name, $password);
+            $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
+            $this->pdoObject->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+            $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_FOUND_ROWS, true);
+            $this->pdoObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $ex) {
-            $error_message = Config::get('mysql/usable') ? 'you should authorized user database on config file.' : $ex->getMessage();
-            die($error_message);
+            die($ex->getMessage());
         }
     }
 
@@ -101,7 +104,7 @@ class DB
         $this->_count = 0;
         $this->lastID = 0;
         $this->_error = '';
-        self::$_instance = null;
+//        self::$_instance = null;
     }
 
     /**
