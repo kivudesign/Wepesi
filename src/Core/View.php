@@ -157,6 +157,9 @@ class View
      */
     private function buildAssetHead($html)
     {
+        if(!$html){
+            throwException('Unable to render empty data');
+        }
         $dom = new \DOMDocument();
         libxml_use_internal_errors(true);
         $dom->loadHTML(
@@ -207,6 +210,10 @@ class View
      */
     public function setLayout(string $template)
     {
-        $this->layout = $template;
+        $this->layout = Application::$ROOT_DIR . '/views/' . $template;
+    }
+
+    public function setLayoutContent(string $layout_name){
+        $this->layout_content = $layout_name;
     }
 }

@@ -115,7 +115,7 @@ class Application
      */
     public static function setLayout(string $layout)
     {
-        self::$LAYOUT = $layout;
+        self::$LAYOUT = self::$ROOT_DIR.'/views/'.$layout;
     }
 
     /**
