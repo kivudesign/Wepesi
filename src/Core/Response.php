@@ -19,11 +19,7 @@ class Response
     {
         header('Content-Type:application/json;charset=utf-8');
         self::setStatusCode($status);
-        $response = $data;
-        if (is_array($data)) {
-            $response = json_encode($data, true);
-        }
-        echo $response;
+        echo json_encode($data, true);
         exit();
     }
 
