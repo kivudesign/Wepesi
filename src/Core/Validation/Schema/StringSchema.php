@@ -72,4 +72,14 @@ final class StringSchema extends SChemaProvider
         }
         return $this;
     }
+
+    /**
+     * @param string $table_name
+     * @return VString
+     */
+    public function unique(string $table_name): StringSchema
+    {
+        $this->schema[$this->class_name]['unique'] = $table_name;
+        return $this;
+    }
 }

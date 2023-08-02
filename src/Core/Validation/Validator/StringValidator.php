@@ -6,6 +6,9 @@
 
 namespace Wepesi\Core\Validation\Validator;
 
+use Wepesi\Core\Orm\DB;
+use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Orm\WhereQueryBuilder\WhereConditions;
 use Wepesi\Core\Validation\Providers\ValidatorProvider;
 
 /**
@@ -144,6 +147,31 @@ final class StringValidator extends ValidatorProvider
         }
     }
 
+    /**
+     * @param string $table_name
+     * @return $this
+     * @throws \Exception
+     */
+    public function unique(string $table_name){
+        $db = \Wepesi\Core\Orm\DB::getInstance();
+        $condition = (new \Wepesi\Core\Orm\WhereQueryBuilder\WhereConditions($this->field_name))->isEqualto(\Wepesi\Core\Escape::encode($this->field_value));
+        $where =  (new \Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder())->andOption($condition);
+        $check_uniq = $db->get($table_name)->where($where)->result();
+        if ($db->error()) {
+            $this->messageItem
+                ->type('string.unique')
+                ->message($db->error())
+                ->label($this->field_name);
+            $this->addError($this->messageItem);
+        } else if ($check_uniq && count($check_uniq)) {
+            $this->messageItem
+                ->type('string.unique')
+                ->message("`{$this->field_name}` = `{$this->field_value}` already exist,it should be unique")
+                ->label($this->field_name);
+            $this->addError($this->messageItem);
+        }
+        return $this;
+    }
     /**
      *
      * @param string $item_key
