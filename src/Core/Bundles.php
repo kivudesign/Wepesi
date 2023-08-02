@@ -51,8 +51,8 @@ class Bundles
      */
     static function insertJS(string $file,bool $is_module = false, bool $not_void=false)
     {
-        if (is_file(ROOT . 'asset/js/' . $file . '.js')) {
-            $src = WEB_ROOT . "asset/js/$file.js";
+        if (is_file(ROOT . 'assets/js/' . $file . '.js')) {
+            $src = WEB_ROOT . "assets/js/$file.js";
             $type = $is_module ? 'type="module"' : '';
             $link = <<<EOF
                     <script  src="$src" $type></script>
