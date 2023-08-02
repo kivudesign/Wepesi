@@ -39,7 +39,7 @@ final class StringValidator extends ValidatorProvider
      */
     public function min(int $rule): void
     {
-        if ($this->positiveParamMethod($rule)) return;
+        if ($this->checkNotPositiveParamMethod($rule)) return;
         if (strlen($this->field_value) < $rule) {
             $this->messageItem
                 ->type('string.min')
@@ -57,7 +57,7 @@ final class StringValidator extends ValidatorProvider
      */
     public function max(int $rule): void
     {
-        if ($this->positiveParamMethod($rule, true)) return;
+        if ($this->checkNotPositiveParamMethod($rule, true)) return;
         if (strlen($this->field_value) > $rule) {
             $this->messageItem
                 ->type('string.max')

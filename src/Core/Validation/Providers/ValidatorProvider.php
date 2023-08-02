@@ -117,9 +117,9 @@ abstract class ValidatorProvider implements Contracts
      * @param bool $max
      * @return bool
      */
-    protected function positiveParamMethod(int $rule, bool $max = false): bool
+    protected function checkNotPositiveParamMethod(int $rule, bool $max = false): bool
     {
-        $status = true;
+        $status = false;
         if ($rule < 1) {
             $method = $max ? "max" : "min";
             $this->messageItem
@@ -127,7 +127,7 @@ abstract class ValidatorProvider implements Contracts
                 ->message("'$this->field_name' $method param should be a positive number")
                 ->label($this->field_name);
             $this->addError($this->messageItem);
-            $status = false;
+            $status = true;
         }
         return $status;
     }
