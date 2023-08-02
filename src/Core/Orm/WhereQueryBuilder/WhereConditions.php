@@ -129,6 +129,6 @@ final class WhereConditions
      */
     private function conditionIsString($field_value)
     {
-        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "'" . $field_value . "'";
+        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "" . $field_value . "";
     }
 }
