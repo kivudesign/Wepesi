@@ -60,7 +60,7 @@ final class StringSchema extends SChemaProvider
     }
 
     /**
-     * @param string $ip_address
+     * @param bool $ipv6
      * @return $this
      */
     public function addressIp(bool $ipv6 = false): StringSchema
@@ -75,7 +75,7 @@ final class StringSchema extends SChemaProvider
 
     /**
      * @param string $table_name
-     * @return VString
+     * @return $this
      */
     public function unique(string $table_name): StringSchema
     {
