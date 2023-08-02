@@ -35,7 +35,7 @@ final class ArrayValidator extends ValidatorProvider
     public function min(int $rule): void
     {
         // TODO: Implement min() method.
-        if ($this->positiveParamMethod($rule)) return;
+        if ($this->checkNotPositiveParamMethod($rule)) return;
         if (count($this->field_value) < $rule) {
             $this->messageItem
                 ->type('array.min')
@@ -53,7 +53,7 @@ final class ArrayValidator extends ValidatorProvider
     public function max(int $rule): void
     {
         // TODO: Implement max() method.
-        if ($this->positiveParamMethod($rule, true)) return;
+        if ($this->checkNotPositiveParamMethod($rule, true)) return;
         if (count($this->field_value) > $rule) {
             $this->messageItem
                 ->type('array.max')
