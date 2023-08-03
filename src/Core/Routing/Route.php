@@ -44,7 +44,7 @@ class Route{
      * @param $path
      * @param $callable
      */
-    function __construct($path,$callable,$middleware = null){
+    function __construct($path,$callable,array $middleware = []){
         $this->pattern = trim($path, '/');
         $this->callable = $callable;
         $this->_matches = [];
