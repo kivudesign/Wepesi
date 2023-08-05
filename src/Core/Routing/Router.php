@@ -108,6 +108,20 @@ class  Router
     {
         return $this->add($path, $callable, $name, 'POST');
     }
+    /**
+     *
+     */
+    public function put(string $path, $callable, $name = null): Route
+    {
+        return $this->add($path, $callable, $name, 'PUT');
+    }
+    /**
+     *
+     */
+    public function delete(string $path, $callable, $name = null): Route
+    {
+        return $this->add($path, $callable, $name, 'DELETE');
+    }
 
     /**
      * The group method help to group a collection of routes in to a sub-route pattern.
