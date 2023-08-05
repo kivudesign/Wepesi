@@ -18,7 +18,7 @@ class  Router
     /**
      * @var array|null
      */
-    protected ?array $baseMiddleware;
+    protected array $baseMiddleware;
     /**
      * @var string|mixed|null
      */
@@ -52,7 +52,7 @@ class  Router
         $this->routes = [];
         $this->_nameRoute = [];
         $this->notFoundCallback = null;
-        $this->baseMiddleware = null;
+        $this->baseMiddleware = [];
     }
 
     /**
@@ -95,7 +95,6 @@ class  Router
         if ($name) {
             $this->_nameRoute[$name] = $route;
         }
-        $this->baseMiddleware = null;
         return $route;
     }
 
