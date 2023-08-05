@@ -20,11 +20,11 @@ final class ArrayValidator extends ValidatorProvider
      */
     public function __construct(string $item, array $data_source = [])
     {
+        parent::__construct();
         $this->errors = [];
         $this->data_source = $data_source;
         $this->field_name = $item;
         $this->field_value = $data_source[$item];
-        parent::__construct();
     }
 
     /**

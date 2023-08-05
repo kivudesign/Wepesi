@@ -28,6 +28,7 @@ final class BooleanValidator extends ValidatorProvider
      */
     function __construct(string $item, array $source)
     {
+        parent::__construct();
         $this->field_name = $item;
         $this->data_source = $source;
         $this->field_value = $source[$this->field_name];
@@ -35,7 +36,6 @@ final class BooleanValidator extends ValidatorProvider
         if ($this->isBoolean()) {
             $this->field_value = $source[$item];
         }
-        parent::__construct();
     }
 
     /**

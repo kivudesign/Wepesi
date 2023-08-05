@@ -28,13 +28,11 @@ final class NumberValidator extends ValidatorProvider
      */
     public function __construct(string $item, array $data_source)
     {
+        parent::__construct();
         $this->data_source = $data_source;
         $this->field_name = $item;
-        $this->field_value = $data_source[$item];
-        if ($this->isNumber()) {
-            $this->field_value = $data_source[$item];
-        }
-        parent::__construct();
+        $this->field_value = (int)$data_source[$item];
+        $this->isNumber();
     }
 
     /**
@@ -43,7 +41,6 @@ final class NumberValidator extends ValidatorProvider
      */
     public function min(int $rule)
     {
-        if ($this->checkNotPositiveParamMethod($rule)) return;
         if ((int)$this->field_value < $rule) {
             $this->messageItem
                 ->type('number.min')
@@ -60,7 +57,6 @@ final class NumberValidator extends ValidatorProvider
      */
     public function max(int $rule)
     {
-        if ($this->checkNotPositiveParamMethod($rule, true)) return;
         if ((int)$this->field_value > $rule) {
             $this->messageItem
                 ->type('number.max')
@@ -92,7 +88,7 @@ final class NumberValidator extends ValidatorProvider
     protected function isNumber(): bool
     {
         $regex_string = '#[a-zA-Z]#';
-        if (preg_match($regex_string, trim($this->data_source[$this->field_name])) || !is_integer($this->data_source[$this->field_name])) {
+        if (preg_match($regex_string, trim($this->data_source[$this->field_name])) || ((int)$this->data_source[$this->field_name] !== $this->field_value)) {
             $this->messageItem
                 ->type('number.unknown')
                 ->message("`$this->field_name` should be a number")
