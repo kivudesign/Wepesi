@@ -67,7 +67,7 @@ abstract class ValidatorProvider implements Contracts
      */
     private function getClassProvider(): string
     {
-        return $this->classProvider && strlen($this->classProvider) > 0 ? $this->classProvider : 'unknown';
+        return $this->classProvider() && strlen($this->classProvider()) > 0 ? $this->classProvider() : 'unknown';
     }
     /**
      * @return void

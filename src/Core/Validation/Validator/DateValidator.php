@@ -23,11 +23,11 @@ final class DateValidator extends ValidatorProvider
      */
     public function __construct(string $item, array $data_source)
     {
+        parent::__construct();
         $this->field_name = $item;
         $this->field_value = $data_source[$item];
         $this->data_source = $data_source;
         $this->checkExist();
-        parent::__construct();
     }
 
     /**
