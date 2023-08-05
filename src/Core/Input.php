@@ -39,9 +39,9 @@ class Input
 
     /**
      * extract data submitted as json on POST or PUT or PATCH method
-     * @return array|null
+     * @return array
      */
-    private static function put(): ?array
+    private static function put(): array
     {
         if (file_get_contents('php://input')) {
             parse_str(file_get_contents('php://input'), $file_input);
@@ -54,7 +54,7 @@ class Input
                 return self::extractFromFormData($file_input);
             }
         }
-        return null;
+        return [];
     }
 
     /**
@@ -104,6 +104,6 @@ class Input
      */
     public static function body()
     {
-        return isset($_POST) && !empty($_POST) ? $_POST : self::put();
+        return isset($_POST) && !empty($_POST) ? $_POST : !empty( self::put() ? self::put() : null);
     }
 }
