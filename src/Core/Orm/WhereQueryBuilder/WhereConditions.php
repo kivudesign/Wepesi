@@ -75,7 +75,7 @@ final class WhereConditions
      * @param $field_comparison
      * @return $this
      */
-    public function isEqualto($field_comparison): WhereConditions
+    public function isEqualTo($field_comparison): WhereConditions
     {
         $this->field_condition->comparison = '=';
         $this->conditionIsString($field_comparison);
@@ -116,9 +116,9 @@ final class WhereConditions
     }
 
     /**
-     * @return array
+     * @return object
      */
-    public function getCondition(): object
+    private function getCondition(): object
     {
         return $this->field_condition;
     }
@@ -130,5 +130,17 @@ final class WhereConditions
     private function conditionIsString($field_value)
     {
         $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "" . $field_value . "";
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed|void
+     */
+    public function __call($name, $arguments)
+    {
+        if (method_exists($this, $name)) {
+            return call_user_func_array([$this, $name], $arguments);
+        }
     }
 }

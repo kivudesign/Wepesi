@@ -5,12 +5,13 @@ namespace Wepesi\Core;
 /**
  *
  */
-class Escape{
+class Escape
+{
     /**
      * @param string $input
      * @return string
      */
-    static function encode(string $input)
+    public static function encode(string $input): string
     {
         $text = $input;
         if ($input != strip_tags($input)) {
@@ -23,7 +24,7 @@ class Escape{
      * @param string $input
      * @return string
      */
-    static function decode(string $input)
+    public static function decode(string $input): string
     {
         return html_entity_decode($input, ENT_QUOTES, 'UTF-8');
     }
@@ -32,7 +33,7 @@ class Escape{
      * @param int $length
      * @return string
      */
-    static function randomString(int $length = 8)
+    public static function randomString(int $length = 8): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
@@ -47,12 +48,12 @@ class Escape{
      * @param string $link
      * @return string
      */
-    static function addSlaches(string $link): string
+    public static function addSlaches(string $link): string
     {
         $sub_string = substr($link, 0, 1);
         $new_link = substr($link, 1);
         if ($sub_string == '/') {
-            $link = substr(self::addSlaches($new_link),1);
+            $link = substr(self::addSlaches($new_link), 1);
         }
         return $link == '' ? $link : '/' . $link;
     }
@@ -61,9 +62,18 @@ class Escape{
      * @param $fileName
      * @return mixed|string
      */
-    static function checkFileExtension($fileName)
+    public static function checkFileExtension($fileName)
     {
         $file_parts = pathinfo($fileName);
         return isset($file_parts['extension']) ? $fileName : $fileName . '.php';
+    }
+
+    /**
+     * @param array $data_arr
+     * @return array
+     */
+    public static function removeDuplicateAssocArray(array $data_arr): array
+    {
+        return array_values(array_map('unserialize', array_unique(array_map('serialize', $data_arr))));
     }
 }

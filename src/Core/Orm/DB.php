@@ -2,6 +2,7 @@
 
 namespace Wepesi\Core\Orm;
 
+use phpDocumentor\Reflection\Types\This;
 use Wepesi\Core\Config;
 use Wepesi\Core\Orm\Traits\QueryExecuter;
 use Wepesi\Core\Resolver\Option;
@@ -10,7 +11,7 @@ use Wepesi\Core\Resolver\OptionsResolver;
 /**
  *
  */
-class DB
+class DB extends DBConfig
 {
     /**
      * @var DB
@@ -53,15 +54,16 @@ class DB
     /**
      *
      */
-    private function __construct(string $host, string $port, string $db_name, string $user_name, string $password)
+    private function __construct()
     {
         try {
             if (!Config::get('mysql/usable')) {
                 throw new \Exception('you should authorized user database on config file.');
             }
             $this->initialisation();
-            $this->db_name = $db_name;
-            $this->pdoObject = new \PDO('mysql:host=' . $host . ';port=' . $port . ';dbname=' . $db_name . ';charset=utf8mb4', $user_name, $password);
+            $config = self::getConfig();
+            $this->db_name = $config->db;
+            $this->pdoObject = new \PDO('mysql:host=' . $config->host . ';port=' . $config->port . ';dbname=' . $this->db_name . ';charset=utf8mb4', $config->username, $config->password);
             $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
             $this->pdoObject->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
             $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_FOUND_ROWS, true);
@@ -112,8 +114,9 @@ class DB
      */
     static function getInstance(): DB
     {
+
         if (!isset(self::$_instance)) {
-            self::$_instance = new DB(Config::get('mysql/host'), Config::get('mysql/port'), Config::get('mysql/db'), Config::get('mysql/username'), Config::get('mysql/password'));
+            self::$_instance = new DB();
         }
         return self::$_instance;
     }

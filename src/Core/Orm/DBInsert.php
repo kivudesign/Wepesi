@@ -10,10 +10,6 @@ use Wepesi\Core\Orm\Provider\DbProvider;
 class DBInsert extends DbProvider
 {
     /**
-     * @var string
-     */
-    private string $table;
-    /**
      * @var array
      */
     private array $_fields;

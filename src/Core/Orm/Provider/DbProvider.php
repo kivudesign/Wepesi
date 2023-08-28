@@ -13,6 +13,10 @@ abstract class DbProvider Implements DbContract
     /**
      * @var string
      */
+    protected string $table;
+    /**
+     * @var string
+     */
     protected string $_error = '';
     /**
      * @var \PDO
@@ -30,7 +34,10 @@ abstract class DbProvider Implements DbContract
      * @var int
      */
     protected int $_count = 0;
-
+    /**
+     * @var array
+     */
+    protected array $include_object;
     use QueryExecuter;
 
     /**
@@ -51,9 +58,13 @@ abstract class DbProvider Implements DbContract
     {
         $q = $this->executeQuery($this->pdo, $sql, $values);
         $this->result = $q['result'];
-        $this->_error = $q['error'] ?? '';
         $this->lastID = $q['lastID'] ?? 0;
         $this->_count = $q['count'] ?? 0;
+
+        if($q['error'] !== ''){
+            $this->_error = $q['error'];
+            $this->result = ['exception' => $q['error']];
+        }
     }
 
     /**

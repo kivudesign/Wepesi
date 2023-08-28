@@ -1,7 +1,6 @@
 <?php
 
 namespace Wepesi\Core;
-use Exception;
 
 /**
  *
@@ -11,9 +10,9 @@ class Hash
     /**
      * @param $length
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
-    static function salt($length)
+    static function salt($length): string
     {
         return bin2hex(random_bytes($length));
     }

@@ -12,10 +12,6 @@ use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
 class DBUpdate extends DbProvider
 {
     /**
-     * @var string
-     */
-    private string $table;
-    /**
      * @var array
      */
     private array $where;

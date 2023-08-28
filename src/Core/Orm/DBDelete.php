@@ -12,10 +12,6 @@ use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
 class DBDelete extends DbProvider
 {
     /**
-     * @var string
-     */
-    private string $table;
-    /**
      * @var array
      */
     private array $where;
