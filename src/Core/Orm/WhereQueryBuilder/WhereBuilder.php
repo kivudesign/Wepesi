@@ -2,6 +2,9 @@
 
 namespace Wepesi\Core\Orm\WhereQueryBuilder;
 
+/**
+ *
+ */
 final class WhereBuilder
 {
     /**
@@ -45,14 +48,28 @@ final class WhereBuilder
      */
     protected function groupOption(WhereBuilder $builder): array
     {
-        return ['groupe' => $builder->generate()];
+        // TODO implement group conditions.
+        // return ['groupe' => $builder->generate()];
+        return [];
     }
 
     /**
      * @return array
      */
-    public function generate(): array
+    protected function generate(): array
     {
         return $this->operator;
+    }
+
+    /**
+     * @param $name
+     * @param $arguments
+     * @return mixed|void
+     */
+    public function __call($name, $arguments)
+    {
+        if (method_exists($this, $name)) {
+            return call_user_func_array([$this, $name], $arguments);
+        }
     }
 }

@@ -21,10 +21,10 @@ trait DBWhereCondition
         $params = [];
 
         /**
-         * defined comparion operator to avoid error while assing operation witch does not exist
+         * defined comparison operator to avoid error while passing operation witch does not exist
          */
         $logicalOperator = ["or", "not"];
-        // chech if the array is multidimensional array
+        // check if the array is multidimensional array
         $len = count($where);
         $where_condition_string = '';
         $index = 1;
