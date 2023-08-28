@@ -1,7 +1,7 @@
 <?php
 /**
  * Wepesi ORM
- * QueryExecuter
+ * QueryExecute
  * Ibrahim Mussa
  * https://github.com/bim-g
  */
@@ -28,8 +28,8 @@ trait QueryExecuter
                 'count' => 0,
                 'error' => "",
             ];
-            $sql_string = explode(' ',strtolower($sql));
-            if($sql_string[0] == 'select' && isset($this->include_object) &&  count($this->include_object) > 0){
+            $sql_string = explode(' ', strtolower($sql));
+            if ($sql_string[0] == 'select' && isset($this->include_object) && count($this->include_object) > 0) {
                 $pdo->setAttribute(\PDO::ATTR_FETCH_TABLE_NAMES, true);
             }
 
@@ -46,21 +46,21 @@ trait QueryExecuter
             if ($query_result) {
                 $data_result['result'] = ['query_result' => true];
 
-                switch ($sql_string[0]){
+                switch ($sql_string[0]) {
                     case 'select' :
-                        if(count($this->include_object) > 0){
+                        if (count($this->include_object) > 0) {
                             $data_result['result'] = $query->fetchAll(\PDO::FETCH_GROUP);
-                        }else{
+                        } else {
                             $data_result['result'] = $query->fetchAll(\PDO::FETCH_OBJ);
                         }
                         $data_result['count'] = $query->columnCount();
                         break;
                     case 'insert' :
                         $last_id = $pdo->lastInsertId();
-                         $data_result['lastID'] = $last_id;
+                        $data_result['lastID'] = $last_id;
                         $data_result['count'] = $query->rowCount();
                         $sql = "SELECT * FROM $this->table WHERE id=?";
-                        return $this->executeQuery($sql,[$last_id]);
+                        return $this->executeQuery($pdo, $sql, [$last_id]);
                         break;
                     case 'update':
                         $data_result['count'] = $query->rowCount();

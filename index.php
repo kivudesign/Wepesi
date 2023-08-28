@@ -22,6 +22,13 @@ $configuration = $appConfiguration
     ->lang(getenv('LANG'))
     ->timezone(getenv('TIME_ZONE'));
 
+(new \Wepesi\Core\Orm\DBConfig())
+    ->db($_ENV['DB_HOST'])
+    ->port($_ENV['DB_PORT'])
+    ->db($_ENV['DB_NAME'])
+    ->username($_ENV['DB_USER'])
+    ->password($_ENV['DB_PASSWORD']);
+
 $app = new Application($ROOT_DIR, $configuration);
 
 require_once $app::$ROOT_DIR . '/router/route.php';
