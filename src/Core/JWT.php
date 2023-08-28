@@ -33,7 +33,7 @@ class JWT
     private string $decryption_key;
 
     /**
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct()
     {
