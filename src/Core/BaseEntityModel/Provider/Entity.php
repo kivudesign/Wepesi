@@ -1,17 +1,19 @@
 <?php
 
-namespace Wepesi\Core\BaseEntityModel;
+namespace Wepesi\Core\BaseEntityModel\Provider;
 
-use ReflectionClass;
-use ReflectionProperty;
+use phpDocumentor\Reflection\Types\This;
+use Wepesi\Core\BaseEntityModel\EntityReflexion;
+use Wepesi\Core\BaseEntityModel\Provider\Contract\EntityInterface;
 use Wepesi\Core\Orm\DB;
 use Wepesi\Core\Orm\Relations\HasMany;
+use Wepesi\Core\Orm\Relations\HasOne;
 use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
 
 /**
  *
  */
-abstract class Entity
+abstract class Entity implements EntityInterface
 {
     /**
      * @var DB
@@ -87,7 +89,7 @@ abstract class Entity
      */
     private function getTableName(): string
     {
-        return trim($this->getName()) !== '' ? trim($this->getName()) : $this->getClassDefinition()->table;
+        return trim($this->getName()) !== '' ? trim($this->getName()) : $this->getClassDefinition($this)->table;
     }
 
     /**
@@ -96,35 +98,6 @@ abstract class Entity
     protected function getName(): string
     {
         return '';
-    }
-
-    /**
-     * @param Entity|null $entity
-     * @return object|array
-     */
-    private function getClassDefinition(?Entity $entity = null): object
-    {
-        try {
-            $class_entity = $entity ?? $this;
-            $class = new ReflectionClass($class_entity);
-            if (!$class->isInstance($class_entity)) {
-                throw new \Exception('Entity model undefined');
-            }
-            $class_name = $class->getShortName();
-            $table_name = strtolower($class->getShortName());
-            $table_field = [];
-            foreach ($class->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
-                $propertyName = $property->getName();
-                $table_field[] = $propertyName;
-            }
-            return (object)[
-                'table' => $table_name,
-                'fields' => $table_field,
-                'class' => $class_name
-            ];
-        } catch (\Exception $ex) {
-            return ['exception' => $ex->getMessage()];
-        }
     }
 
     /**
@@ -168,21 +141,21 @@ abstract class Entity
     }
 
     /**
-     * @param Entity $entityName
+     * @param EntityInterface $entityName
      * @param bool $inner
      * @return $this
      */
-    public function include(Entity $entityName, bool $inner = false): Entity
+    public function include(EntityInterface $entityName, bool $inner = false): Entity
     {
         try {
-            $entity_table_name = $this->getEntityName($entityName)['table'];
+            $entity_table_name = $this->getEntityName($entityName);
             if (isset($entity_table_name['exception'])) {
                 throw new \Exception($entity_table_name['exception']);
             }
             $entity_object = $this->getEntityRelationLink($entity_table_name);
             $relation = [
-                'entity' => $entity_object ?? $entity_table_name,
-                'table' => $entity_table_name,
+                'entity' => $entity_object ?? $entity_table_name['table'],
+                'table' => $entity_table_name['table'],
                 'join' => $inner ? 'INNER' : 'LEFT',
             ];
             if (is_array($entity_object) && isset($entity_object['exception'])) {
@@ -190,7 +163,7 @@ abstract class Entity
             } else {
                 $entity_relation = $entity_object->getRelation();
                 $primary_key = $this->getTableName() . '.' . $entity_relation->primary_key;
-                $foreign_key = $entity_table_name . '.' . $entity_relation->foreign_key;
+                $foreign_key = $entity_table_name['table'] . '.' . $entity_relation->foreign_key;
                 $relation['on'] = ' ON ' . $primary_key . '=' . $foreign_key;
             }
             $this->include_entity [] = $relation;
@@ -198,24 +171,6 @@ abstract class Entity
             print_r(['exception' => $ex->getMessage()]);
         }
         return $this;
-    }
-
-
-    /**
-     * @param string $entity_name
-     * @return array|mixed
-     */
-    private function getEntityRelationLink(string $entity_name)
-    {
-        try {
-            $class = new ReflectionClass($this);
-            $object = $class->newInstance();
-            $method = $class->getMethod(strtolower($entity_name));
-            $method->setAccessible(true);
-            return $method->invoke($object);
-        } catch (\Exception $ex) {
-            return ['exception' => $ex->getMessage() . ' from class ' . $this->getClassDefinition()->class];
-        }
     }
 
     /**
@@ -354,11 +309,20 @@ abstract class Entity
     }
 
     /**
-     * @param Entity $entity
+     * @param EntityInterface $entity
      * @return object|HasMany
      */
-    protected function hasMany(Entity $entity): object
+    protected function hasMany(EntityInterface $entity): object
     {
         return (new HasMany($this, $entity));
+    }
+
+    /**
+     * @param EntityInterface $entity
+     * @return object|HasOne
+     */
+    protected function hasOne(EntityInterface $entity): object
+    {
+        return (new HasOne($this, $entity));
     }
 }

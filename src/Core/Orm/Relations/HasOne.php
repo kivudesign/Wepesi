@@ -4,11 +4,10 @@ namespace Wepesi\Core\Orm\Relations;
 
 use Wepesi\Core\BaseEntityModel\Provider\Contract\EntityInterface;
 
-
 /**
  *
  */
-class HasMany extends BaseRelation
+class HasOne extends BaseRelation
 {
     /**
      * @param EntityInterface $entity_parent
