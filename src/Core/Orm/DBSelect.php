@@ -208,7 +208,7 @@ class DBSelect extends DbProvider
     public function result(): array
     {
         $this->build();
-        return count($this->include_object)>0 ? $this->formatData($this->result) : $this->result;
+        return (! isset($this->result['exception']) && count($this->include_object)>0) ? $this->formatData($this->result) : $this->result;
     }
 
     /**
@@ -275,10 +275,18 @@ class DBSelect extends DbProvider
                 } else if (!in_array($relation->parent, $parent_entity)) {
                     $other_entity[] = $relation->parent;
                 }
-                if ($relation->type == 'hasMany' && !in_array($relation->child, $children_entity)) {
-                    $children_entity[] = $relation->child;
-                } else if (!in_array($relation->child, $other_entity)) {
-                    $other_entity[] = $relation->child;
+                switch ($relation->type){
+                    case 'HasMany' :
+                        if (!in_array($relation->child, $children_entity)) {
+                            $children_entity[] = $relation->child;
+                        } else if (!in_array($relation->child, $other_entity)) {
+                            $other_entity[] = $relation->child;
+                        }
+                        break;
+                    case 'BelongTo':
+                        break;
+                    case 'HasOne': $other_entity[] = $relation->child;
+                    break;
                 }
             }
             return $this->buildStructure($result, $parent_entity[0], $children_entity, $other_entity);
@@ -411,9 +419,9 @@ class DBSelect extends DbProvider
      * @param array $first_row
      * @param string $parent_table_name
      * @param array $parent_keys
-     * @return array
+     * @return object
      */
-    private function getExtractedUndefined(array $first_row, string $parent_table_name, array $parent_keys): array
+    private function getExtractedUndefined(array $first_row, string $parent_table_name, array $parent_keys): object
     {
         $filter_field = array_filter($parent_keys, function ($item) use ($parent_table_name) {
             if (explode('.', $item)[0] == $parent_table_name) {
@@ -425,10 +433,7 @@ class DBSelect extends DbProvider
             $key = explode('.', $child_key)[1];
             $data_table[$key] = $first_row[$child_key];
         }
-        $unique = Escape::removeDuplicateAssocArray($data_table);
-        return array_map(function($item){
-            return (object)$item;
-        },$unique);
+        return (object)$data_table;
     }
 
     /**

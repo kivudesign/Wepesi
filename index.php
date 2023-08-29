@@ -23,7 +23,7 @@ $configuration = $appConfiguration
     ->timezone(getenv('TIME_ZONE'));
 
 (new \Wepesi\Core\Orm\DBConfig())
-    ->db($_ENV['DB_HOST'])
+    ->host($_ENV['DB_HOST'])
     ->port($_ENV['DB_PORT'])
     ->db($_ENV['DB_NAME'])
     ->username($_ENV['DB_USER'])
