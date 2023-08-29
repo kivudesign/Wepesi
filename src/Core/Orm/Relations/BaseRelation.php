@@ -2,8 +2,8 @@
 
 namespace Wepesi\Core\Orm\Relations;
 
-use Wepesi\Core\BaseEntityModel\EntityReflexion;
-use Wepesi\Core\BaseEntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Orm\EntityModel\EntityReflexion;
+use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
 /**
  *
  */
