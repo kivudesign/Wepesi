@@ -29,8 +29,8 @@ abstract class BaseRelation
      */
     public function __construct(EntityInterface $entity_parent, EntityInterface $entity_child)
     {
-        $this->parent_table = $this->getEntityName($entity_parent)['table'];
-        $this->child_table = $this->getEntityName($entity_child)['table'];
+        $this->parent_table = $this->getClassDefinition($entity_parent,false,true)->table;
+        $this->child_table = $this->getClassDefinition($entity_child,false,true)->table;
         $this->table_relations = [];
     }
     /**
