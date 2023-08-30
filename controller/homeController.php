@@ -12,7 +12,6 @@ use Wepesi\Core\Input;
 use Wepesi\Core\Redirect;
 use Wepesi\Core\Session;
 
-
 class homeController{
 
     /**

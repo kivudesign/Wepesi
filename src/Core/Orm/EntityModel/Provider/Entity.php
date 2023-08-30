@@ -147,24 +147,22 @@ abstract class Entity implements EntityInterface
     public function include(EntityInterface $entityName, bool $inner = false): Entity
     {
         try {
-            $entity_table_name = $this->getEntityName($entityName);
-            if (isset($entity_table_name['exception'])) {
-                throw new \Exception($entity_table_name['exception']);
+            $entity_table_object = $this->getClassDefinition($entityName,true);
+            if (is_array($entity_table_object) && isset($entity_table_object['exception'])) {
+                throw new \Exception($entity_table_object['exception']);
             }
-            $entity_object = $this->getEntityRelationLink($entity_table_name);
+            $entity_object = $entity_table_object->entity_object;
             $relation = [
-                'entity' => $entity_object ?? $entity_table_name['table'],
-                'table' => $entity_table_name['table'],
+                'entity' => $entity_object ?? $entity_table_object->table,
+                'table' => $entity_table_object->table,
                 'join' => $inner ? 'INNER' : 'LEFT',
             ];
-            if (is_array($entity_object) && isset($entity_object['exception'])) {
-                throw new \Exception($entity_object['exception']);
-            } else {
-                $entity_relation = $entity_object->getRelation();
-                $primary_key = $this->getTableName() . '.' . $entity_relation->primary_key;
-                $foreign_key = $entity_table_name['table'] . '.' . $entity_relation->foreign_key;
-                $relation['on'] = ' ON ' . $primary_key . '=' . $foreign_key;
-            }
+
+            $entity_relation = $entity_object->getRelation();
+            $primary_key = $this->getTableName() . '.' . $entity_relation->primary_key;
+            $foreign_key = $entity_table_object->table . '.' . $entity_relation->foreign_key;
+            $relation['on'] = ' ON ' . $primary_key . '=' . $foreign_key;
+
             $this->include_entity [] = $relation;
         } catch (\Exception $ex) {
             print_r(['exception' => $ex->getMessage()]);
