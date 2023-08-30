@@ -1,10 +1,9 @@
 <?php
 
-namespace Wepesi\Core\BaseEntityModel\Provider;
+namespace Wepesi\Core\Orm\EntityModel\Provider;
 
-use phpDocumentor\Reflection\Types\This;
-use Wepesi\Core\BaseEntityModel\EntityReflexion;
-use Wepesi\Core\BaseEntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Orm\EntityModel\EntityReflexion;
+use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
 use Wepesi\Core\Orm\DB;
 use Wepesi\Core\Orm\Relations\HasMany;
 use Wepesi\Core\Orm\Relations\HasOne;
