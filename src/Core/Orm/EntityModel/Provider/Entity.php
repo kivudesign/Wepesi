@@ -22,6 +22,10 @@ abstract class Entity implements EntityInterface
      * @var array
      */
     private array $include_entity;
+    /**
+     * @var array|mixed
+     */
+    private array $param;
     use EntityReflexion;
 
     /**
@@ -31,6 +35,7 @@ abstract class Entity implements EntityInterface
     {
         $this->db = DB::getInstance();
         $this->include_entity = [];
+        $this->param = [];
     }
 
     /**
@@ -200,7 +205,28 @@ abstract class Entity implements EntityInterface
             return ['exception' => $ex->getMessage()];
         }
     }
+    /**
+     * @return array
+     */
+    public function count(): array
+    {
+        try {
 
+            $query = $this->db->count($this->getTableName());
+            if (isset($this->param['where'])) {
+                $query->where($this->param['where']);
+            }
+
+            $result = $query->result();
+            $this->param = [];
+            if ($this->db->error()) {
+                throw new \Exception($this->db->error());
+            }
+            return $result;
+        } catch (\Exception $ex) {
+            return ['exception' => $ex->getMessage()];
+        }
+    }
     /**
      * @param array $fields
      * @return $this
