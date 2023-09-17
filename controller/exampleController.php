@@ -12,7 +12,7 @@ use Wepesi\Core\Input;
 use Wepesi\Core\Redirect;
 use Wepesi\Core\Session;
 
-class homeController{
+class exampleController{
 
     /**
      * @return void

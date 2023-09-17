@@ -3,7 +3,7 @@ namespace Wepesi\Middleware\Validation;
 
 use Wepesi\Core\MiddleWare;
 
-class HomeValidation extends MiddleWare
+class exampleValidation extends MiddleWare
 {
     function changeLang(){
         $rules = [
