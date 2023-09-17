@@ -48,7 +48,7 @@ trait QueryExecuter
 
                 switch ($sql_string[0]) {
                     case 'select' :
-                        if (count($this->include_object) > 0) {
+                        if (isset($this->include_object) && count($this->include_object) > 0) {
                             $data_result['result'] = $query->fetchAll(\PDO::FETCH_GROUP);
                         } else {
                             $data_result['result'] = $query->fetchAll(\PDO::FETCH_OBJ);
