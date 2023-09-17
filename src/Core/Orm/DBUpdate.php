@@ -102,8 +102,8 @@ class DBUpdate extends DbProvider
         $where_params = $this->where['params'] ?? [];
         $fields = $this->_fields['keys'];
         $field_params = $this->_fields['params'] ?? [];
-        $params = array_merge($field_params, $where_params);
-        //generate the sql query to be execute
+        $params = array_merge(array_values($field_params),array_values($where_params));
+        //generate the sql query to be executed
         $sql = "UPDATE $this->table SET $fields  $where";
         $this->query($sql, $params);
     }
