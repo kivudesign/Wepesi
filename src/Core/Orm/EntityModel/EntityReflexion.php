@@ -18,7 +18,7 @@ trait EntityReflexion
         try {
             $reflexion = new \ReflectionClass($entity);
             $classEntity = $reflexion->getShortName();
-            $table_name = strtolower($reflexion->getShortName());
+            $table_name = lcfirst($classEntity);
             $table_field = [];
             $entity_object = null;
             $method = null;
@@ -28,7 +28,7 @@ trait EntityReflexion
             }
             if($entity_relation){
                 $object = $reflexion->newInstance();
-                $class_name = strtolower($classEntity);
+                $class_name = lcfirst($classEntity);
                 $method = $reflexion->getMethod('getTableName');
                 $method->setAccessible(true);
                 $get_table_name = $method->invoke($object);
@@ -42,7 +42,7 @@ trait EntityReflexion
                     $method = $this_reflexion->getMethod($class_name);
                     $method->setAccessible(true);
                 }else{
-                    throw new \Exception('You should implement a relation method for the ' . $class_name .' from class '. $classEntity);
+                    throw new \Exception('You should implement a relation method call ' . $class_name .' from class '. $classEntity);
                 }
                 $entity_object = $method->invoke($object);
             }elseif ($entity_name){
