@@ -208,7 +208,7 @@ class DBSelect extends DbProvider
     public function result(): array
     {
         $this->build();
-        return (! isset($this->result['exception']) && count($this->include_object)>0) ? $this->formatData($this->result) : $this->result;
+        return (! isset($this->result['exception']) && count($this->include_object)>0 && count($this->result)>0) ? $this->formatData($this->result) : $this->result;
     }
 
     /**
