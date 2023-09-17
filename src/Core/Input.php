@@ -14,7 +14,7 @@ class Input
     {
         switch ($type) {
             case "POST":
-                return !empty($_POST) || self::_put() || !empty($_FILES);
+                return !empty($_POST) || self::put() || !empty($_FILES);
             default:
                 return false;
         }
