@@ -6,10 +6,12 @@
 
 namespace Wepesi\Core\Validation;
 
+use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
+
 /**
  *
  */
-final class MessageErrorBuilder
+final class MessageErrorBuilder implements MessageBuilderContracts
 {
     /**
      * @var array
@@ -19,7 +21,8 @@ final class MessageErrorBuilder
     /**
      *
      */
-    public function __construct(){
+    public function __construct()
+    {
         $this->items = [];
     }
 
@@ -64,9 +67,22 @@ final class MessageErrorBuilder
     }
 
     /**
+     * @param $method
+     * @param $arg
+     * @return mixed|void
+     */
+    public function __call($method, $arg)
+    {
+        if (method_exists($this, $method)) {
+            return call_user_func_array([$this, $method], $arg);
+        }
+    }
+
+    /**
      * @return array
      */
-    public function generate(){
+    private function generate(): array
+    {
         return $this->items;
     }
 }

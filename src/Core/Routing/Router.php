@@ -126,16 +126,16 @@ class  Router
     /**
      * The group method help to group a collection of routes in to a sub-route pattern.
      * The sub-route pattern is prefixed into all following routes defined in the scope.
-     * @param $base_route can be a string or an array to defined middleware for the group routing
-     * @param array|string $callable a callable method can be a controller method or an anonymous callable method
+     * @param array|string $base_route can be a string or an array to defined middleware for the group routing
+     * @param callable $callable a callable method can be a controller method or an anonymous callable method
      */
-    public function group($base_route, $callable)
+    public function group($base_route,callable $callable)
     {
         $pattern = $base_route;
         if (is_array($base_route)) {
-            $pattern = $base_route['pattern'] ?? '/';
+            $pattern = $base_route['pattern'] ?? '';
             if (isset($base_route['middleware'])) {
-                $this->baseMiddleware = $this->validateMiddleware($base_route['middleware']);
+                $this->validateMiddleware($base_route['middleware']);
             }
         }
         $cur_base_route = $this->baseRoute;
@@ -146,11 +146,11 @@ class  Router
 
     /**
      * API base group routing
-     * @param $base_route
-     * @param $callable
+     * @param string|array $base_route it can be defined as we did for group routing, but you don't need to specify api, it will be added automatically
+     * @param callable $callable
      * @return null
      */
-    public function api($base_route, $callable){
+    public function api($base_route,callable $callable){
         $api_pattern = '/api';
         if (is_array($base_route)) {
             $base_route['pattern'] = $api_pattern . (isset($base_route['pattern']) ? $this->trimPath($base_route['pattern']) : '');
@@ -169,20 +169,21 @@ class  Router
         $trim_path = trim($path,'/');
         return strlen($trim_path) > 0 ? '/' . $trim_path : '';
     }
+
     /**
-     * @param $name
+     * @param string $name
      * @param array $params
-     * @return string
+     * @return \Exception[]|RoutingException[]
      */
-    public function url(string $name, array $params = []) :string
+    public function url(string $name, array $params = [])
     {
         try {
-            if (!isset($this->_nameRoute[$name])) {
+            if (! isset($this->_nameRoute[$name])) {
                 throw new RoutingException('No route match');
             }
             return $this->_nameRoute[$name]->geturl($params);
         } catch (RoutingException $ex) {
-            return $ex->getMessage();
+            return ['RoutingException' => $ex];
         }
     }
 
@@ -229,9 +230,11 @@ class  Router
             }
             if (count($routesRequestMethod) === $i) {
                 $this->trigger404($this->notFoundCallback);
+                Response::setStatusCode(404);
             }
         } catch (RoutingException $ex) {
             Application::dumper($ex);
+            Response::setStatusCode(500);
             exit;
         }
     }

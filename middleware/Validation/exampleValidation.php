@@ -20,7 +20,7 @@ class exampleValidation extends MiddleWare
         $this->validate->check($_POST,$rules);
         if(!$this->validate->passed()){
             dumper($this->validate->errors());
-            die();
+            exit();
         }
     }
 }
