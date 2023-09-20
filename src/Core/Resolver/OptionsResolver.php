@@ -24,33 +24,37 @@ final class OptionsResolver
 
     public function resolve(array $options): array
     {
-        $this->checkDiff($options);
+        try{
+            $this->checkDiff($options);
 
-        /**
-         * @var Option $option
-         */
-        $optionsResolved = [];
-        foreach ($this->options as $option) {
-            $optionName = $option->getName();
-            if (array_key_exists($optionName, $options)) {
-                $value = $options[$optionName];
-                if ($option->isValid($value) === false) {
-                    throw new InvalidArgumentException(sprintf('The option "%s" with value %s is invalid.', $optionName, self::formatValue($value)));
+            /**
+             * @var Option $option
+             */
+            $optionsResolved = [];
+            foreach ($this->options as $option) {
+                $optionName = $option->getName();
+                if (array_key_exists($optionName, $options)) {
+                    $value = $options[$optionName];
+                    if ($option->isValid($value) === false) {
+                        throw new InvalidArgumentException(sprintf('The option "%s" with value %s is invalid.', $optionName, self::formatValue($value)));
+                    }
+                    $optionsResolved[$optionName] = $value;
+                    continue;
                 }
-                $optionsResolved[$optionName] = $value;
-                continue;
-            }
 
-            if ($option->hasDefaultValue()) {
-                $optionsResolved[$optionName] = $option->getDefaultValue();
-                continue;
-            }
+                if ($option->hasDefaultValue()) {
+                    $optionsResolved[$optionName] = $option->getDefaultValue();
+                    continue;
+                }
 
-            throw new InvalidArgumentException(sprintf(
-                    'The required option "%s" is missing.', $optionName)
-            );
+                throw new InvalidArgumentException(sprintf(
+                        'The required option "%s" is missing.', $optionName)
+                );
+            }
+            return $optionsResolved;
+        }catch (InvalidArgumentException $ex){
+            return ['InvalidArgumentException' => $ex];
         }
-        return $optionsResolved;
     }
 
     /**

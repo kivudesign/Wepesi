@@ -6,8 +6,12 @@
 
 namespace Wepesi\Core\Validation;
 
+use Wepesi\Core\Application;
 use Wepesi\Core\Resolver\OptionsResolver;
 use Wepesi\Core\Resolver\Option;
+use Wepesi\Core\Response;
+use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
+
 /**
  *
  */
@@ -51,14 +55,13 @@ final class Validate
             }
             $resolver = new OptionsResolver($option_resolver);
             $options = $resolver->resolve($schema);
-
-            $exceptions = isset($options['exception']) || isset($options['InvalidArgumentException']) ?? false;
+            $exceptions = $options['InvalidArgumentException'] ?? false;
             if ($exceptions) {
                 $this->message
                     ->type('object.unknown')
-                    ->message($options['exception'] ?? $options['InvalidArgumentException'])
+                    ->message($exceptions->getMessage())
                     ->label('exception');
-                $this->addError($message);
+                $this->addError($this->message);
             } else {
                 foreach ($schema as $item => $rules) {
                     if (!is_array($rules) && is_object($rules)) {
@@ -89,7 +92,9 @@ final class Validate
                 }
             }
         } catch (\Exception $ex) {
-            die($ex);
+            Application::dumper($ex);
+            Response::setStatusCode(500);
+            exit;
         }
     }
 
@@ -97,7 +102,7 @@ final class Validate
      * @param array $item
      * @return void
      */
-    private function addError(MessageErrorBuilder $item)
+    private function addError(MessageBuilderContracts $item)
     {
         $this->errors[] = $item->generate();
     }
