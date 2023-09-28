@@ -263,10 +263,10 @@ abstract class Entity implements EntityInterface
         try {
 
             $query = $this->db->delete($this->getTableName());
-            $result = $query->result();
             if (isset($this->param['where'])) {
                 $query->where($this->param['where']);
             }
+            $result = $query->result();
             $this->param = [];
             if ($this->db->error()) {
                 throw new \Exception($this->db->error());
