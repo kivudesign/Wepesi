@@ -2,7 +2,7 @@
 
 namespace Wepesi\Core\Orm\EntityModel\Provider;
 
-use Wepesi\Core\Orm\EntityModel\EntityReflexion;
+use Wepesi\Core\Orm\EntityModel\EntityReflexionTrait;
 use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
 use Wepesi\Core\Orm\DB;
 use Wepesi\Core\Orm\Relations\HasMany;
@@ -26,7 +26,7 @@ abstract class Entity implements EntityInterface
      * @var array|mixed
      */
     private array $param;
-    use EntityReflexion;
+    use EntityReflexionTrait;
 
     /**
      *

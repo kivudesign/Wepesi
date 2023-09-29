@@ -2,12 +2,15 @@
 
 namespace Wepesi\Core\Orm\Relations;
 
-use Wepesi\Core\Orm\EntityModel\EntityReflexion;
+use ReflectionClass;
+use Wepesi\Core\Orm\EntityModel\EntityReflexionTrait;
 use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Orm\Relations\Provider\Contract\BaseRelationInterface;
+
 /**
  *
  */
-abstract class BaseRelation
+abstract class BaseRelation implements BaseRelationInterface
 {
     /**
      * @var string|mixed
@@ -21,7 +24,7 @@ abstract class BaseRelation
      * @var array
      */
     protected array $table_relations;
-    use EntityReflexion;
+    use EntityReflexionTrait;
 
     /**
      * @param EntityInterface $entity_parent
@@ -29,13 +32,16 @@ abstract class BaseRelation
      */
     public function __construct(EntityInterface $entity_parent, EntityInterface $entity_child)
     {
-        $this->parent_table = $this->getClassDefinition($entity_parent,false,true)->table;
-        $this->child_table = $this->getClassDefinition($entity_child,false,true)->table;
+        $this->parent_table = $this->getClassDefinition($entity_parent, false, true)->table;
+        $this->child_table = $this->getClassDefinition($entity_child, false, true)->table;
         $this->table_relations = [];
     }
+
     /**
-     * @param string $reference_key
-     * @param string $foreignKey
+     * create link relation between to two entity.
+     *
+     * @param string $reference_key The parent entity relation id
+     * @param string $foreignKey the child entity relation id
      * @return BaseRelation
      */
     public function linkOn(string $reference_key, string $foreignKey): BaseRelation
@@ -43,7 +49,7 @@ abstract class BaseRelation
         $this->table_relations = [
             'parent' => $this->parent_table,
             'child' => $this->child_table,
-            'type' => $this->getClassDefinition($this)->class,
+            'type' => (new ReflectionClass($this))->getShortName(),
             'primary_key' => $reference_key,
             'foreign_key' => $foreignKey
         ];
@@ -63,6 +69,12 @@ abstract class BaseRelation
     }
 
     /**
+     * Get relation type information about two entities
+     *  parent the parent entity table,
+     *  child the child entity table,
+     *  type the entity relation type (hasOne, hasMany,...),
+     *  primary_key entity primary key references not for table,
+     *  foreign_key entity primary key references
      * @return object
      */
     protected function getRelation(): object
