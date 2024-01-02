@@ -7,9 +7,9 @@
 namespace Wepesi\Core\Validation;
 
 use Wepesi\Core\Application;
-use Wepesi\Core\Resolver\OptionsResolver;
+use Wepesi\Core\Http\Response;
 use Wepesi\Core\Resolver\Option;
-use Wepesi\Core\Response;
+use Wepesi\Core\Resolver\OptionsResolver;
 use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
 
 /**
@@ -26,6 +26,7 @@ final class Validate
      */
     private bool $passed;
     private MessageErrorBuilder $message;
+
     /**
      *
      */
@@ -65,7 +66,7 @@ final class Validate
             } else {
                 foreach ($schema as $item => $rules) {
                     if (!is_array($rules) && is_object($rules)) {
-                        if(!$rules->generate()){
+                        if (!$rules->generate()) {
                             throw new \Exception("Schema rule is not a valid schema! method generate does not exist");
                         }
                         $rules = $rules->generate();

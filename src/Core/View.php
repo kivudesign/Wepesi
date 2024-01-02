@@ -2,15 +2,46 @@
 
 namespace Wepesi\Core;
 
+use DOMDocument;
+use Exception;
+use Wepesi\Core\Http\Response;
+
+/**
+ *
+ */
 class View
 {
+    /**
+     *
+     */
     const ERROR_VIEW = '';
+    /**
+     * @var array
+     */
     private static array $jslink;
+    /**
+     * @var array
+     */
     private static array $stylelink;
+    /**
+     * @var string|null
+     */
     private static ?string $metadata;
+    /**
+     * @var array
+     */
     private array $data = [];
+    /**
+     * @var string
+     */
     private string $folder_name;
+    /**
+     * @var string|null
+     */
     private ?string $layout;
+    /**
+     * @var string|null
+     */
     private ?string $layout_content;
 
     /**
@@ -27,19 +58,11 @@ class View
     }
 
     /**
-     * @param string $folder_name
-     * @return void
-     */
-    public function setFolder(string $folder_name = '/')
-    {
-        $this->folder_name = Escape::addSlaches($folder_name);
-    }
-    /**
      * @param string $js_link
      *
      * @return void
      */
-    public static function setJsToHead(string $js_link,bool $external = false)
+    public static function setJsToHead(string $js_link, bool $external = false)
     {
         self::$jslink[] = [
             'link' => $js_link,
@@ -66,6 +89,15 @@ class View
     public static function setMetaData(MetaData $metadata)
     {
         self::$metadata = $metadata->build();
+    }
+
+    /**
+     * @param string $folder_name
+     * @return void
+     */
+    public function setFolder(string $folder_name = '/')
+    {
+        $this->folder_name = Escape::addSlaches($folder_name);
     }
 
     /**
@@ -157,10 +189,10 @@ class View
      */
     private function buildAssetHead($html)
     {
-        if(!$html){
-            throwException('Unable to render empty data');
+        if (!$html) {
+            throw new Exception('Unable to render empty data');
         }
-        $dom = new \DOMDocument();
+        $dom = new DOMDocument();
         libxml_use_internal_errors(true);
         $dom->loadHTML(
             mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
@@ -180,7 +212,7 @@ class View
         foreach (self::$jslink as $k => $v) {
             $link = $v['link'];
             $src = '<script src="' . $link . '" type="text/javascript"></script>';
-            if(!$v['external']) $src = Bundles::insertJS($link,false,true);
+            if (!$v['external']) $src = Bundles::insertJS($link, false, true);
             $template->appendXML($src);
             $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
         }
@@ -213,7 +245,12 @@ class View
         $this->layout = Application::$ROOT_DIR . '/views/' . $template;
     }
 
-    public function setLayoutContent(string $layout_name){
+    /**
+     * @param string $layout_name
+     * @return void
+     */
+    public function setLayoutContent(string $layout_name)
+    {
         $this->layout_content = $layout_name;
     }
 }
