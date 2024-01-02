@@ -1,8 +1,10 @@
 <?php
 
-namespace Wepesi\Core;
-use Wepesi\Core\Validation\Validate;
+namespace Wepesi\Core\Http;
+
+use Wepesi\Core\Escape;
 use Wepesi\Core\Validation\Schema;
+use Wepesi\Core\Validation\Validate;
 
 /**
  *

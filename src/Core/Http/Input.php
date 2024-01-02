@@ -1,6 +1,6 @@
 <?php
 
-namespace Wepesi\Core;
+namespace Wepesi\Core\Http;
 /**
  *
  */
@@ -18,23 +18,6 @@ class Input
             default:
                 return false;
         }
-    }
-
-    /**
-     * @param $item
-     * @return mixed|null
-     */
-    static function get($item)
-    {
-        $object_data = self::put();
-        if (isset($_POST[$item])) {
-            return $_POST[$item];
-        } else if (isset($_GET[$item])) {
-            return $_GET[$item];
-        } else if (isset($object_data[$item])) {
-            return $object_data[$item];
-        }
-        return null;
     }
 
     /**
@@ -86,6 +69,23 @@ class Input
     }
 
     /**
+     * @param $item
+     * @return mixed|null
+     */
+    static function get($item)
+    {
+        $object_data = self::put();
+        if (isset($_POST[$item])) {
+            return $_POST[$item];
+        } else if (isset($_GET[$item])) {
+            return $_GET[$item];
+        } else if (isset($object_data[$item])) {
+            return $object_data[$item];
+        }
+        return null;
+    }
+
+    /**
      * Extract header data information
      * @param $item
      * @return mixed|null
@@ -104,6 +104,6 @@ class Input
      */
     public static function body()
     {
-        return isset($_POST) && !empty($_POST) ? $_POST : !empty( self::put() ? self::put() : null);
+        return isset($_POST) && !empty($_POST) ? $_POST : !empty(self::put() ? self::put() : null);
     }
 }
