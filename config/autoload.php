@@ -15,14 +15,17 @@ if (isset($config['autoload'])) {
     $autoload = is_string($config['autoload']) ? [$config['autoload']] : $config['autoload'];
 }
 // check project is still on development.
-if (! APP_DEV){
+if (!APP_DEV) {
     autoIndexFolder();
 }
 // builtin autoload
-spl_autoload_register(function ($class) use ($autoload) {
+spl_autoload_register(/**
+ * @param $class
+ * @return void
+ */ function ($class) use ($autoload) {
     $app_root = appDirSeparator(dirname(__DIR__));
-    foreach ($autoload as $src){
-        $folder = $app_root. '/' .$src;
+    foreach ($autoload as $src) {
+        $folder = $app_root . '/' . $src;
         $dirs = getSubDirectories($folder);
         $classFile = extractNamespace($class);
         foreach ($dirs as $dir) {
@@ -32,4 +35,4 @@ spl_autoload_register(function ($class) use ($autoload) {
             }
         }
     }
-},true);
+}, true);

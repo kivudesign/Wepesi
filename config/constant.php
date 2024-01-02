@@ -27,4 +27,4 @@ const TIMEZONE = 'Africa/Kigali';
 
 // define in witch cycle are you are working on.
 // in case you are in dev, indexing file will not be generated, but in prod fase, it will be generated
-define('APP_DEV',true);
+define('APP_DEV', true);

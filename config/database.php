@@ -5,7 +5,7 @@
 
 use Wepesi\Core\DotEnv;
 
-(new DotEnv(dirname(__DIR__).'/.env'))->load();
+(new DotEnv(dirname(__DIR__) . '/.env'))->load();
 
 $GLOBALS['config'] ['mysql'] =
     [

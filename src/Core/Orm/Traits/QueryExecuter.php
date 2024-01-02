@@ -19,7 +19,7 @@ trait QueryExecuter
      * @param array $params
      * @return array
      */
-    protected function executeQuery(\PDO $pdo, string $sql, array $params = [],int $last_id = -1): array
+    protected function executeQuery(\PDO $pdo, string $sql, array $params = [], int $last_id = -1): array
     {
         try {
             $data_result = [
@@ -60,7 +60,7 @@ trait QueryExecuter
                         $data_result['lastID'] = $last_id;
                         $data_result['count'] = $query->rowCount();
                         $sql = "SELECT * FROM $this->table WHERE id=?";
-                        return $this->executeQuery($pdo, $sql, [$last_id],$last_id);
+                        return $this->executeQuery($pdo, $sql, [$last_id], $last_id);
                         break;
                     case 'update':
                         $data_result['count'] = $query->rowCount();

@@ -2,9 +2,9 @@
 
 namespace Wepesi\Core\Orm\EntityModel\Provider;
 
+use Wepesi\Core\Orm\DB;
 use Wepesi\Core\Orm\EntityModel\EntityReflexionTrait;
 use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
-use Wepesi\Core\Orm\DB;
 use Wepesi\Core\Orm\Relations\HasMany;
 use Wepesi\Core\Orm\Relations\HasOne;
 use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
@@ -152,7 +152,7 @@ abstract class Entity implements EntityInterface
     public function include(EntityInterface $entityName, bool $inner = false): Entity
     {
         try {
-            $entity_table_object = $this->getClassDefinition($entityName,true);
+            $entity_table_object = $this->getClassDefinition($entityName, true);
             if (is_array($entity_table_object) && isset($entity_table_object['exception'])) {
                 throw new \Exception($entity_table_object['exception']);
             }
@@ -205,6 +205,7 @@ abstract class Entity implements EntityInterface
             return ['exception' => $ex->getMessage()];
         }
     }
+
     /**
      * @return array
      */
@@ -227,6 +228,7 @@ abstract class Entity implements EntityInterface
             return ['exception' => $ex->getMessage()];
         }
     }
+
     /**
      * @param array $fields
      * @return $this

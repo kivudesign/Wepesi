@@ -6,9 +6,6 @@
 
 namespace Wepesi\Core\Validation\Validator;
 
-use Wepesi\Core\Orm\DB;
-use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
-use Wepesi\Core\Orm\WhereQueryBuilder\WhereConditions;
 use Wepesi\Core\Validation\Providers\ValidatorProvider;
 
 /**
@@ -118,6 +115,30 @@ final class StringValidator extends ValidatorProvider
     }
 
     /**
+     *
+     * @param string $item_key
+     * @return void
+     */
+    protected function isStringAndValid(string $item_key): void
+    {
+        $field_to_check = !$item_key ? $this->field_name : $item_key;
+        $regex = '#[a-zA-Z0-9]#';
+        if (!isset($this->data_source[$field_to_check])) {
+            $this->messageItem
+                ->type('string.unknown')
+                ->message("`$field_to_check` is not valid")
+                ->label($field_to_check);
+            $this->addError($this->messageItem);
+        } else if (!preg_match($regex, $this->data_source[$field_to_check]) || strlen(trim($this->field_value)) == 0) {
+            $this->messageItem
+                ->type('string.unknown')
+                ->message("`$field_to_check` should be a string")
+                ->label($field_to_check);
+            $this->addError($this->messageItem);
+        }
+    }
+
+    /**
      * @param string $ip_address
      * @return void
      */
@@ -152,10 +173,11 @@ final class StringValidator extends ValidatorProvider
      * @return $this
      * @throws \Exception
      */
-    public function unique(string $table_name){
+    public function unique(string $table_name)
+    {
         $db = \Wepesi\Core\Orm\DB::getInstance();
         $condition = (new \Wepesi\Core\Orm\WhereQueryBuilder\WhereConditions($this->field_name))->isEqualTo(\Wepesi\Core\Escape::encode($this->field_value));
-        $where =  (new \Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder())->andOption($condition);
+        $where = (new \Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder())->andOption($condition);
         $check_uniq = $db->get($table_name)->where($where)->result();
         if ($db->error()) {
             $this->messageItem
@@ -171,29 +193,6 @@ final class StringValidator extends ValidatorProvider
             $this->addError($this->messageItem);
         }
         return $this;
-    }
-    /**
-     *
-     * @param string $item_key
-     * @return void
-     */
-    protected function isStringAndValid(string $item_key): void
-    {
-        $field_to_check = !$item_key ? $this->field_name : $item_key;
-        $regex = '#[a-zA-Z0-9]#';
-        if (!isset($this->data_source[$field_to_check])) {
-            $this->messageItem
-                ->type('string.unknown')
-                ->message("`$field_to_check` is not valid")
-                ->label($field_to_check);
-            $this->addError($this->messageItem);
-        } else if (!preg_match($regex, $this->data_source[$field_to_check]) || strlen(trim($this->field_value)) == 0) {
-            $this->messageItem
-                ->type('string.unknown')
-                ->message("`$field_to_check` should be a string")
-                ->label($field_to_check);
-            $this->addError($this->messageItem);
-        }
     }
 
     protected function classProvider(): string

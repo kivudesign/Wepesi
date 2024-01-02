@@ -19,7 +19,7 @@ final class WhereConditions
      */
     public function __construct(string $field)
     {
-        $this->field_condition = (Object)[
+        $this->field_condition = (object)[
             'field_name' => $field,
             'comparison' => null,
             'field_value' => null,
@@ -36,6 +36,15 @@ final class WhereConditions
         $this->field_condition->comparison = '>';
         $this->conditionIsString($field_comparison);
         return $this;
+    }
+
+    /**
+     * @param $field_value
+     * @return void
+     */
+    private function conditionIsString($field_value)
+    {
+        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "" . $field_value . "";
     }
 
     /**
@@ -116,23 +125,6 @@ final class WhereConditions
     }
 
     /**
-     * @return object
-     */
-    private function getCondition(): object
-    {
-        return $this->field_condition;
-    }
-
-    /**
-     * @param $field_value
-     * @return void
-     */
-    private function conditionIsString($field_value)
-    {
-        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "" . $field_value . "";
-    }
-
-    /**
      * @param $name
      * @param $arguments
      * @return mixed|void
@@ -142,5 +134,13 @@ final class WhereConditions
         if (method_exists($this, $name)) {
             return call_user_func_array([$this, $name], $arguments);
         }
+    }
+
+    /**
+     * @return object
+     */
+    private function getCondition(): object
+    {
+        return $this->field_condition;
     }
 }

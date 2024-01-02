@@ -28,25 +28,6 @@ final class ArrayValidator extends ValidatorProvider
     }
 
     /**
-     * check the minimum length of an array should be about
-     * @param int $rule
-     * @return void
-     */
-    public function min(int $rule): void
-    {
-        // TODO: Implement min() method.
-        if ($this->checkNotPositiveParamMethod($rule)) return;
-        if (count($this->field_value) < $rule) {
-            $this->messageItem
-                ->type('array.min')
-                ->message("`$this->field_name` should have a minimum of `$rule` elements")
-                ->label($this->field_name)
-                ->limit($rule);
-            $this->addError($this->messageItem);
-        }
-    }
-
-    /**
      * @param int $rule
      * @return void
      */
@@ -101,6 +82,25 @@ final class ArrayValidator extends ValidatorProvider
                     ->limit(1);
                 $this->addError($this->messageItem);
             }
+        }
+    }
+
+    /**
+     * check the minimum length of an array should be about
+     * @param int $rule
+     * @return void
+     */
+    public function min(int $rule): void
+    {
+        // TODO: Implement min() method.
+        if ($this->checkNotPositiveParamMethod($rule)) return;
+        if (count($this->field_value) < $rule) {
+            $this->messageItem
+                ->type('array.min')
+                ->message("`$this->field_name` should have a minimum of `$rule` elements")
+                ->label($this->field_name)
+                ->limit($rule);
+            $this->addError($this->messageItem);
         }
     }
 

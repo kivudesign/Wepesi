@@ -31,6 +31,30 @@ final class DateValidator extends ValidatorProvider
     }
 
     /**
+     * @param string|null $itemKey
+     * @return void
+     */
+    protected function checkExist(string $itemKey = null): void
+    {
+        $item_to_check = $itemKey ? $itemKey : $this->field_name;
+        $regex = '#[a-zA-Z0-9]#';
+        $this->_errors = [];
+        if (!isset($this->data_source[$item_to_check])) {
+            $this->messageItem
+                ->type('any.unknown')
+                ->message("`$item_to_check` is unknown")
+                ->label($item_to_check);
+            $this->addError($this->messageItem);
+        } else if (!preg_match($regex, $this->data_source[$item_to_check]) || strlen(trim($this->data_source[$item_to_check])) == 0) {
+            $this->messageItem
+                ->type('date.unknown')
+                ->message("`$item_to_check` should be a date.")
+                ->label($item_to_check);
+            $this->addError($this->messageItem);
+        }
+    }
+
+    /**
      * @return void
      */
     public function now()
@@ -112,30 +136,6 @@ final class DateValidator extends ValidatorProvider
                 ->message("`$this->field_name` should be less than `$max_date`")
                 ->label($this->field_name)
                 ->limit($max_date);
-            $this->addError($this->messageItem);
-        }
-    }
-
-    /**
-     * @param string|null $itemKey
-     * @return void
-     */
-    protected function checkExist(string $itemKey = null): void
-    {
-        $item_to_check = $itemKey ? $itemKey : $this->field_name;
-        $regex = '#[a-zA-Z0-9]#';
-        $this->_errors = [];
-        if (!isset($this->data_source[$item_to_check])) {
-            $this->messageItem
-                ->type('any.unknown')
-                ->message("`$item_to_check` is unknown")
-                ->label($item_to_check);
-            $this->addError($this->messageItem);
-        } else if (!preg_match($regex, $this->data_source[$item_to_check]) || strlen(trim($this->data_source[$item_to_check])) == 0) {
-            $this->messageItem
-                ->type('date.unknown')
-                ->message("`$item_to_check` should be a date.")
-                ->label($item_to_check);
             $this->addError($this->messageItem);
         }
     }

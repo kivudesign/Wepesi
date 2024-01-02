@@ -2,7 +2,8 @@
 
 namespace Wepesi\Core;
 
-class Email {
+class Email
+{
     private $url;
     private string $from;
     private string $contact;
@@ -13,47 +14,49 @@ class Email {
 
     function __construct()
     {
-        $this->subject="Welcome to Wepesi";
-        $this->from="no-reply@".APP_DOMAIN;
-        $this->contact="contact@".APP_DOMAIN;
-        $this->url=DEFAULT_DOMAIN;
-        $this->default_lang=LANG;
+        $this->subject = "Welcome to Wepesi";
+        $this->from = "no-reply@" . APP_DOMAIN;
+        $this->contact = "contact@" . APP_DOMAIN;
+        $this->url = DEFAULT_DOMAIN;
+        $this->default_lang = LANG;
     }
 
     /**
-     * @return array|void
+     * @param array $data
+     * @return array|bool
      */
-    private function checkConfig(array $config_data){
-        try{
-            $validat=new Validate($config_data);
-            $schema=[
-                "from"=>$validat->string("from")->required()->email()->check(),
-                "to"=>$validat->string("to")->required()->email()->check(),
-            ];
-            $validat->check($config_data,$schema);
-            if(!$validat->passed()){
-                throw new \Exception($validat->errors());
-            }
-        }catch (\Exception $ex){
-            return ["exception"=>$ex->getMessage()];
-        }
-    }
-
-    private function sendMail(array  $data,string $body){
-        try{
-            $this->from=$data["from"];
-            $this->to=$data["to"];
-            $this->subject=$data["subject"];
-            $check_email=$this->checkConfig(["from"=>$this->from,"to"=>$this->to]);
-            if(isset($check_email['exception'])) return $check_email;
-            $header=[
-                "MIME_Version:1.0",
-                "Content-type:text/html;charset=iso-8859",
-                "From:$this->from"
-            ];
-            return mail($this->to,$this->subject,$body,implode("\r\n",$header));
-        }catch (\Exception $ex){
-            return ["exception"=>$ex->getMessage()];
+    function welcom(array $data)
+    {
+        $subject = isset($data["subject"]) ?? $this->subject;
+        $body = <<<EOF
+            <table style="border-spacing:0!important;border-collapse:collapse!important;table-layout: fixed !important;margin: 0" >
+                <tr>
+                    <td style="width:50%;text-align: center;color:#3e3e33;" >
+                        <div>Bienvenues chez <b style="font-size:25px;color:#f0c807">Wepesi</b> <br>
+                            <span>Your simple and light weight framework to devellop simple wep application</span>
+                        </div>                
+                    </td>
+                    <td style="width:50%">
+                        <H1 style="text-align:center;color:#f0c807">Wepesi</h1>
+                        <div style="color:#3e3e33">.</div>
+                    </td>            
+                </tr>
+                <tr>
+                    <td style="width:50%;text-align: center;color:#3e3e33;" >
+                        <div><a href="#"> Unsubscribe</a></div>                
+                    </td>
+                    <td style="width:50%">
+                        <H1 style="text-align:center;color:#f0c807">Wepesi</h1>
+                        <div style="color:#3e3e33">votre assistant, de prise de rendez-vous.</div>
+                    </td>            
+                </tr>      
+            </table>
+        EOF;
+        try {
+            $body = $this->template($body);
+            return $this->sendMail($data, $body);
+        } catch (\Exception $ex) {
+            return ["exception" => $ex->getMessage()];
         }
     }
 
@@ -62,9 +65,10 @@ class Email {
      * @return string
      * Wepesi model format email template
      */
-    private function template(string $message_body):string{
-        try{
-            $thisYear= date("Y",time());
+    private function template(string $message_body): string
+    {
+        try {
+            $thisYear = date("Y", time());
             return <<< html_body
             <!DOCTYPE html>
             <html lang="$this->default_lang" xmlns="http://www.w3.org/1999/xhtml" style="margin: 0 auto !important;padding: 0 !important;height: 100% !important;width: 100% !important;background: #b8b8b8;">
@@ -128,46 +132,47 @@ class Email {
             </body>
             </html>
         html_body;
-        }catch (\Exception $ex){
-            return ["exception"=>$ex->getMessage()];
+        } catch (\Exception $ex) {
+            return ["exception" => $ex->getMessage()];
+        }
+    }
+
+    private function sendMail(array $data, string $body)
+    {
+        try {
+            $this->from = $data["from"];
+            $this->to = $data["to"];
+            $this->subject = $data["subject"];
+            $check_email = $this->checkConfig(["from" => $this->from, "to" => $this->to]);
+            if (isset($check_email['exception'])) return $check_email;
+            $header = [
+                "MIME_Version:1.0",
+                "Content-type:text/html;charset=iso-8859",
+                "From:$this->from"
+            ];
+            return mail($this->to, $this->subject, $body, implode("\r\n", $header));
+        } catch (\Exception $ex) {
+            return ["exception" => $ex->getMessage()];
         }
     }
 
     /**
-     * @param array $data
-     * @return array|bool
+     * @return array|void
      */
-    function welcom(array $data){
-        $subject=isset($data["subject"])??$this->subject;
-        $body=<<<EOF
-            <table style="border-spacing:0!important;border-collapse:collapse!important;table-layout: fixed !important;margin: 0" >
-                <tr>
-                    <td style="width:50%;text-align: center;color:#3e3e33;" >
-                        <div>Bienvenues chez <b style="font-size:25px;color:#f0c807">Wepesi</b> <br>
-                            <span>Your simple and light weight framework to devellop simple wep application</span>
-                        </div>                
-                    </td>
-                    <td style="width:50%">
-                        <H1 style="text-align:center;color:#f0c807">Wepesi</h1>
-                        <div style="color:#3e3e33">.</div>
-                    </td>            
-                </tr>
-                <tr>
-                    <td style="width:50%;text-align: center;color:#3e3e33;" >
-                        <div><a href="#"> Unsubscribe</a></div>                
-                    </td>
-                    <td style="width:50%">
-                        <H1 style="text-align:center;color:#f0c807">Wepesi</h1>
-                        <div style="color:#3e3e33">votre assistant, de prise de rendez-vous.</div>
-                    </td>            
-                </tr>      
-            </table>
-        EOF;
-        try{
-            $body=$this->template($body);
-            return $this->sendMail($data,$body);
-        }catch (\Exception $ex){
-            return ["exception"=>$ex->getMessage()];
+    private function checkConfig(array $config_data)
+    {
+        try {
+            $validat = new Validate($config_data);
+            $schema = [
+                "from" => $validat->string("from")->required()->email()->check(),
+                "to" => $validat->string("to")->required()->email()->check(),
+            ];
+            $validat->check($config_data, $schema);
+            if (!$validat->passed()) {
+                throw new \Exception($validat->errors());
+            }
+        } catch (\Exception $ex) {
+            return ["exception" => $ex->getMessage()];
         }
     }
 }

@@ -208,7 +208,7 @@ class DBSelect extends DbProvider
     public function result(): array
     {
         $this->build();
-        return (! isset($this->result['exception']) && count($this->include_object)>0 && count($this->result)>0) ? $this->formatData($this->result) : $this->result;
+        return (!isset($this->result['exception']) && count($this->include_object) > 0 && count($this->result) > 0) ? $this->formatData($this->result) : $this->result;
     }
 
     /**
@@ -275,7 +275,7 @@ class DBSelect extends DbProvider
                 } else if (!in_array($relation->parent, $parent_entity)) {
                     $other_entity[] = $relation->parent;
                 }
-                switch ($relation->type){
+                switch ($relation->type) {
                     case 'HasMany' :
                         if (!in_array($relation->child, $children_entity)) {
                             $children_entity[] = $relation->child;
@@ -285,8 +285,9 @@ class DBSelect extends DbProvider
                         break;
                     case 'BelongTo':
                         break;
-                    case 'HasOne': $other_entity[] = $relation->child;
-                    break;
+                    case 'HasOne':
+                        $other_entity[] = $relation->child;
+                        break;
                 }
             }
             return $this->buildStructure($result, $parent_entity[0], $children_entity, $other_entity);
@@ -410,9 +411,9 @@ class DBSelect extends DbProvider
         }
         $unique = Escape::removeDuplicateAssocArray($child_tables);
 
-        return array_map(function($item){
+        return array_map(function ($item) {
             return (object)$item;
-        },$unique);
+        }, $unique);
     }
 
     /**
@@ -437,15 +438,6 @@ class DBSelect extends DbProvider
     }
 
     /**
-     * @param array $includes
-     * @return DBSelect
-     */
-    private function include(array $includes): DBSelect
-    {
-        $this->include_object = $includes;
-        return $this;
-    }
-    /**
      * @param $name
      * @param $arguments
      * @return void
@@ -455,5 +447,15 @@ class DBSelect extends DbProvider
         if (method_exists($this, $name)) {
             return call_user_func_array([$this, $name], $arguments);
         }
+    }
+
+    /**
+     * @param array $includes
+     * @return DBSelect
+     */
+    private function include(array $includes): DBSelect
+    {
+        $this->include_object = $includes;
+        return $this;
     }
 }

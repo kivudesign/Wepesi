@@ -36,6 +36,23 @@ final class NumberValidator extends ValidatorProvider
     }
 
     /**
+     * @return bool
+     */
+    protected function isNumber(): bool
+    {
+        $regex_string = '#[a-zA-Z]#';
+        if (preg_match($regex_string, trim($this->data_source[$this->field_name])) || ((int)$this->data_source[$this->field_name] !== $this->field_value)) {
+            $this->messageItem
+                ->type('number.unknown')
+                ->message("`$this->field_name` should be a number")
+                ->label($this->field_name);
+            $this->addError($this->messageItem);
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @param int $rule
      * @return void
      */
@@ -80,23 +97,6 @@ final class NumberValidator extends ValidatorProvider
                 ->limit(1);
             $this->addError($this->messageItem);
         }
-    }
-
-    /**
-     * @return bool
-     */
-    protected function isNumber(): bool
-    {
-        $regex_string = '#[a-zA-Z]#';
-        if (preg_match($regex_string, trim($this->data_source[$this->field_name])) || ((int)$this->data_source[$this->field_name] !== $this->field_value)) {
-            $this->messageItem
-                ->type('number.unknown')
-                ->message("`$this->field_name` should be a number")
-                ->label($this->field_name);
-            $this->addError($this->messageItem);
-            return false;
-        }
-        return true;
     }
 
     /**

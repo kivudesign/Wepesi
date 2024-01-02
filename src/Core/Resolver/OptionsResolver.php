@@ -22,9 +22,18 @@ final class OptionsResolver
         }
     }
 
+    /**
+     * @param Option $option
+     * @return void
+     */
+    private function add(Option $option): void
+    {
+        $this->options->offsetSet($option->getName(), $option);
+    }
+
     public function resolve(array $options): array
     {
-        try{
+        try {
             $this->checkDiff($options);
 
             /**
@@ -52,18 +61,9 @@ final class OptionsResolver
                 );
             }
             return $optionsResolved;
-        }catch (InvalidArgumentException $ex){
+        } catch (InvalidArgumentException $ex) {
             return ['InvalidArgumentException' => $ex];
         }
-    }
-
-    /**
-     * @param Option $option
-     * @return void
-     */
-    private function add(Option $option): void
-    {
-        $this->options->offsetSet($option->getName(), $option);
     }
 
     private function checkDiff(array $options): void

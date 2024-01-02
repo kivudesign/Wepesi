@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023. wepesi dev framework
+ * Copyright (c) 2023-2024. Wepesi Dev Framework
  */
 
 namespace Wepesi\Core\Http;
