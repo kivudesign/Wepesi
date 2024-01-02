@@ -13,7 +13,8 @@ abstract class MiddleWare
     protected Validate $validate;
     protected Schema $schema;
 
-    public function __construct(){
+    public function __construct()
+    {
         $this->schema = new Schema();
         $this->validate = new Validate();
     }

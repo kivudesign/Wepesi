@@ -20,10 +20,12 @@ function getSubDirectories(string $dir): array
  * @param $class
  * @return false|mixed|string
  */
-function extractNamespace($class){
-    $class_arr = explode("\\",$class);
+function extractNamespace($class)
+{
+    $class_arr = explode("\\", $class);
     return end($class_arr);
 }
+
 /**
  * @param $fileName
  * @return mixed|string
@@ -38,26 +40,27 @@ function checkFileExtension($fileName)
  * @param array $exclude_folder
  * @return void
  */
-function autoIndexFolder(array $exclude_folder = []){
+function autoIndexFolder(array $exclude_folder = [])
+{
     $app_root = appDirSeparator(dirname(__DIR__));
     // check if cache directory exists before processing
-    $cash_file_dir = appDirSeparator($app_root.'/cache');
+    $cash_file_dir = appDirSeparator($app_root . '/cache');
     if (!file_exists($cash_file_dir)) {
         mkdir($cash_file_dir, 0777, true);
     }
     // define exclude folder to not be affected by the situation.
     $exclude = ['vendor', 'test'];
-    if(count($exclude_folder)) $exclude = array_merge($exclude,$exclude_folder);
-    $implode = implode('|',$exclude);
+    if (count($exclude_folder)) $exclude = array_merge($exclude, $exclude_folder);
+    $implode = implode('|', $exclude);
     $folder_struct = getSubDirectories($app_root);
-    $filter = array_filter($folder_struct,function($folder_name) use ($implode) {
+    $filter = array_filter($folder_struct, function ($folder_name) use ($implode) {
         $pattern = "/$implode/i";
-        if(!preg_match($pattern, strtolower(trim($folder_name)))) {
+        if (!preg_match($pattern, strtolower(trim($folder_name)))) {
             return $folder_name;
         }
     });
 
-    if(!checkCacheContent($cash_file_dir, $filter)){
+    if (!checkCacheContent($cash_file_dir, $filter)) {
         foreach ($filter as $subFolder) {
             if (!is_file($subFolder . '/index.php')) {
                 copy(__DIR__ . '/index.php', $subFolder . '/index.php');
@@ -74,18 +77,18 @@ function autoIndexFolder(array $exclude_folder = []){
 function checkCacheContent(string $cash_file_dir, array $filter): bool
 {
     $status = true;
-    $cash_file_path = appDirSeparator($cash_file_dir.'/index_folder.txt');
+    $cash_file_path = appDirSeparator($cash_file_dir . '/index_folder.txt');
     sort($filter);
-    $file_content = json_encode($filter,true);
+    $file_content = json_encode($filter, true);
     $cache_file = fOpen($cash_file_path, 'a+');
-    if(!is_file($cash_file_path) || filesize($cash_file_path) < 1 ){
-        fwrite($cache_file,$file_content);
-    }else{
-        $content = fread($cache_file,filesize($cash_file_path));
-        if($content != $file_content) {
+    if (!is_file($cash_file_path) || filesize($cash_file_path) < 1) {
+        fwrite($cache_file, $file_content);
+    } else {
+        $content = fread($cache_file, filesize($cash_file_path));
+        if ($content != $file_content) {
             $cache_file = fOpen($cash_file_path, 'w');
             fwrite($cache_file, $file_content);
-        }else{
+        } else {
             $status = false;
         }
     }
@@ -97,7 +100,8 @@ function checkCacheContent(string $cash_file_dir, array $filter): bool
  * @param string $path
  * @return string
  */
-function appDirSeparator(string $path):string{
+function appDirSeparator(string $path): string
+{
     $new_path = $path;
     if ((substr(PHP_OS, 0, 3)) === 'WIN') $new_path = str_replace("\\", '/', $path);
     return $new_path;
@@ -107,7 +111,8 @@ function appDirSeparator(string $path):string{
  * @param $ex
  * @return void
  */
-function dumper($ex){
+function dumper($ex)
+{
     print('<pre>');
     print_r($ex);
     print('</pre>');

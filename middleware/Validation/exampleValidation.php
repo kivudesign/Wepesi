@@ -1,11 +1,13 @@
 <?php
+
 namespace Wepesi\Middleware\Validation;
 
 use Wepesi\Core\MiddleWare;
 
 class exampleValidation extends MiddleWare
 {
-    function changeLang(){
+    function changeLang()
+    {
         $rules = [
             "token" => $this->schema->string("token")
                 ->min(1)
@@ -17,8 +19,8 @@ class exampleValidation extends MiddleWare
                 ->required()
         ];
 
-        $this->validate->check($_POST,$rules);
-        if(!$this->validate->passed()){
+        $this->validate->check($_POST, $rules);
+        if (!$this->validate->passed()) {
             dumper($this->validate->errors());
             exit();
         }

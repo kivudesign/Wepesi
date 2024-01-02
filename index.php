@@ -14,7 +14,7 @@ if ((substr(PHP_OS, 0, 3)) === 'WIN') $ROOT_DIR = str_replace("\\", '/', $ROOT_D
 
 require_once $ROOT_DIR . '/config/init.php';
 
-(new DotEnv($ROOT_DIR.'/.env'))->load();
+(new DotEnv($ROOT_DIR . '/.env'))->load();
 
 $appConfiguration = new AppConfiguration();
 

@@ -82,19 +82,20 @@ class Application
      * use method to get domain ip
      * @return string
      */
-    public static function getDomainIp() : string
+    public static function getDomainIp(): string
     {
         $ip = $_SERVER['REMOTE_ADDR'];
 
-        if (! empty($_SERVER['HTTP_CLIENT_IP'])) {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
             $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } elseif ($ip == '::1') {
             $ip = gethostbyname(getHostName());
         }
         return $ip;
     }
+
     /**
      * simple builtin dumper for dump data
      * @param $ex
@@ -115,7 +116,7 @@ class Application
      */
     public static function setLayout(string $layout)
     {
-        self::$LAYOUT = self::$ROOT_DIR.'/views/'.$layout;
+        self::$LAYOUT = self::$ROOT_DIR . '/views/' . $layout;
     }
 
     /**

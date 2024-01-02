@@ -5,12 +5,13 @@
 
 namespace Wepesi\Test;
 
-use Wepesi\Core\Config;
 use PHPUnit\Framework\TestCase;
+use Wepesi\Core\Config;
 
 class ConfigTest extends TestCase
 {
-    public function testNotGet(){
+    public function testNotGet()
+    {
         $this->assertEquals(false, Config::get());
     }
     // the module shouldbe rewrite cause global variable break unit test

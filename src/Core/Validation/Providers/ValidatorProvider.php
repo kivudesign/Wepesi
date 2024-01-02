@@ -34,6 +34,7 @@ abstract class ValidatorProvider implements Contracts
      * @var MessageErrorBuilder
      */
     protected MessageErrorBuilder $messageItem;
+
     /**
      *
      */
@@ -56,19 +57,6 @@ abstract class ValidatorProvider implements Contracts
      */
     abstract public function max(int $rule);
 
-    /**
-     * Provide validation module name
-     * @return string
-     */
-    abstract protected function classProvider(): string ;
-
-    /**
-     * @return string
-     */
-    private function getClassProvider(): string
-    {
-        return $this->classProvider() && strlen($this->classProvider()) > 0 ? $this->classProvider() : 'unknown';
-    }
     /**
      * @return void
      */
@@ -93,6 +81,20 @@ abstract class ValidatorProvider implements Contracts
             }
         }
     }
+
+    /**
+     * @return string
+     */
+    private function getClassProvider(): string
+    {
+        return $this->classProvider() && strlen($this->classProvider()) > 0 ? $this->classProvider() : 'unknown';
+    }
+
+    /**
+     * Provide validation module name
+     * @return string
+     */
+    abstract protected function classProvider(): string;
 
     /**
      *

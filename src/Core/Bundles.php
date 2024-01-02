@@ -2,8 +2,6 @@
 
 namespace Wepesi\Core;
 
-use Wepesi\Core\MetaData;
-
 /**
  *
  */
@@ -49,7 +47,7 @@ class Bundles
      * manage to add  javascript script on the page
      * @param string $file
      */
-    static function insertJS(string $file,bool $is_module = false, bool $not_void=false)
+    static function insertJS(string $file, bool $is_module = false, bool $not_void = false)
     {
         if (is_file(ROOT . 'assets/js/' . $file . '.js')) {
             $src = WEB_ROOT . "assets/js/$file.js";
@@ -57,7 +55,7 @@ class Bundles
             $link = <<<EOF
                     <script  src="$src" $type></script>
                 EOF;
-            if($not_void){
+            if ($not_void) {
                 return $link;
             }
             echo $link . PHP_EOL;

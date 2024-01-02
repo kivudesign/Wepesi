@@ -2,11 +2,9 @@
 
 namespace Wepesi\Core\Orm;
 
-use phpDocumentor\Reflection\Types\This;
+use This;
 use Wepesi\Core\Config;
 use Wepesi\Core\Orm\Traits\QueryExecuter;
-use Wepesi\Core\Resolver\Option;
-use Wepesi\Core\Resolver\OptionsResolver;
 
 /**
  *

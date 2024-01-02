@@ -136,11 +136,11 @@ class MetaData
      */
     function keyword($keyword): MetaData
     {
-        if (is_array($keyword)){
-            $this->_keyword = array_filter($keyword,function($item){
-                return is_string($item) && strlen(trim($item))>0;
+        if (is_array($keyword)) {
+            $this->_keyword = array_filter($keyword, function ($item) {
+                return is_string($item) && strlen(trim($item)) > 0;
             });
-        }else{
+        } else {
             $this->_keyword = [trim($keyword)];
         }
         return $this;
@@ -200,6 +200,35 @@ class MetaData
     }
 
     /**
+     * Get the complete meta data to be displayed
+     * @return string
+     */
+    public function build(): string
+    {
+        if ($this->_title && $this->_description) {
+            $open_graph_meta = $this->openGraphMeta();
+            $twitter_meta = $this->twitterMeta();
+            $tags_exist = $this->getTags();
+            $canonical_exist = $this->getCanonical();
+            $keyword_exist = $this->getKeyWord();
+            $author_exist = $this->getAuthor();
+            return <<<META
+                <!-- Extra information -->
+                <meta name="mobile-web-app-capable" content="yes" />
+                <meta name="apple-mobile-web-app-title" content="yes" />
+                $keyword_exist
+                $author_exist
+                $tags_exist
+                $canonical_exist
+                <!-- Open Grap data-->
+                $open_graph_meta                
+                <!-- Twitter Metta Data -->
+                $twitter_meta
+            META;
+        }
+    }
+
+    /**
      * Open graph meta tags promote integration between
      * Facebook, LinkedIn, Google, and your website.
      *
@@ -212,7 +241,7 @@ class MetaData
         $cover_exist = $this->getCover();
         $lang_exist = $this->getLang();
         $title = $this->getTitle();
-        $description  = $this->getDescription();
+        $description = $this->getDescription();
         $title = $this->getTitle();
         $app_domain = $_SERVER['SERVER_NAME'] ?? 'localhost';
         return <<<HTML
@@ -224,6 +253,70 @@ class MetaData
                     $cover_exist
                     $lang_exist
                 HTML;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getLink(bool $twitter = false): string
+    {
+        $destination = $twitter ? 'twitter' : 'og';
+        return $this->_link ? "<meta name=\"$destination:url\" content=\"$this->_link\" />" : '';
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getType(bool $twitter = fals): string
+    {
+        $type = $twitter ? "<meta property=\"og:type\" content=\"$this->_type\" />" : "<meta name=\"twitter:type\" content=\"article\" />";
+        return $this->_type ? $type : '';
+    }
+
+    /**
+     * @return string
+     */
+    protected function getCover(bool $twitter = false): string
+    {
+        $destination = $twitter ? 'twitter' : 'og';
+        $cover = "<meta name=\"twitter:image\" content=\"$this->_cover\" />";
+        if (!$twitter) {
+            $cover = <<<IMG
+                    <meta property="og:image:secure_url" content="$this->_cover" />
+                    <meta property="og:image:type" content="image/jpeg">
+                    <!-- Size of image. Any size up to 300. Anything above 300px will not work in WhatsApp -->
+                    <meta property="og:image:width" content="300">
+                    <meta property="og:image:height" content="300">
+                IMG;
+        }
+        return $this->_cover ? $cover : '';
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getLang(bool $twitter = false): string
+    {
+        $destination = $twitter ? 'twitter' : 'og';
+        return $this->_lang ? "<meta name=\"$destination:local\" content=\"$this->_lang\" />" : '';
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getTitle(bool $twitter = false): string
+    {
+        $destination = $twitter ? 'twitter' : 'og';
+        return "<meta name = \"$twitter:title\" content = \"$this->_title\" />";
+    }
+
+    /**
+     * @return string|null
+     */
+    protected function getDescription(bool $twitter = false): ?string
+    {
+        $destination = $twitter ? 'twitter' : 'og';
+        return $this->_description ? "<meta property = \"$destination:description\" content = \"$this->_description\" />" : '';
     }
 
     /**
@@ -256,81 +349,12 @@ class MetaData
     /**
      * @return string|null
      */
-    protected function getTitle(bool $twitter = false): string
-    {
-        $destination = $twitter ? 'twitter' : 'og';
-        return "<meta name = \"$twitter:title\" content = \"$this->_title\" />";
-    }
-
-    /**
-     * @return string|null
-     */
     protected function getCanonical(bool $twitter = false): string
     {
         $canonical = $twitter ? "<meta name=\"twitter:site\" content=\"$this->_canonical\">" : "<link rel=\"canonical\" href=\"$this->_canonical\">";
         return $this->_canonical ? $canonical : '';
     }
 
-    /**
-     * @return string|null
-     */
-    protected function getLang(bool $twitter = false): string
-    {
-        $destination = $twitter ? 'twitter' : 'og';
-        return $this->_lang ? "<meta name=\"$destination:local\" content=\"$this->_lang\" />" : '';
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCover(bool $twitter = false): string
-    {
-        $destination = $twitter ? 'twitter' : 'og';
-        $cover = "<meta name=\"twitter:image\" content=\"$this->_cover\" />";
-        if (!$twitter) {
-            $cover = <<<IMG
-                    <meta property="og:image:secure_url" content="$this->_cover" />
-                    <meta property="og:image:type" content="image/jpeg">
-                    <!-- Size of image. Any size up to 300. Anything above 300px will not work in WhatsApp -->
-                    <meta property="og:image:width" content="300">
-                    <meta property="og:image:height" content="300">
-                IMG;
-        }
-        return $this->_cover ? $cover : '';
-    }
-
-    /**
-     * @return string
-     */
-    protected function getLink(bool $twitter = false): string
-    {
-        $destination = $twitter ? 'twitter' : 'og';
-        return $this->_link ? "<meta name=\"$destination:url\" content=\"$this->_link\" />" : '';
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getAuthor(): ?string
-    {
-        return $this->_author ? "<meta name=\"author\" content=\"$this->_author\">" : '';
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getType(bool $twitter = fals): string
-    {
-        $type = $twitter ? "<meta property=\"og:type\" content=\"$this->_type\" />" : "<meta name=\"twitter:type\" content=\"article\" />";
-        return $this->_type ? $type : '';
-    }/**
-     * @return string|null
-     */
-    protected function getKeyWord(): string
-    {
-        $keyword = implode(',', $this->_keyword);
-        return count($this->_keyword) > 0 ? "<link name=\"keywords\" href=\"$keyword\">" : '';
-    }
     /**
      * @return string|null
      */
@@ -343,39 +367,18 @@ class MetaData
     /**
      * @return string|null
      */
-    protected function getDescription(bool $twitter = false): ?string
+    protected function getKeyWord(): string
     {
-        $destination = $twitter ? 'twitter' : 'og';
-        return $this->_description ? "<meta property = \"$destination:description\" content = \"$this->_description\" />" : '';
+        $keyword = implode(',', $this->_keyword);
+        return count($this->_keyword) > 0 ? "<link name=\"keywords\" href=\"$keyword\">" : '';
     }
 
     /**
-     * Get the complete meta data to be displayed
-     * @return string
+     * @return string|null
      */
-    public function build(): string
+    protected function getAuthor(): ?string
     {
-        if ($this->_title && $this->_description) {
-            $open_graph_meta = $this->openGraphMeta();
-            $twitter_meta = $this->twitterMeta();
-            $tags_exist = $this->getTags();
-            $canonical_exist = $this->getCanonical();
-            $keyword_exist = $this->getKeyWord();
-            $author_exist = $this->getAuthor();
-            return <<<META
-                <!-- Extra information -->
-                <meta name="mobile-web-app-capable" content="yes" />
-                <meta name="apple-mobile-web-app-title" content="yes" />
-                $keyword_exist
-                $author_exist
-                $tags_exist
-                $canonical_exist
-                <!-- Open Grap data-->
-                $open_graph_meta                
-                <!-- Twitter Metta Data -->
-                $twitter_meta
-            META;
-        }
+        return $this->_author ? "<meta name=\"author\" content=\"$this->_author\">" : '';
     }
 
     public function generate(): array

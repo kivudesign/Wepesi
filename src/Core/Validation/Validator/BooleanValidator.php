@@ -39,22 +39,6 @@ final class BooleanValidator extends ValidatorProvider
     }
 
     /**
-     * @param $rule
-     * @return void
-     */
-    public function min($rule)
-    {
-    }
-
-    /**
-     * @param $rule
-     * @return void
-     */
-    public function max($rule)
-    {
-    }
-
-    /**
      *
      * @param string|null $itemKey
      * @return boolean
@@ -74,6 +58,22 @@ final class BooleanValidator extends ValidatorProvider
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param $rule
+     * @return void
+     */
+    public function min($rule)
+    {
+    }
+
+    /**
+     * @param $rule
+     * @return void
+     */
+    public function max($rule)
+    {
     }
 
     /**

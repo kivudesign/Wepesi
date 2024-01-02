@@ -43,6 +43,18 @@ final class WhereBuilder
     }
 
     /**
+     * @param $name
+     * @param $arguments
+     * @return mixed|void
+     */
+    public function __call($name, $arguments)
+    {
+        if (method_exists($this, $name)) {
+            return call_user_func_array([$this, $name], $arguments);
+        }
+    }
+
+    /**
      * @param WhereBuilder $builder
      * @return array[]
      */
@@ -59,17 +71,5 @@ final class WhereBuilder
     protected function generate(): array
     {
         return $this->operator;
-    }
-
-    /**
-     * @param $name
-     * @param $arguments
-     * @return mixed|void
-     */
-    public function __call($name, $arguments)
-    {
-        if (method_exists($this, $name)) {
-            return call_user_func_array([$this, $name], $arguments);
-        }
     }
 }

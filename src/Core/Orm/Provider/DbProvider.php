@@ -8,7 +8,7 @@ use Wepesi\Core\Orm\Traits\QueryExecuter;
 /**
  *
  */
-abstract class DbProvider Implements DbContract
+abstract class DbProvider implements DbContract
 {
     /**
      * @var string
@@ -21,15 +21,15 @@ abstract class DbProvider Implements DbContract
     /**
      * @var \PDO
      */
-    protected \PDO $pdo ;
+    protected \PDO $pdo;
     /**
      * @var array
      */
-    protected array $result = [] ;
+    protected array $result = [];
     /**
      * @var int
      */
-    protected int $lastID = 0 ;
+    protected int $lastID = 0;
     /**
      * @var int
      */
@@ -49,6 +49,17 @@ abstract class DbProvider Implements DbContract
     }
 
     /**
+     * @return int
+     * return counted rows of a select query
+     */
+    public function count(): int
+    {
+        return $this->_count;
+    }
+
+    abstract function result(): array;
+
+    /**
      * @param string $sql
      * @param array $params
      * @return void
@@ -61,19 +72,9 @@ abstract class DbProvider Implements DbContract
         $this->lastID = $q['lastID'] ?? 0;
         $this->_count = $q['count'] ?? 0;
 
-        if($q['error'] !== ''){
+        if ($q['error'] !== '') {
             $this->_error = $q['error'];
             $this->result = ['exception' => $q['error']];
         }
     }
-
-    /**
-     * @return int
-     * return counted rows of a select query
-     */
-    public function count(): int
-    {
-        return $this->_count;
-    }
-    abstract function result(): array;
 }
