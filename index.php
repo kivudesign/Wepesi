@@ -16,6 +16,13 @@ require_once $ROOT_DIR . '/config/init.php';
 
 (new DotEnv($ROOT_DIR . '/.env'))->load();
 
+/**
+ *  Generate and index file for redirection (protection) while APP_DEV in production
+ */
+if (!getenv('APP_ENV')) {
+    autoIndexFolder();
+}
+
 $appConfiguration = new AppConfiguration();
 
 $configuration = $appConfiguration
