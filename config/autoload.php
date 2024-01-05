@@ -23,9 +23,9 @@ spl_autoload_register(/**
     $app_root = appDirSeparator(dirname(__DIR__));
     foreach ($autoload as $src) {
         $folder = $app_root . '/' . $src;
-        $dirs = getSubDirectories($folder);
+        $directories = getSubDirectories($folder);
         $classFile = extractNamespace($class);
-        foreach ($dirs as $dir) {
+        foreach ($directories as $dir) {
             $file = $dir . '/' . checkFileExtension($classFile);
             if (is_file($file)) {
                 require_once "$file";

@@ -1,7 +1,12 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
 
 namespace Wepesi\Core\Orm;
 
+use Exception;
+use PDO;
 use Wepesi\Core\Escape;
 use Wepesi\Core\Orm\Provider\DbProvider;
 use Wepesi\Core\Orm\Traits\DBWhereCondition;
@@ -44,14 +49,11 @@ class DBSelect extends DbProvider
      * @var string
      */
     private string $_offset;
+
     /**
      * @var string
      */
-    private string $_dsc;
-    /**
-     * @var string
-     */
-    private string $_asc;
+    private string $ascending;
     /**
      * @var string
      */
@@ -61,11 +63,11 @@ class DBSelect extends DbProvider
 
     /**
      *
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @param string $table
      * @param string|null $action
      */
-    public function __construct(\PDO $pdo, string $table, string $action = null)
+    public function __construct(PDO $pdo, string $table, string $action = null)
     {
         $this->table = $table;
         $this->pdo = $pdo;
@@ -79,8 +81,7 @@ class DBSelect extends DbProvider
         $this->_fields = ['keys' => '*'];
         $this->_limit = '';
         $this->_offset = '';
-        $this->_dsc = '';
-        $this->_asc = '';
+        $this->ascending = '';
         $this->_between = '';
         $this->include_object = [];
     }
@@ -163,8 +164,7 @@ class DBSelect extends DbProvider
      */
     public function ASC(): DBSelect
     {
-        $this->_asc = ' ASC ';
-        $this->_dsc = '';
+        $this->ascending = ' ASC ';
         return $this;
     }
 
@@ -174,8 +174,7 @@ class DBSelect extends DbProvider
      */
     public function DESC(): DBSelect
     {
-        $this->_asc = '';
-        $this->_dsc = ' DESC ';
+        $this->ascending = ' DESC ';
         return $this;
     }
 
@@ -249,8 +248,12 @@ class DBSelect extends DbProvider
         }
         $params = $this->where['value'] ?? [];
         //
-        $sql = "SELECT {$fields} FROM {$this->table} " . $WHERE . $this->groupBY . $this->orderBy . $this->_asc . $this->_dsc . $this->_limit . $this->_offset;
-        $this->query($sql, $params);
+        if ($this->orderBy == '' && $this->ascending != '') {
+            $this->result['exception'] = 'You should provide the order by which field name to which field you to apply the `' . $this->ascending . '`.';
+        } else {
+            $sql = "SELECT {$fields} FROM {$this->table} " . $WHERE . $this->groupBY . $this->orderBy . $this->ascending . $this->_limit . $this->_offset;
+            $this->query($sql, $params);
+        }
     }
 
     /**
@@ -292,7 +295,7 @@ class DBSelect extends DbProvider
             }
             return $this->buildStructure($result, $parent_entity[0], $children_entity, $other_entity);
 
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
@@ -347,7 +350,7 @@ class DBSelect extends DbProvider
                 $data_result[] = (object)$parent_table;
             }
             return $data_result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }

@@ -61,7 +61,7 @@ require_once $ROOT_DIR . '/config/function.php';
  *  Project autoload register
  */
 require_once $ROOT_DIR . '/config/autoload.php';
-require_once $ROOT_DIR . '/vendor/autoload.php';
+//require_once $ROOT_DIR . '/vendor/autoload.php';
 /**
  * Project Utils
  */
