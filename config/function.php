@@ -70,6 +70,7 @@ function autoIndexFolder(array $exclude_folder = [])
 }
 
 /**
+ * check content from cache file
  * @param string $cash_file_dir
  * @param array $filter
  * @return bool
@@ -88,9 +89,9 @@ function checkCacheContent(string $cash_file_dir, array $filter): bool
         if ($content != $file_content) {
             $cache_file = fOpen($cash_file_path, 'w');
             fwrite($cache_file, $file_content);
-        } else {
-            $status = false;
-        }
+    } else {
+        $status = false;
+    }
     }
     fclose($cache_file);
     return $status;
@@ -105,16 +106,4 @@ function appDirSeparator(string $path): string
     $new_path = $path;
     if ((substr(PHP_OS, 0, 3)) === 'WIN') $new_path = str_replace("\\", '/', $path);
     return $new_path;
-}
-
-/**
- * @param $ex
- * @return void
- */
-function dumper($ex)
-{
-    print('<pre>');
-    print_r($ex);
-    print('</pre>');
-    exit();
 }
