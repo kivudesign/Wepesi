@@ -11,8 +11,8 @@ class exampleValidation extends MiddleWare
     {
         $rules = [
             "token" => $this->schema->string("token")
-                ->min(1)
-                ->max(2)
+                ->min(5)
+                ->max(30)
                 ->required(),
             "lang" => $this->schema->string("lang")
                 ->min(1)
