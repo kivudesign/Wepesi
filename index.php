@@ -19,8 +19,8 @@ require_once $ROOT_DIR . '/config/init.php';
 /**
  *  Generate and index file for redirection (protection) while APP_DEV in production
  */
-if (!getenv('APP_ENV')) {
-    autoIndexFolder();
+if (getenv('APP_ENV') === 'prod') {
+    autoIndexFolder(['assets']);
 }
 
 $appConfiguration = new AppConfiguration();

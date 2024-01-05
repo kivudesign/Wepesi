@@ -43,24 +43,20 @@ function checkFileExtension($fileName)
 function autoIndexFolder(array $exclude_folder = [])
 {
     $app_root = appDirSeparator(dirname(__DIR__));
-    // check if cache directory exists before processing
-    $cash_file_dir = appDirSeparator($app_root . '/cache');
-    if (!file_exists($cash_file_dir)) {
-        mkdir($cash_file_dir, 0777, true);
-    }
-    // define exclude folder to not be affected by the situation.
+
+    // define folder to be excluded to not be affected by the process.
     $exclude = ['vendor', 'test'];
     if (count($exclude_folder)) $exclude = array_merge($exclude, $exclude_folder);
     $implode = implode('|', $exclude);
     $folder_struct = getSubDirectories($app_root);
+
     $filter = array_filter($folder_struct, function ($folder_name) use ($implode) {
         $pattern = "/$implode/i";
         if (!preg_match($pattern, strtolower(trim($folder_name)))) {
             return $folder_name;
         }
     });
-
-    if (!checkCacheContent($cash_file_dir, $filter)) {
+    if (!checkCacheContent($filter,$app_root)) {
         foreach ($filter as $subFolder) {
             if (!is_file($subFolder . '/index.php')) {
                 copy(__DIR__ . '/index.php', $subFolder . '/index.php');
@@ -71,29 +67,30 @@ function autoIndexFolder(array $exclude_folder = [])
 
 /**
  * check content from cache file
- * @param string $cash_file_dir
  * @param array $filter
+ * @param string $app_root
  * @return bool
  */
-function checkCacheContent(string $cash_file_dir, array $filter): bool
+function checkCacheContent(array $filter,string $app_root): bool
 {
     $status = true;
-    $cash_file_path = appDirSeparator($cash_file_dir . '/index_folder.txt');
-    sort($filter);
-    $file_content = json_encode($filter, true);
-    $cache_file = fOpen($cash_file_path, 'a+');
-    if (!is_file($cash_file_path) || filesize($cash_file_path) < 1) {
-        fwrite($cache_file, $file_content);
-    } else {
-        $content = fread($cache_file, filesize($cash_file_path));
-        if ($content != $file_content) {
-            $cache_file = fOpen($cash_file_path, 'w');
-            fwrite($cache_file, $file_content);
-    } else {
-        $status = false;
+    // check if cache directory exists before processing
+    $cash_file_dir = appDirSeparator($app_root . '/cache');
+    if (!file_exists($cash_file_dir)) {
+        mkdir($cash_file_dir, 0777, true);
     }
+    $cash_file_path = appDirSeparator($cash_file_dir . '/index_folder');
+
+    if (!file_exists($cash_file_path)){
+        file_put_contents($cash_file_path, var_export($filter, true));
+    } else {
+        $old_content = file_get_contents($cash_file_path);
+        if (json_encode($old_content, true) != json_encode($filter, true)) {
+            file_put_contents($cash_file_path, var_export($filter, true));
+        } else {
+            $status = false;
+        }
     }
-    fclose($cache_file);
     return $status;
 }
 
