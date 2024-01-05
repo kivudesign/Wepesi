@@ -10,8 +10,9 @@
 
 namespace Wepesi\Controller;
 
-use Wepesi\Core\Input;
-use Wepesi\Core\Redirect;
+
+use Wepesi\Core\Http\Input;
+use Wepesi\Core\Http\Redirect;
 use Wepesi\Core\Session;
 
 class exampleController

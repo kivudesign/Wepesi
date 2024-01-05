@@ -8,7 +8,7 @@ namespace Wepesi\Core;
 use Wepesi\Core\Routing\Router;
 
 /**
- *
+ * Application root
  */
 class Application
 {
@@ -55,45 +55,12 @@ class Application
     {
 
         self::$ROOT_DIR = str_replace("\\", '/', $path);
-        self::$APP_DOMAIN = $this->domainSetup()->app_domain;
+        self::$APP_DOMAIN = serverDomain()->domain;
         self::$params = $config->generate();
         self::$APP_TEMPLATE = self::$params['app_template'] ?? null;
         self::$APP_LANG = self::$params['lang'] ?? 'fr';
         $this->router = new Router();
         self::$LAYOUT_CONTENT = 'layout_content';
-    }
-
-    /**
-     * @return object
-     */
-    private function domainSetup(): object
-    {
-        $server_name = $_SERVER['SERVER_NAME'];
-        $protocol = strtolower(explode('/', $_SERVER['SERVER_PROTOCOL'])[0]);
-        $domain = self::getDomainIp() === '127.0.0.1' ? "$protocol://$server_name" : $server_name;
-        return (object)[
-            'server_name' => $server_name,
-            'protocol' => $protocol,
-            'app_domain' => $domain,
-        ];
-    }
-
-    /**
-     * use method to get domain ip
-     * @return string
-     */
-    public static function getDomainIp(): string
-    {
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif ($ip == '::1') {
-            $ip = gethostbyname(getHostName());
-        }
-        return $ip;
     }
 
     /**

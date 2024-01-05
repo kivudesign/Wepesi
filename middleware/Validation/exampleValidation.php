@@ -2,6 +2,7 @@
 
 namespace Wepesi\Middleware\Validation;
 
+use Wepesi\Core\Application;
 use Wepesi\Core\MiddleWare;
 
 class exampleValidation extends MiddleWare
@@ -10,8 +11,8 @@ class exampleValidation extends MiddleWare
     {
         $rules = [
             "token" => $this->schema->string("token")
-                ->min(1)
-                ->max(2)
+                ->min(5)
+                ->max(30)
                 ->required(),
             "lang" => $this->schema->string("lang")
                 ->min(1)
@@ -21,8 +22,7 @@ class exampleValidation extends MiddleWare
 
         $this->validate->check($_POST, $rules);
         if (!$this->validate->passed()) {
-            dumper($this->validate->errors());
-            exit();
+            Application::dumper($this->validate->errors());
         }
     }
 }
