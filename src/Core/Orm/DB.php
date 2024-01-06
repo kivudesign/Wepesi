@@ -1,8 +1,14 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
 
 namespace Wepesi\Core\Orm;
 
-use This;
+use Closure;
+use Exception;
+use PDO;
+use PDOException;
 use Wepesi\Core\Config;
 use Wepesi\Core\Orm\Traits\QueryExecuter;
 
@@ -36,9 +42,9 @@ class DB extends DBConfig
      */
     private int $lastID;
     /**
-     * @var \PDO
+     * @var PDO
      */
-    private \PDO $pdoObject;
+    private PDO $pdoObject;
     /**
      * @var int
      */
@@ -56,17 +62,17 @@ class DB extends DBConfig
     {
         try {
             if (!Config::get('mysql/usable')) {
-                throw new \Exception('you should authorized user database on config file.');
+                throw new Exception('you should authorized user database on config file.');
             }
             $this->initialisation();
-            $config = self::getConfig();
+            $config = $this->getDBConfig();
             $this->db_name = $config->db;
-            $this->pdoObject = new \PDO('mysql:host=' . $config->host . ';port=' . $config->port . ';dbname=' . $this->db_name . ';charset=utf8mb4', $config->username, $config->password);
-            $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
-            $this->pdoObject->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
-            $this->pdoObject->setAttribute(\PDO::MYSQL_ATTR_FOUND_ROWS, true);
-            $this->pdoObject->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        } catch (\PDOException $ex) {
+            $this->pdoObject = new PDO('mysql:host=' . $config->host . ';port=' . $config->port . ';dbname=' . $this->db_name . ';charset=utf8mb4', $config->username, $config->password);
+            $this->pdoObject->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
+            $this->pdoObject->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+            $this->pdoObject->setAttribute(PDO::MYSQL_ATTR_FOUND_ROWS, true);
+            $this->pdoObject->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $ex) {
             die($ex->getMessage());
         }
     }
@@ -74,7 +80,7 @@ class DB extends DBConfig
     /**
      * @string :$table =>this is the name of the table where to get information
      * this method allow to do a select field from  a $table with all the conditions defined ;
-     * @throws \Exception
+     * @throws Exception
      */
     public function get(string $table_name): ?DBSelect
     {
@@ -84,12 +90,12 @@ class DB extends DBConfig
     /**
      * @string : $table=> this is the name of the table where to get information
      * @string : @action=> this is the type of action tu do while want to do a request
-     * @throws \Exception
+     * @throws Exception
      */
     private function select_option(string $table_name, string $action = null): DBSelect
     {
         if (strlen($table_name) < 1) {
-            throw new \Exception('table name should be a string');
+            throw new Exception('table name should be a string');
         }
         $this->queryResult = new DBSelect($this->pdoObject, $table_name, $action);
         return $this->queryResult;
@@ -132,7 +138,7 @@ class DB extends DBConfig
     /**
      * @param string $table :  this is the name of the table where to get information
      * @return DBDelete
-     * @throws \Exception
+     * @throws Exception
      * this method will help delete row data information
      */
     public function delete(string $table): DBDelete
@@ -144,7 +150,7 @@ class DB extends DBConfig
     /**
      * @param string $table : this is the name of the table where to get information
      * @return DBUpdate
-     * @throws \Exception
+     * @throws Exception
      * this methode will help update row information of a selected tables
      */
     public function update(string $table): DBUpdate
@@ -183,7 +189,7 @@ class DB extends DBConfig
     /**
      * @string :$table =>this is the name of the table where to get information
      * this method allow to do a count the number of field on a $table with all the possible condition
-     * @throws \Exception
+     * @throws Exception
      */
     public function count(string $table_name): DBSelect
     {
@@ -192,16 +198,16 @@ class DB extends DBConfig
 
     /**
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function transaction(\Closure $callable)
+    public function transaction(Closure $callable)
     {
         try {
             $this->convertToInnoDB();
             $this->pdoObject->beginTransaction();
             $callable($this);
             $this->pdoObject->commit();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             if ($this->pdoObject->inTransaction()) {
                 $this->pdoObject->rollBack();
             }
@@ -210,7 +216,7 @@ class DB extends DBConfig
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function convertToInnoDB()
     {
@@ -228,7 +234,7 @@ class DB extends DBConfig
     /**
      * @param string $engine : default "MyISAM"
      * @return array
-     * @throws \Exception
+     * @throws Exception
      */
 
     protected function get_db_engine_table(string $engine = 'MyISAM'): array
@@ -237,7 +243,7 @@ class DB extends DBConfig
             $params = [$this->db_name, $engine];
             $sql = 'SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = ? AND `ENGINE` = ?';
             return self::query($sql, $params)->result();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             throw $ex;
         }
     }

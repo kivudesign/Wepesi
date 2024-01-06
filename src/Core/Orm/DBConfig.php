@@ -1,4 +1,7 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
 
 namespace Wepesi\Core\Orm;
 
@@ -11,24 +14,28 @@ class DBConfig
     /**
      * @var array
      */
-    private static array $config = [];
-
-    public function __construct()
+    protected array $dbConfig = [];
+    /*
+     * Get Default configuration
+     * @return array
+     */
+    private function defaultConfig (): array
     {
-        self::$config['host'] = $_ENV['DB_HOST'];
-        self::$config['port'] = $_ENV['DB_PORT'];
-        self::$config['db'] = $_ENV['DB_NAME'];
-        self::$config['password'] = $_ENV['DB_USER'];
-        self::$config['username'] = $_ENV['DB_PASSWORD'];
+        return  [
+            'host' => $_ENV['DB_HOST'],
+            'port' => $_ENV['DB_PORT'],
+            'db' => $_ENV['DB_NAME'],
+            'password' => $_ENV['DB_USER'],
+            'username' => $_ENV['DB_PASSWORD']
+        ];
     }
-
     /**
      * Get database connection information's
      * @return object
      */
-    protected static function getConfig(): object
+    protected function getDBConfig(): object
     {
-        return (object)self::$config;
+        return (object) (count($this->dbConfig)>0 ? $this->dbConfig : $this->defaultConfig());
     }
 
     /**
@@ -38,7 +45,7 @@ class DBConfig
      */
     public function host(string $host_name): DBConfig
     {
-        self::$config['host'] = $host_name;
+        $this->dbConfig['host'] = $host_name;
         return $this;
     }
 
@@ -49,7 +56,7 @@ class DBConfig
      */
     public function password(string $password): DBConfig
     {
-        self::$config['password'] = $password;
+        $this->dbConfig['password'] = $password;
         return $this;
     }
 
@@ -60,7 +67,7 @@ class DBConfig
      */
     public function username(string $username): DBConfig
     {
-        self::$config['username'] = $username;
+        $this->dbConfig['username'] = $username;
         return $this;
     }
 
@@ -71,7 +78,7 @@ class DBConfig
      */
     public function port(string $port): DBConfig
     {
-        self::$config['port'] = $port;
+        $this->dbConfig['port'] = $port;
         return $this;
     }
 
@@ -82,7 +89,7 @@ class DBConfig
      */
     public function db(string $db_name): DBConfig
     {
-        self::$config['db'] = $db_name;
+        $this->dbConfig['db'] = $db_name;
         return $this;
     }
 
