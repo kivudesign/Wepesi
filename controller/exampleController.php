@@ -11,32 +11,24 @@
 namespace Wepesi\Controller;
 
 
-use Wepesi\Core\Application;
+use Wepesi\Core\Controller;
 use Wepesi\Core\Http\Input;
 use Wepesi\Core\Http\Redirect;
 use Wepesi\Core\Session;
-use Wepesi\Models\Message;
-use Wepesi\Models\Roles;
-use Wepesi\Models\Users;
 
-class exampleController
+class exampleController extends Controller
 {
+    public function __construct()
+    {
+        parent::__construct();
+    }
 
     /**
      * @return void
      */
     function home()
     {
-        $users = (new Users())
-            ->include((new Message()))
-            ->include((new Roles()))->findAll();
-        if (isset($users['exception'])){
-            Application::dumper($users['exception']);
-        }else{
-            Application::dumper($users[0]);
-
-        }
-//        Redirect::to("/");
+        $this->view->display('home');
     }
 
     /**
