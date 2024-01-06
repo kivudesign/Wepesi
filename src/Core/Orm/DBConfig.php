@@ -3,7 +3,8 @@
 namespace Wepesi\Core\Orm;
 
 /**
- *
+ * Provide DataBase connection connection configurations.
+ * By default set up from `.env`.
  */
 class DBConfig
 {
@@ -12,7 +13,17 @@ class DBConfig
      */
     private static array $config = [];
 
+    public function __construct()
+    {
+        self::$config['host'] = $_ENV['DB_HOST'];
+        self::$config['port'] = $_ENV['DB_PORT'];
+        self::$config['db'] = $_ENV['DB_NAME'];
+        self::$config['password'] = $_ENV['DB_USER'];
+        self::$config['username'] = $_ENV['DB_PASSWORD'];
+    }
+
     /**
+     * Get database connection information's
      * @return object
      */
     protected static function getConfig(): object
@@ -21,6 +32,7 @@ class DBConfig
     }
 
     /**
+     * Set database host name
      * @param string $host_name
      * @return $this
      */
@@ -31,6 +43,7 @@ class DBConfig
     }
 
     /**
+     * Set database connection user  password
      * @param string $password
      * @return $this
      */
@@ -41,6 +54,7 @@ class DBConfig
     }
 
     /**
+     * Set database connection username
      * @param string $username
      * @return $this
      */
@@ -51,6 +65,7 @@ class DBConfig
     }
 
     /**
+     * set database connection default 3306
      * @param string $port
      * @return $this
      */
@@ -61,6 +76,7 @@ class DBConfig
     }
 
     /**
+     * Set database name to be selected
      * @param string $db_name
      * @return $this
      */
