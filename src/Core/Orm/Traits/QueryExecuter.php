@@ -8,18 +8,21 @@
 
 namespace Wepesi\Core\Orm\Traits;
 
+use PDO;
+use PDOException;
+
 /**
  *
  */
 trait QueryExecuter
 {
     /**
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @param string $sql
      * @param array $params
      * @return array
      */
-    protected function executeQuery(\PDO $pdo, string $sql, array $params = [], int $last_id = -1): array
+    protected function executeQuery(PDO $pdo, string $sql, array $params = [], int $last_id = -1): array
     {
         try {
             $data_result = [
@@ -29,8 +32,8 @@ trait QueryExecuter
                 'error' => "",
             ];
             $sql_string = explode(' ', strtolower($sql));
-            if ($sql_string[0] == 'select' && isset($this->include_object) && count($this->include_object) > 0) {
-                $pdo->setAttribute(\PDO::ATTR_FETCH_TABLE_NAMES, true);
+            if ($sql_string[0] == 'select' && !$this->isCount) {
+                $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
             }
 
             $query = $pdo->prepare($sql);
@@ -48,12 +51,23 @@ trait QueryExecuter
 
                 switch ($sql_string[0]) {
                     case 'select' :
-                        if (isset($this->include_object) && count($this->include_object) > 0) {
-                            $data_result['result'] = $query->fetchAll(\PDO::FETCH_GROUP);
+                        if ($this->isCount) {
+                            $count_result = $query->fetchAll(PDO::FETCH_OBJ);
+                            if (isset($count_result[0]->{'.count'})) {
+                                array_map(function ($item) {
+                                    if ($item->{'.count'}) {
+                                        $item->count = $item->{'.count'};
+                                        unset($item->{'.count'});
+                                    }
+                                    return $item;
+                                }, $count_result);
+                            }
+                            $data_result['result'] = $count_result;
+                            $data_result['count'] = $count_result[0]->count;
                         } else {
-                            $data_result['result'] = $query->fetchAll(\PDO::FETCH_OBJ);
+                            $data_result['result'] = $query->fetchAll(PDO::FETCH_GROUP);
+                            $data_result['count'] = $query->columnCount();
                         }
-                        $data_result['count'] = $query->columnCount();
                         break;
                     case 'insert' :
                         $last_id = (int)$pdo->lastInsertId();
@@ -72,7 +86,7 @@ trait QueryExecuter
                 }
             }
             return $data_result;
-        } catch (\PDOException $ex) {
+        } catch (PDOException $ex) {
             $data_result['error'] = $ex->getmessage();
             return $data_result;
         }

@@ -38,6 +38,7 @@ abstract class DbProvider implements DbContract
      * @var array
      */
     protected array $include_object;
+    protected bool $isCount = false;
     use QueryExecuter;
 
     /**

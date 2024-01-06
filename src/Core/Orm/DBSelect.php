@@ -207,7 +207,16 @@ class DBSelect extends DbProvider
     public function result(): array
     {
         $this->build();
-        return (!isset($this->result['exception']) && count($this->include_object) > 0 && count($this->result) > 0) ? $this->formatData($this->result) : $this->result;
+        $operation_result = $this->result;
+        if (!isset($this->result['exception']) ) {
+            if ($this->isCount) {
+                $this->isCount = false;
+            } else if (count($this->result) > 0) {
+                $operation_result = $this->formatData($operation_result);
+            }
+        }
+        $this->include_object = [];
+        return $operation_result;
     }
 
     /**
@@ -227,6 +236,7 @@ class DBSelect extends DbProvider
      */
     private function count_all(): void
     {
+        $this->isCount = true;
         $WHERE = $this->where['field'] ?? '';
         $params = $this->where['value'] ?? [];
         $sql = "SELECT COUNT(*) as count FROM {$this->table} " . $WHERE;
@@ -293,7 +303,7 @@ class DBSelect extends DbProvider
                         break;
                 }
             }
-            return $this->buildStructure($result, $parent_entity[0], $children_entity, $other_entity);
+            return $this->buildStructure($result, $parent_entity[0] ?? $this->table , $children_entity, $other_entity);
 
         } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
