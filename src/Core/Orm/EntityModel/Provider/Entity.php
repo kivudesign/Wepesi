@@ -93,7 +93,7 @@ abstract class Entity implements EntityInterface
      */
     private function getTableName(): string
     {
-        return trim($this->getName()) !== '' ? trim($this->getName()) : $this->getClassDefinition($this)->table;
+        return trim($this->getName()) !== '' ? trim($this->getName()) : $this->extractEntityDefinition($this)->table;
     }
 
     /**
@@ -152,7 +152,7 @@ abstract class Entity implements EntityInterface
     public function include(EntityInterface $entityName, bool $inner = false): Entity
     {
         try {
-            $entity_table_object = $this->getClassDefinition($entityName, true);
+            $entity_table_object = $this->getEntityRelation($entityName);
             if (is_array($entity_table_object) && isset($entity_table_object['exception'])) {
                 throw new \Exception($entity_table_object['exception']);
             }

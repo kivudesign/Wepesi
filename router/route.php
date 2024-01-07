@@ -9,7 +9,7 @@ $router = $app->router();
 $router->get('/', function () {
     (new View)->display('/home');
 });
-$router->get('/home', '\Wepesi\Controller\exampleController#home');
+$router->get('/home', [\Wepesi\Controller\exampleController::class,'home']);
 //
 $router->post('/changelang', [exampleController::class, 'changeLang'])
     ->middleware([exampleValidation::class, 'changeLang']);
