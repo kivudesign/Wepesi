@@ -17,12 +17,15 @@ use PDOException;
 trait QueryExecuter
 {
     /**
-     * @param PDO $pdo
-     * @param string $sql
-     * @param array $params
+     * Execute sql request pass by the user
+     * @param PDO $pdo pdo object
+     * @param string $sql query string
+     * @param array $params for prepare request provide params value
+     * @param int $last_id in case of loop request provide id of the previous request
+     * @param bool $isQuery define if we use the query method directly
      * @return array
      */
-    protected function executeQuery(PDO $pdo, string $sql, array $params = [], int $last_id = -1): array
+    protected function executeQuery(PDO $pdo, string $sql, array $params = [], int $last_id = -1,bool $isQuery = false): array
     {
         try {
             $data_result = [
@@ -32,7 +35,8 @@ trait QueryExecuter
                 'error' => "",
             ];
             $sql_string = explode(' ', strtolower($sql));
-            if ($sql_string[0] == 'select' && !$this->isCount) {
+            $fetchObject = $isQuery || (isset($this->isCount) && $this->isCount);
+            if ($sql_string[0] == 'select' && $fetchObject) {
                 $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
             }
 
@@ -51,19 +55,23 @@ trait QueryExecuter
 
                 switch ($sql_string[0]) {
                     case 'select' :
-                        if ($this->isCount) {
-                            $count_result = $query->fetchAll(PDO::FETCH_OBJ);
-                            if (isset($count_result[0]->{'.count'})) {
-                                array_map(function ($item) {
-                                    if ($item->{'.count'}) {
-                                        $item->count = $item->{'.count'};
-                                        unset($item->{'.count'});
-                                    }
-                                    return $item;
-                                }, $count_result);
+                        if ($fetchObject) {
+                            $fetch_result = $query->fetchAll(PDO::FETCH_OBJ);
+                            if ( $isQuery ){
+                                $data_result['count'] = $query->columnCount();
+                            } else {
+                                if (isset($fetch_result[0]->{'.count'})) {
+                                    array_map(function ($item) {
+                                        if ($item->{'.count'}) {
+                                            $item->count = $item->{'.count'};
+                                            unset($item->{'.count'});
+                                        }
+                                        return $item;
+                                    }, $fetch_result);
+                                }
+                                $data_result['count'] = $fetch_result[0]->count;
                             }
-                            $data_result['result'] = $count_result;
-                            $data_result['count'] = $count_result[0]->count;
+                            $data_result['result'] = $fetch_result;
                         } else {
                             $data_result['result'] = $query->fetchAll(PDO::FETCH_GROUP);
                             $data_result['count'] = $query->columnCount();
