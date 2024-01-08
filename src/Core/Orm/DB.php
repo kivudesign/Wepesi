@@ -32,15 +32,15 @@ class DB extends DBConfig
     /**
      * @var string|null
      */
-    private string $_error;
+    private string $request_error;
     /**
      * @var array
      */
-    private array $_results;
+    private array $request_results;
     /**
      * @var int
      */
-    private int $lastID;
+    private int $request_lastID;
     /**
      * @var PDO
      */
@@ -48,7 +48,7 @@ class DB extends DBConfig
     /**
      * @var int
      */
-    private int $_count;
+    private int $result_count;
     /**
      * @var false|mixed
      */
@@ -106,11 +106,10 @@ class DB extends DBConfig
      */
     private function initialisation()
     {
-        $this->_results = [];
-        $this->_count = 0;
-        $this->lastID = 0;
-        $this->_error = '';
-//        self::$_instance = null;
+        $this->request_results = [];
+        $this->result_count = 0;
+        $this->request_lastID = -1;
+        $this->request_error = '';
     }
 
     /**
@@ -165,8 +164,8 @@ class DB extends DBConfig
      */
     public function lastId(): int
     {
-        if ($this->queryResult && method_exists($this->queryResult, 'lastId')) $this->lastID = $this->queryResult->lastId();
-        return $this->lastID;
+        if ($this->queryResult && method_exists($this->queryResult, 'lastId')) $this->request_lastID = $this->queryResult->lastId();
+        return $this->request_lastID;
     }
 
     /**
@@ -174,8 +173,8 @@ class DB extends DBConfig
      */
     public function error(): string
     {
-        if (isset($this->queryResult)) $this->_error = $this->queryResult->error();
-        return $this->_error;
+        if (isset($this->queryResult)) $this->request_error = $this->queryResult->error();
+        return $this->request_error;
     }
 
     /**
@@ -183,7 +182,7 @@ class DB extends DBConfig
      */
     public function rowCount(): int
     {
-        return $this->queryResult->count() ?? $this->_count;
+        return $this->queryResult ? $this->queryResult->count() : $this->result_count;
     }
 
     /**
@@ -253,7 +252,7 @@ class DB extends DBConfig
      */
     public function result(): array
     {
-        return $this->_results;
+        return $this->request_results;
     }
 
     /**
@@ -263,11 +262,11 @@ class DB extends DBConfig
      */
     public function query(string $sql, array $params = []): DB
     {
-        $q = $this->executeQuery($this->pdoObject, $sql, $params);
-        $this->_results = $q['result'];
-        $this->_count = $q['count'];
-        $this->_error = $q['error'];
-        $this->lastID = $q['lastID'];
+        $q = $this->executeQuery($this->pdoObject, $sql, $params, -1, true);
+        $this->request_results = $q['result'];
+        $this->result_count = $q['count'];
+        $this->request_error = $q['error'];
+        $this->request_lastID = $q['lastID'];
         return $this;
     }
 
