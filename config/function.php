@@ -3,6 +3,9 @@
  * Copyright (c) 2023. Wepesi.
  */
 
+use Wepesi\Core\I18n;
+use Wepesi\Core\Session;
+
 /**
  * @param string $dir
  * @return array
@@ -103,4 +106,17 @@ function appDirSeparator(string $path): string
     $new_path = $path;
     if ((substr(PHP_OS, 0, 3)) === 'WIN') $new_path = str_replace("\\", '/', $path);
     return $new_path;
+}
+
+/**
+ * translate your text
+ * @param string $message
+ * @param string|array    $value
+ * @return string
+ */
+function tra(string $message, $value = null): string
+{
+    $i18n = new i18n(Session::get('lang'));
+    $translate_value = !is_array($value) ? [$value] : $value;
+    return $i18n->translate($message, $translate_value);
 }
