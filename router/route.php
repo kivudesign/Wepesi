@@ -1,6 +1,6 @@
 <?php
 
-use Wepesi\Controller\exampleController;
+use Wepesi\Controller\indexController;
 use Wepesi\Core\View;
 use Wepesi\Middleware\Validation\exampleValidation;
 
@@ -9,9 +9,9 @@ $router = $app->router();
 $router->get('/', function () {
     (new View)->display('/home');
 });
-$router->get('/home', [\Wepesi\Controller\exampleController::class,'home']);
+$router->get('/home', [\Wepesi\Controller\indexController::class,'home']);
 //
-$router->post('/changelang', [exampleController::class, 'changeLang'])
+$router->post('/changelang', [indexController::class, 'changeLang'])
     ->middleware([exampleValidation::class, 'changeLang']);
 
 include \Wepesi\Core\Application::$ROOT_DIR . './router/api.php';
