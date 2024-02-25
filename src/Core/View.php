@@ -5,6 +5,7 @@ namespace Wepesi\Core;
 use \DOMDocument;
 use \DOMXPath;
 use Exception;
+use Wepesi\Core\Http\Response;
 use function libxml_clear_errors;
 use function libxml_use_internal_errors;
 
