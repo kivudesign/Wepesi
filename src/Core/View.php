@@ -2,9 +2,11 @@
 
 namespace Wepesi\Core;
 
-use DOMDocument;
+use \DOMDocument;
+use \DOMXPath;
 use Exception;
-use Wepesi\Core\Http\Response;
+use function libxml_clear_errors;
+use function libxml_use_internal_errors;
 
 /**
  *
@@ -14,19 +16,19 @@ class View
     /**
      *
      */
-    const ERROR_VIEW = '';
+    private bool $reset = false;
     /**
      * @var array
      */
-    private static array $jslink;
+    private static array $jslink = [];
     /**
      * @var array
      */
-    private static array $stylelink;
+    private static array $stylelink = [];
     /**
      * @var string|null
      */
-    private static ?string $metadata;
+    private static ?string $metadata = null;
     /**
      * @var array
      */
@@ -34,27 +36,22 @@ class View
     /**
      * @var string
      */
-    private string $folder_name;
+    private string $folder_name = '';
+    /**
+     * @var string
+     */
+    private string $layout = '';
     /**
      * @var string|null
      */
-    private ?string $layout;
-    /**
-     * @var string|null
-     */
-    private ?string $layout_content;
+    private string $layout_content = '';
 
     /**
-     * @param string|null $folder_name
+     *
      */
-    function __construct(?string $folder_name = '/')
+    public function __construct()
     {
-        $this->folder_name = Escape::addSlaches($folder_name);
-        $this->layout = Application::$LAYOUT;
-        self::$jslink = [];
-        self::$stylelink = [];
-        self::$metadata = null;
-        $this->layout_content = Application::$LAYOUT_CONTENT;
+        $this->folder_name = Application::getViewFolder();
     }
 
     /**
@@ -95,7 +92,7 @@ class View
      * @param string $folder_name
      * @return void
      */
-    public function setFolder(string $folder_name = '/')
+    public function setFolder(string $folder_name)
     {
         $this->folder_name = Escape::addSlaches($folder_name);
     }
@@ -109,7 +106,10 @@ class View
     {
         $view_file = $this->buildFilePath($view);
         $render = $this->renderView($view_file);
-        if ($this->layout) {
+        if ($this->layout === '' && !$this->reset) {
+            $this->layout = Application::getLayout();
+        }
+        if ($this->layout !== '') {
             $render = $this->renderLayout($render);
         }
         $this->buildAssetHead($render);
@@ -164,6 +164,9 @@ class View
      */
     protected function renderLayout(string $view)
     {
+        if ($this->layout_content === '') {
+            $this->layout_content = Application::getLayoutContent();
+        }
         if ($this->layout && is_file($this->layout)) {
             $layout_data = $this->data;
             // set the layout content variable to be used on the layout template
@@ -189,39 +192,43 @@ class View
      */
     private function buildAssetHead($html)
     {
-        if (!$html) {
-            throw new Exception('Unable to render empty data');
+        try {
+            if (!$html) {
+                throw new Exception('Unable to render empty data');
+            }
+            $dom = new DOMDocument();
+            libxml_use_internal_errors(true);
+            $dom->loadHTML(
+                mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
+                LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
+            );
+            //            $errors = libxml_get_errors();
+            libxml_clear_errors();
+            $xpath = new DOMXPath($dom);
+            $head = $xpath->query('//head/title');
+            $template = $dom->createDocumentFragment();
+            // add style link to the head tag of the page
+            foreach (self::$stylelink as $k => $v) {
+                $template->appendXML('<link rel="stylesheet" type="text/css" href="' . $v . '">');
+                $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+            }
+            // add script link to the head of the page
+            foreach (self::$jslink as $k => $v) {
+                $link = $v['link'];
+                $src = '<script src="' . $link . '" type="text/javascript"></script>';
+                if (!$v['external']) $src = Bundles::insertJS($link, false, true);
+                $template->appendXML($src);
+                $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+            }
+            // add metadata to the head of the page
+            if (self::$metadata) {
+                $template->appendXML(self::$metadata);
+                $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+            }
+            print(html_entity_decode($dom->saveHTML()));
+        } catch (Exception $ex) {
+            print_r(['exception' => $ex->getMessage()]);
         }
-        $dom = new DOMDocument();
-        libxml_use_internal_errors(true);
-        $dom->loadHTML(
-            mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
-            LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
-        );
-        //            $errors = libxml_get_errors();
-        libxml_clear_errors();
-        $xpath = new \DOMXPath($dom);
-        $head = $xpath->query('//head/title');
-        $template = $dom->createDocumentFragment();
-        // add style link to the head tag of the page
-        foreach (self::$stylelink as $k => $v) {
-            $template->appendXML('<link rel="stylesheet" type="text/css" href="' . $v . '">');
-            $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
-        }
-        // add script link to the head of the page
-        foreach (self::$jslink as $k => $v) {
-            $link = $v['link'];
-            $src = '<script src="' . $link . '" type="text/javascript"></script>';
-            if (!$v['external']) $src = Bundles::insertJS($link, false, true);
-            $template->appendXML($src);
-            $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
-        }
-        // add metadata to the head of the page
-        if (self::$metadata) {
-            $template->appendXML(self::$metadata);
-            $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
-        }
-        print(html_entity_decode($dom->saveHTML()));
     }
 
     /**
@@ -236,13 +243,15 @@ class View
     }
 
     /**
+     * you should provide the extension of your file,
+     * in another case the file will be missing
      * @param string $template
      *
      * @return void
      */
     public function setLayout(string $template)
     {
-        $this->layout = Application::$ROOT_DIR . '/views/' . $template;
+        $this->layout = Application::$ROOT_DIR . '/views' . $template;
     }
 
     /**
@@ -252,5 +261,14 @@ class View
     public function setLayoutContent(string $layout_name)
     {
         $this->layout_content = $layout_name;
+    }
+
+    /**
+     * @return void
+     */
+    public function resetConfig(){
+        $this->reset = true;
+        $this->layout = '';
+        $this->folder_name = '';
     }
 }
