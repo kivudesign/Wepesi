@@ -103,7 +103,7 @@ class View
      *
      * @param string $view
      */
-    function display(string $view)
+    public function display(string $view)
     {
         $view_file = $this->buildFilePath($view);
         $render = $this->renderView($view_file);
@@ -154,8 +154,7 @@ class View
      */
     private function renderNotDefined(string $file_name)
     {
-        Response::setStatusCode(404);
-        print_r(['exception' => "$file_name file path is not correct."]);
+        Response::send(['exception' => "$file_name file path is not correct."],404);
     }
 
     /**
@@ -208,12 +207,12 @@ class View
             $xpath = new DOMXPath($dom);
             $head = $xpath->query('//head/title');
             $template = $dom->createDocumentFragment();
-            // add style link to the head tag of the page
+            // add a style link to the head tag of the page
             foreach (self::$stylelink as $k => $v) {
                 $template->appendXML('<link rel="stylesheet" type="text/css" href="' . $v . '">');
                 $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
             }
-            // add script link to the head of the page
+            // add a script link to the head of the page
             foreach (self::$jslink as $k => $v) {
                 $link = $v['link'];
                 $src = '<script src="' . $link . '" type="text/javascript"></script>';
@@ -224,7 +223,9 @@ class View
             // add metadata to the head of the page
             if (self::$metadata) {
                 $template->appendXML(self::$metadata);
-                $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+                if ($head[0]) {
+                    $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+                }
             }
             print(html_entity_decode($dom->saveHTML()));
         } catch (Exception $ex) {
