@@ -120,3 +120,12 @@ function tra(string $message, $value = null): string
     $translate_value = !is_array($value) ? [$value] : $value;
     return $i18n->translate($message, $translate_value);
 }
+
+/**
+ * get a formatted application route path
+ * @param string $path
+ * @return string
+ */
+function route_path(string $path): string{
+    return WEB_ROOT . ltrim($path,'/');
+}

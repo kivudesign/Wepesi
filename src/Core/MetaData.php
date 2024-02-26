@@ -267,7 +267,7 @@ class MetaData
     /**
      * @return string|null
      */
-    protected function getType(bool $twitter = fals): string
+    protected function getType(bool $twitter = false): string
     {
         $type = $twitter ? "<meta property=\"og:type\" content=\"$this->_type\" />" : "<meta name=\"twitter:type\" content=\"article\" />";
         return $this->_type ? $type : '';

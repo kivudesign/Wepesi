@@ -14,6 +14,5 @@ $GLOBALS['config'] = [
     'lang' => 'fr',
     'vendor' => true,
     'autoload' => ['src', 'controller', 'middleware', 'models', 'helpers'],
-    'helper' => WEB_ROOT,
-    'preferences' => WEB_ROOT . 'helper'
+    'helpers' => WEB_ROOT,
 ];
