@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023. Wepesi.
+ * Copyright (c) 2023-2024. Wepesi Dev Framework
  */
 
 if (! function_exists('getSubDirectories')) {
@@ -132,15 +132,19 @@ if (! function_exists('dumper')) {
     }
 }
 
-if (! function_exists('url')) {
+if (! function_exists('tra')) {
     /**
-     * get a formatted application url route path
-     * @param string $path
+     * translate your text
+     * @param string $text
+     * @param array|string|null $value
      * @return string
      */
-    function url(string $path): string
+    function tra(string $text, array|string $value = null): string
     {
-        return WEB_ROOT . ltrim($path, '/');
+        $default_language = $_ENV['LANG'] ?? \Wepesi\Core\Session::get('lang');
+        $i18n = new \Wepesi\Core\i18n($default_language);
+        $translate_value = !is_array($value) ? [$value] : $value;
+        return $i18n->translate($text, $translate_value);
     }
 }
 
@@ -151,7 +155,7 @@ if (! function_exists('fileExists')) {
      * @param bool $create if the file does not exist, create it
      * @return bool
      */
-    function fileExists(string $filename, bool $create): bool
+    function fileExists(string $filename, bool $create= false): bool
     {
         if (! is_file($filename) && !file_exists($filename)){
             if ($create) {
@@ -165,12 +169,12 @@ if (! function_exists('fileExists')) {
 
 if (! function_exists('directoryExists')) {
     /**
-     * Validate if the file exists, and in some case create it
-     * @param string $filename Path to the file or directory. to check files on network shares.
-     * @param bool $create if the file does not exist, create it
+     * Validate if the directory exists, and in some case create it
+     * @param string $filename directory Path to check files on network shares.
+     * @param bool $create if the directory does not exist, create it
      * @return bool
      */
-    function directoryExists(string $filename, bool $create): bool
+    function directoryExists(string $filename, bool $create = false): bool
     {
         if (! file_exists($filename)){
             if ($create) {
