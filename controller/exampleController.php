@@ -36,7 +36,7 @@ class exampleController extends Controller
      */
     function changeLang(): void
     {
-        Session::put('lang', Input::get("lang"));
+        Session::put('lang', Input::post("lang"));
         Redirect::to("/");
     }
 }
