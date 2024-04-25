@@ -245,6 +245,14 @@ class View
     }
 
     /**
+     * List all data assigned before being displayed
+     * @return array
+     */
+    public function getAssignData(): array
+    {
+        return $this->data;
+    }
+    /**
      * you should provide the extension of your file,
      * in another case the file will be missing
      * @param string $template
