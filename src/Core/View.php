@@ -184,6 +184,14 @@ class View
     }
 
     /**
+     * render html string text
+     * @param string $html
+     * @return void
+     */
+    public function renderHTML(string $html) {
+        print($html);
+    }
+    /**
      * @param $html
      *
      * @return void
