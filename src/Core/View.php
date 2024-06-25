@@ -184,6 +184,14 @@ class View
     }
 
     /**
+     * render html string text
+     * @param string $html
+     * @return void
+     */
+    public function renderHTML(string $html) {
+        print($html);
+    }
+    /**
      * @param $html
      *
      * @return void
@@ -244,6 +252,14 @@ class View
         $this->data[$variable] = $value;
     }
 
+    /**
+     * List all data assigned before being displayed
+     * @return array
+     */
+    public function getAssignData(): array
+    {
+        return $this->data;
+    }
     /**
      * you should provide the extension of your file,
      * in another case the file will be missing

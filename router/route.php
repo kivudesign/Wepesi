@@ -9,6 +9,10 @@ $router = $app->router();
 $router->get('/', function () {
     (new View)->display('/home');
 });
+
+$router->get('/helloworld', function () {
+    (new View)->renderHTML('<h1>Hello World!</h1>');
+});
 $router->get('/home', [\Wepesi\Controller\indexController::class,'home']);
 //
 $router->post('/changelang', [indexController::class, 'changeLang'])
