@@ -36,7 +36,7 @@ class indexController extends Controller
      */
     function changeLang()
     {
-        Session::put('lang', Input::get("lang"));
+        Session::put('lang', Input::post("lang"));
         Redirect::to("/");
     }
 }

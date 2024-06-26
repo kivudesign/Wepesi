@@ -12,7 +12,7 @@ class exampleValidation extends MiddleWare
         $rules = [
             "token" => $this->schema->string("token")
                 ->min(5)
-                ->max(30)
+                ->max(50)
                 ->required(),
             "lang" => $this->schema->string("lang")
                 ->min(1)
@@ -21,8 +21,9 @@ class exampleValidation extends MiddleWare
         ];
 
         $this->validate->check($_POST, $rules);
-        if (!$this->validate->passed()) {
-            Application::dumper($this->validate->errors());
+        if (! $this->validate->passed()) {
+            print_r($this->validate->errors());
+            exit();
         }
     }
 }
