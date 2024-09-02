@@ -10,13 +10,13 @@ namespace Wepesi\Core\Validation\Providers\Contracts;
 /**
  *
  */
-interface ValidatorContracts extends Contracts
+interface ValidateRulesContracts extends ValidationContracts
 {
     /**
      * @param array $value
      * @return mixed
      */
-    public function addError(array $value);
+    public function addError(MessageBuilderContracts $value);
 
     /**
      * @return array

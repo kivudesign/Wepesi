@@ -7,12 +7,13 @@
 namespace Wepesi\Core\Validation\Providers;
 
 use Wepesi\Core\Validation\MessageErrorBuilder;
-use Wepesi\Core\Validation\Providers\Contracts\Contracts;
+use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
+use Wepesi\Core\Validation\Providers\Contracts\ValidateRulesContracts;
 
 /**
  * Validator provider model
  */
-abstract class ValidatorProvider implements Contracts
+abstract class ValidatorProvider implements ValidateRulesContracts
 {
     /**
      * @var array
@@ -31,9 +32,9 @@ abstract class ValidatorProvider implements Contracts
      */
     protected $field_value;
     /**
-     * @var MessageErrorBuilder
+     * @var MessageBuilderContracts
      */
-    protected MessageErrorBuilder $messageItem;
+    protected MessageBuilderContracts $messageItem;
 
     /**
      *
@@ -98,10 +99,10 @@ abstract class ValidatorProvider implements Contracts
 
     /**
      *
-     * @param array $value
+     * @param MessageBuilderContracts $item
      * @return void
      */
-    public function addError(MessageErrorBuilder $item): void
+    public function addError(MessageBuilderContracts $item): void
     {
         $this->errors[] = $item->generate();
     }

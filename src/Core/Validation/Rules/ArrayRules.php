@@ -4,14 +4,14 @@
  *  @author Boss Ibrahim Mussa
  */
 
-namespace Wepesi\Core\Validation\Schema;
+namespace Wepesi\Core\Validation\Rules;
 
-use Wepesi\Core\Validation\Providers\SChemaProvider;
+use Wepesi\Core\Validation\Providers\RulesProvider;
 
 /**
- * Arraye schema validation
+ * Array schema validation
  */
-final class ArraySchema extends SChemaProvider
+final class ArrayRules extends RulesProvider
 {
     /**
      *
@@ -23,9 +23,9 @@ final class ArraySchema extends SChemaProvider
 
     /**
      * @param array $elements data array to be validated
-     * @return $this
+     * @return $this|false
      */
-    public function structure(array $elements): ?ArraySchema
+    public function structure(array $elements): ?ArrayRules
     {
         if (isset($this->schema[$this->class_name]['string']) || isset($this->schema[$this->class_name]['number'])) {
             return false;
@@ -36,9 +36,9 @@ final class ArraySchema extends SChemaProvider
 
     /**
      *  check if array content are(is) string
-     * @return $this|null
+     * @return $this|false
      */
-    public function string(): ?ArraySchema
+    public function string(): ?ArrayRules
     {
         if (isset($this->schema[$this->class_name]['number'])) {
             return false;
@@ -48,9 +48,9 @@ final class ArraySchema extends SChemaProvider
     }
 
     /**
-     * @return $this|null
+     * @return $this|false
      */
-    public function number(): ?ArraySchema
+    public function number(): ?ArrayRules
     {
         if (isset($this->schema[$this->class_name]['string'])) {
             return false;

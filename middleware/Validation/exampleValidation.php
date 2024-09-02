@@ -9,20 +9,20 @@ class exampleValidation extends MiddleWare
 {
     function changeLang()
     {
-        $rules = [
-            "token" => $this->schema->string("token")
+        $schema = [
+            "token" => $this->rule->string("token")
                 ->min(5)
                 ->max(30)
                 ->required(),
-            "lang" => $this->schema->string("lang")
+            "lang" => $this->rule->string("lang")
                 ->min(1)
                 ->max(2)
                 ->required()
         ];
 
-        $this->validate->check($_POST, $rules);
+        $this->validate->check($_POST, $schema);
         if (!$this->validate->passed()) {
-            Application::dumper($this->validate->errors());
+            print_r($this->validate->errors());
         }
     }
 }

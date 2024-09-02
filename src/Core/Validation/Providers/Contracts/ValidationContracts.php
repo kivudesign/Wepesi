@@ -10,7 +10,7 @@ namespace Wepesi\Core\Validation\Providers\Contracts;
 /**
  *
  */
-interface Contracts
+interface ValidationContracts
 {
     /**
      * @param int $rule

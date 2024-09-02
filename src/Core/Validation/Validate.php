@@ -7,6 +7,7 @@
 namespace Wepesi\Core\Validation;
 
 use Wepesi\Core\Application;
+use Wepesi\Core\Exceptions\ValidationException;
 use Wepesi\Core\Http\Response;
 use Wepesi\Core\Resolver\Option;
 use Wepesi\Core\Resolver\OptionsResolver;
@@ -25,7 +26,7 @@ final class Validate
      * @var bool
      */
     private bool $passed;
-    private MessageErrorBuilder $message;
+    private MessageBuilderContracts $message;
 
     /**
      *
@@ -67,13 +68,13 @@ final class Validate
                 foreach ($schema as $item => $rules) {
                     if (!is_array($rules) && is_object($rules)) {
                         if (!$rules->generate()) {
-                            throw new \Exception("Schema rule is not a valid schema! method generate does not exist");
+                            throw new ValidationException("This rule is not a valid! method generate does not exist");
                         }
                         $rules = $rules->generate();
                     }
                     $class_namespace = array_keys($rules)[0];
                     if ($class_namespace == "any") continue;
-                    $validator_class = str_replace("Schema", "Validator", $class_namespace);
+                    $validator_class = str_replace("Rules", "Validator", $class_namespace);
                     $reflexion = new \ReflectionClass($validator_class);
 
                     $instance = $reflexion->newInstance($item, $resource);
@@ -92,7 +93,7 @@ final class Validate
                     $this->passed = true;
                 }
             }
-        } catch (\Exception $ex) {
+        } catch (ValidationException $ex) {
             Application::dumper($ex);
             Response::setStatusCode(500);
             exit;

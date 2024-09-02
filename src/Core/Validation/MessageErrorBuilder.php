@@ -30,7 +30,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      * @param string $value
      * @return $this
      */
-    public function type(string $value): MessageErrorBuilder
+    public function type(string $value): MessageBuilderContracts
     {
         $this->items['type'] = $value;
         return $this;
@@ -40,7 +40,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      * @param string $value
      * @return $this
      */
-    public function message(string $value): MessageErrorBuilder
+    public function message(string $value): MessageBuilderContracts
     {
         $this->items['message'] = $value;
         return $this;
@@ -50,7 +50,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      * @param string $value
      * @return $this
      */
-    public function label(string $value): MessageErrorBuilder
+    public function label(string $value): MessageBuilderContracts
     {
         $this->items['label'] = $value;
         return $this;
@@ -60,7 +60,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      * @param string $value
      * @return $this
      */
-    public function limit(string $value): MessageErrorBuilder
+    public function limit(string $value): MessageBuilderContracts
     {
         $this->items['limit'] = $value;
         return $this;

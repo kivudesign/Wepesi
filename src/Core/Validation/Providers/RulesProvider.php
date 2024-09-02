@@ -6,12 +6,12 @@
 
 namespace Wepesi\Core\Validation\Providers;
 
-use Wepesi\Core\Validation\Providers\Contracts\SchemaContracts;
+use Wepesi\Core\Validation\Providers\Contracts\RulesValidationContracts;
 
 /**
  *
  */
-abstract class SChemaProvider implements SchemaContracts
+abstract class RulesProvider implements RulesValidationContracts
 {
     /**
      * @var array
@@ -33,9 +33,9 @@ abstract class SChemaProvider implements SchemaContracts
 
     /**
      * @param int $rule
-     * @return SChemaProvider
+     * @return RulesProvider
      */
-    public function min(int $rule): SChemaProvider
+    public function min(int $rule): RulesProvider
     {
         $this->schema[$this->class_name]["min"] = $rule;
         return $this;
@@ -45,7 +45,7 @@ abstract class SChemaProvider implements SchemaContracts
      * @param $rule
      * @return $this
      */
-    public function max($rule): SChemaProvider
+    public function max($rule): RulesProvider
     {
         $this->schema[$this->class_name]["max"] = $rule;
         return $this;
@@ -54,7 +54,7 @@ abstract class SChemaProvider implements SchemaContracts
     /**
      * @return $this
      */
-    public function required(): SChemaProvider
+    public function required(): RulesProvider
     {
         $this->schema[$this->class_name]["required"] = true;
         return $this;
