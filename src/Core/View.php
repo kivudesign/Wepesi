@@ -282,9 +282,10 @@ class View
     }
 
     /**
+     * Reset view to default configuration
      * @return void
      */
-    public function resetConfig(){
+    public function flush(){
         $this->reset = true;
         $this->layout = '';
         $this->folder_name = '';
