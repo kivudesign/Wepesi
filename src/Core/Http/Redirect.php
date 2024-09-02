@@ -30,7 +30,7 @@ class Redirect
                 exit();
             } else {
                 $webroot = substr(WEB_ROOT, 0, -1);
-                $link = Escape::addSlaches($location);
+                $link = Escape::addSlashes($location);
                 $location = $link == '' ? WEB_ROOT : $webroot . $link;
                 header('Location:' . $location);
                 exit();
