@@ -48,14 +48,6 @@ class View
     private string $layout_content = '';
 
     /**
-     *
-     */
-    public function __construct()
-    {
-        $this->folder_name = Application::getViewFolder();
-    }
-
-    /**
      * @param string $js_link
      *
      * @return void
@@ -95,7 +87,7 @@ class View
      */
     public function setFolder(string $folder_name)
     {
-        $this->folder_name = Escape::addSlaches($folder_name);
+        $this->folder_name = Escape::addSlashes($folder_name);
     }
 
     /**
@@ -123,8 +115,9 @@ class View
      */
     private function buildFilePath(string $file_name): ?string
     {
+        $folder = strlen(trim($this->folder_name)) > 0 ? $this->folder_name : Application::getViewFolder();;
         $view_file = Escape::checkFileExtension($file_name);
-        $file_source = $this->folder_name . Escape::addSlaches($view_file);
+        $file_source = $folder . Escape::addSlashes($view_file);
         return Application::$ROOT_DIR . '/views' . $file_source;
     }
 
