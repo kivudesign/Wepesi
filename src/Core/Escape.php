@@ -48,14 +48,9 @@ class Escape
      * @param string $link
      * @return string
      */
-    public static function addSlaches(string $link): string
+    public static function addSlashes(string $link): string
     {
-        $sub_string = substr($link, 0, 1);
-        $new_link = substr($link, 1);
-        if ($sub_string == '/') {
-            $link = substr(self::addSlaches($new_link), 1);
-        }
-        return $link == '' ? $link : '/' . $link;
+        return "/" . trim($link,"/");
     }
 
     /**

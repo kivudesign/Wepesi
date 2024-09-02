@@ -6,7 +6,7 @@
 namespace Wepesi\Core\Routing;
 
 use Wepesi\Core\Application;
-use Wepesi\Core\CoreException\RoutingException;
+use Wepesi\Core\Exceptions\RoutingException;
 use Wepesi\Core\Http\Response;
 use Wepesi\Core\Routing\Traits\routeBuilder;
 
