@@ -4,15 +4,15 @@
  *  @author Boss Ibrahim Mussa
  */
 
-namespace Wepesi\Core\Validation\Schema;
+namespace Wepesi\Core\Validation\Rules;
 
-use Wepesi\Core\Validation\Providers\SChemaProvider;
+use Wepesi\Core\Validation\Providers\RulesProvider;
 
 /**
  * Schema datetime
  *
  */
-final class DateSchema extends SChemaProvider
+final class DateRules extends RulesProvider
 {
     /**
      *
@@ -24,9 +24,9 @@ final class DateSchema extends SChemaProvider
 
     /**
      * @param string $rule
-     * @return DateSchema
+     * @return DateRules
      */
-    public function min($rule): DateSchema
+    public function min($rule): DateRules
     {
         $this->schema[$this->class_name]['min'] = $rule;
         return $this;
@@ -36,7 +36,7 @@ final class DateSchema extends SChemaProvider
      * @param string $rule
      * @return $this
      */
-    public function max($rule): DateSchema
+    public function max($rule): DateRules
     {
         $this->schema[$this->class_name]['max'] = $rule;
         return $this;
@@ -45,7 +45,7 @@ final class DateSchema extends SChemaProvider
     /**
      * @return $this
      */
-    function now(): DateSchema
+    function now(): DateRules
     {
         $this->schema[$this->class_name]["now"] = true;
         return $this;
@@ -54,7 +54,7 @@ final class DateSchema extends SChemaProvider
     /**
      * @return $this
      */
-    function today(): DateSchema
+    function today(): DateRules
     {
         $this->schema[$this->class_name]["today"] = true;
         return $this;

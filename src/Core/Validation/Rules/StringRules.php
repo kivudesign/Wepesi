@@ -4,21 +4,21 @@
  *  @author Boss Ibrahim Mussa
  */
 
-namespace Wepesi\Core\Validation\Schema;
+namespace Wepesi\Core\Validation\Rules;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-use Wepesi\Core\Validation\Providers\SChemaProvider;
+use Wepesi\Core\Validation\Providers\RulesProvider;
 
 
 /**
- * String valiation schema
+ * String validation rules
  * validate string value
  */
-final class StringSchema extends SChemaProvider
+final class StringRules extends RulesProvider
 {
 
     /**
@@ -32,7 +32,7 @@ final class StringSchema extends SChemaProvider
     /**
      * @return $this
      */
-    public function email(): StringSchema
+    public function email(): StringRules
     {
         $this->schema[$this->class_name]["email"] = true;
         return $this;
@@ -42,7 +42,7 @@ final class StringSchema extends SChemaProvider
      *
      * @return $this
      */
-    public function url(): StringSchema
+    public function url(): StringRules
     {
         $this->schema[$this->class_name]["url"] = true;
         return $this;
@@ -53,7 +53,7 @@ final class StringSchema extends SChemaProvider
      * @param string $key_to_match
      * @return $this
      */
-    public function match(string $key_to_match): StringSchema
+    public function match(string $key_to_match): StringRules
     {
         $this->schema[$this->class_name]["match"] = $key_to_match;
         return $this;
@@ -63,7 +63,7 @@ final class StringSchema extends SChemaProvider
      * @param bool $ipv6
      * @return $this
      */
-    public function addressIp(bool $ipv6 = false): StringSchema
+    public function addressIp(bool $ipv6 = false): StringRules
     {
         if ($ipv6) {
             $this->schema[$this->class_name]['addressIpv6'] = true;
@@ -77,7 +77,7 @@ final class StringSchema extends SChemaProvider
      * @param string $table_name
      * @return $this
      */
-    public function unique(string $table_name): StringSchema
+    public function unique(string $table_name): StringRules
     {
         $this->schema[$this->class_name]['unique'] = $table_name;
         return $this;

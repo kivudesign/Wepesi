@@ -10,7 +10,7 @@ namespace Wepesi\Core\Validation\Providers\Contracts;
 /**
  *
  */
-interface SchemaContracts extends Contracts
+interface RulesValidationContracts extends ValidationContracts
 {
 
     /**

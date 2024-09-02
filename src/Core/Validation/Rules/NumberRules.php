@@ -4,15 +4,15 @@
  *  @author Boss Ibrahim Mussa
  */
 
-namespace Wepesi\Core\Validation\Schema;
+namespace Wepesi\Core\Validation\Rules;
 
-use Wepesi\Core\Validation\Providers\SChemaProvider;
+use Wepesi\Core\Validation\Providers\RulesProvider;
 
 /**
  * Schema number validation
- * validate any format number
+ * validates any format number
  */
-final class NumberSchema extends SChemaProvider
+final class NumberRules extends RulesProvider
 {
 
     /**
@@ -26,7 +26,7 @@ final class NumberSchema extends SChemaProvider
     /**
      * @return $this
      */
-    function positive(): NumberSchema
+    function positive(): NumberRules
     {
         $this->schema[$this->class_name]['positive'] = true;
         return $this;

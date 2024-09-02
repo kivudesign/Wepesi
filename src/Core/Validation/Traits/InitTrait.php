@@ -6,28 +6,30 @@
 
 namespace Wepesi\Core\Validation\Traits;
 
+use Wepesi\Core\Exceptions\ValidationException;
 
-use Exception;
-
+/**
+ *
+ */
 trait InitTrait
 {
     /**
      * @param $source
      * @param $schema
-     * @throws Exception
+     * @throws ValidationException
      */
     private function initInstance($source, $schema)
     {
         if (!is_array($source) || count($source) == 0) {
-            throw new Exception('Your Source Data should not be en empty array');
+            throw new ValidationException('Your Source Data should not be en empty array', 500);
         }
         if (!is_array($schema) || count($schema) == 0) {
-            throw new Exception('Your Schema should not be en empty array');
+            throw new ValidationException('Your Schema should not be en empty array', 500);
         }
         $fields = array_keys($schema);
 
         if (!isset($source[$fields[0]])) {
-            throw new Exception('field not defined');
+            throw new ValidationException('field not defined',500);
         }
 
         $this->extract_data($schema);

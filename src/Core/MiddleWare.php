@@ -5,17 +5,17 @@
 
 namespace Wepesi\Core;
 
-use Wepesi\Core\Validation\Schema;
+use Wepesi\Core\Validation\Rules;
 use Wepesi\Core\Validation\Validate;
 
 abstract class MiddleWare
 {
     protected Validate $validate;
-    protected Schema $schema;
+    protected Rules $rule;
 
     public function __construct()
     {
-        $this->schema = new Schema();
+        $this->rule = new Rules();
         $this->validate = new Validate();
     }
 }
