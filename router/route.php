@@ -1,7 +1,7 @@
 <?php
 
 use Wepesi\Controller\indexController;
-use Wepesi\Core\View;
+use Wepesi\Core\Views\View;
 use Wepesi\Middleware\Validation\exampleValidation;
 
 $router = $app->router();
