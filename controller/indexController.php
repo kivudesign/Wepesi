@@ -24,17 +24,17 @@ class indexController extends Controller
     }
 
     /**
-     * @return void
+     *
      */
-    function home()
+    function home(): void
     {
         $this->view->display('home');
     }
 
     /**
-     * @return void
+     *
      */
-    function changeLang()
+    function changeLang(): void
     {
         Session::put('lang', Input::get("lang"));
         Redirect::to("/");
