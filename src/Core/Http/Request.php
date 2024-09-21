@@ -5,7 +5,9 @@
 
 namespace Wepesi\Core\Http;
 
-class Request
+use Wepesi\Core\Http\Providers\Contracts\RequestContract;
+
+class Request implements RequestContract
 {
     public string $uri;
     public string $method;
