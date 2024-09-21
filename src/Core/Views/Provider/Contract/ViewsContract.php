@@ -5,8 +5,6 @@
 
 namespace Wepesi\Core\Views\Provider\Contract;
 
-use Wepesi\Core\MetaData;
-
 /**
  *
  */
