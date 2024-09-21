@@ -132,13 +132,16 @@ if (! function_exists('dumper')) {
     }
 }
 
-/**
- * get a formatted application route path
- * @param string $path
- * @return string
- */
-function route_path(string $path): string{
-    return WEB_ROOT . ltrim($path,'/');
+if (! function_exists('url')) {
+    /**
+     * get a formatted application url route path
+     * @param string $path
+     * @return string
+     */
+    function url(string $path): string
+    {
+        return WEB_ROOT . ltrim($path, '/');
+    }
 }
 
 if (! function_exists('fileExists')) {

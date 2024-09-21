@@ -16,7 +16,7 @@
 <body>
 <div class="w3-margin w3-center">
     <h1 class="w3-text-green ">404</h1>
-    <p><a href="<?= route_path('/') ?>">Go home</a></p>
+    <p><a href="<?= url('/') ?>">Go home</a></p>
 </div>
 </body>
 </html>
