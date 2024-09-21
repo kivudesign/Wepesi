@@ -5,10 +5,12 @@
 
 namespace Wepesi\Core\Http;
 
+use Wepesi\Core\Http\Providers\Contracts\ResponseContract;
+
 /**
  *
  */
-class Response
+class Response implements ResponseContract
 {
     /**
      * @param $data
