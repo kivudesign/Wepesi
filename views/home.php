@@ -44,7 +44,7 @@ $language = new I18n($lang);
     <?php } ?>
     <div class="w3-card w3-border w3-round-large " style="width: 300px;overflow: hidden">
         <h3 class="w3-text-blue-gray w3-padding"><?= $language->translate("Change the language") ?></h3>
-        <form action="<?= route_path("/changelang") ?>" method="post">
+        <form action="<?= url("/changelang") ?>" method="post">
             <input type="hidden" name="token" value="<?= Token::generate() ?>">
             <select name="lang" id="lang_id" class="w3-select w3-center">
                 <option value="" class="w3-center w3-large" disabled selected><?= $lang ?></option>

@@ -11,7 +11,7 @@
 namespace Wepesi\Controller;
 
 
-use Wepesi\Core\Controller;
+use Wepesi\Core\Http\Controller;
 use Wepesi\Core\Http\Input;
 use Wepesi\Core\Http\Redirect;
 use Wepesi\Core\Session;

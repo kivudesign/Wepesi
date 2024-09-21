@@ -2,8 +2,7 @@
 
 namespace Wepesi\Middleware\Validation;
 
-use Wepesi\Core\Application;
-use Wepesi\Core\MiddleWare;
+use Wepesi\Core\Http\MiddleWare;
 
 class exampleValidation extends MiddleWare
 {
