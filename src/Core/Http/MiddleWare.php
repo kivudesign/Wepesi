@@ -3,7 +3,7 @@
  * Copyright (c) 2023. wepesi dev framework
  */
 
-namespace Wepesi\Core;
+namespace Wepesi\Core\Http;
 
 use Wepesi\Core\Validation\Rules;
 use Wepesi\Core\Validation\Validate;
