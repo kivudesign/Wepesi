@@ -17,16 +17,13 @@ use function libxml_clear_errors;
 use function libxml_use_internal_errors;
 
 /**
- *
+ * @template T
+ * @template-extends ViewBuilderProvider<T>
  */
 class View extends ViewBuilderProvider
 {
     /**
-     *
-     */
-    private bool $reset = false;
-    /**
-     * @var array
+     * @var T[]
      */
     private static array $js_link_path = [];
     /**
@@ -38,35 +35,25 @@ class View extends ViewBuilderProvider
      */
     private static ?string $metadata = null;
 
-    /**
-     * @var string
-     */
-    private string $layout = '';
-    /**
-     * @var string|null
-     */
-    private string $layout_content = '';
 
     /**
      * Provide js link to be set up on the page header
-     * @param string $path file path
-     * @param bool $external set to true for an external link
+     * @param class-string<T> $path_file
      * @return void
      */
-    public static function setJsToHead(string $path, bool $external = false)
+    public static function setJsToHead(string $path_file): void
     {
-        self::$js_link_path[] = $path;
+        self::$js_link_path[] = $path_file;
     }
 
     /**
-     * Provide css link path to set up stylesheet on the page header
+     * Provide CSS link path to set up stylesheet on the page header
      *
      * @param string $path
-     *
      * @return void
-     * add
+     *
      */
-    public static function setStyleToHead(string $path)
+    public static function setStyleToHead(string $path): void
     {
         self::$style_link_path[] = $path;
     }
@@ -76,7 +63,7 @@ class View extends ViewBuilderProvider
      *
      * @return void
      */
-    public static function setMetaData(MetaData $metadata)
+    public static function setMetaData(MetaData $metadata): void
     {
         self::$metadata = $metadata->build();
     }
@@ -84,9 +71,9 @@ class View extends ViewBuilderProvider
     /**
      * call this method to display file content
      *
-     * @param string $view
+     * @param class-string<T> $view
      */
-    public function display(string $view)
+    public function display(string $view): void
     {
         $view_file = $this->buildFilePath($view);
         $render = $this->renderView($view_file);
@@ -100,7 +87,7 @@ class View extends ViewBuilderProvider
     }
 
     /**
-     * @param string $file_name
+     * @param class-string<T> $file_name
      *
      * @return string|null
      */
@@ -113,8 +100,8 @@ class View extends ViewBuilderProvider
     }
 
     /**
-     * Render content from prided file
-     * @param string $view
+     * Render content from a provided file
+     * @param class-string<T> $view
      *
      * @return false|string|void
      */
@@ -133,17 +120,17 @@ class View extends ViewBuilderProvider
     }
 
     /**
-     * @param string $file_name
+     * @param class-string<T> $file_name
      *
      * @return void
      */
-    private function renderNotDefined(string $file_name)
+    private function renderNotDefined(string $file_name): void
     {
         Response::send(['exception' => "$file_name file path is not correct."],404);
     }
 
     /**
-     * @param string $view
+     * @param class-string<T> $view
      *
      * @return false|string|void
      */
@@ -168,26 +155,19 @@ class View extends ViewBuilderProvider
         }
     }
 
+
     /**
-     * render html string text
-     * @param string $html
-     * @return void
-     */
-    public function renderHTML(string $html) {
-        print($html);
-    }
-    /**
+     *   this module will help to create a dom document to add
+     *   asset js | CSS on the head of your file.
      * @param $html
      *
      * @return void
-     *  this module will help to create a dom document to add
-     *  asset js | css on the head of your file.
-     */
-    private function buildAssetHead($html)
+    */
+    private function buildAssetHead($html): void
     {
         try {
             if (!$html) {
-                throw new Exception('Unable to render empty data');
+                throw new Exception('Unable to render empty file');
             }
             $dom = new DOMDocument();
             libxml_use_internal_errors(true);
@@ -195,20 +175,20 @@ class View extends ViewBuilderProvider
                 mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
                 LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
             );
-            //            $errors = libxml_get_errors();
+//            $errors = libxml_get_errors();
             libxml_clear_errors();
             $xpath = new DOMXPath($dom);
             $head = $xpath->query('//head/title');
             $template = $dom->createDocumentFragment();
             // add a style link to the head tag of the page
-            foreach (self::$style_link_path as $k => $v) {
-                $template->appendXML('<link rel="stylesheet" type="text/css" href="' . $v . '">');
+            foreach (self::$style_link_path as $key => $value) {
+                $src = $this->generateStyleLink($value);
+                $template->appendXML($src);
                 $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
             }
             // add a script link to the head of the page
-            foreach (self::$js_link_path as $k => $v) {
-                $link = $v['link'];
-                $src = '<script src="' . $link . '" type="text/javascript"></script>';
+            foreach (self::$js_link_path as $key => $value) {
+                $src = $this->generateStyleLink($value['link']);
                 $template->appendXML($src);
                 $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
             }
@@ -225,37 +205,21 @@ class View extends ViewBuilderProvider
         }
     }
 
-
-
-
     /**
-     * you should provide the extension of your file,
-     * in another case the file will be missing
-     * @param string $template
-     *
-     * @return void
+     * @param class-string<T> $path
+     * @return T
      */
-    public function setLayout(string $template)
+    private function generateJSLink(string $path): string
     {
-        $this->layout = Application::$ROOT_DIR . '/views' . $template;
+        return '<script src="' . $path . '" type="text/javascript"></script>';
     }
 
     /**
-     * @param string $layout_name
-     * @return void
+     * @param class-string<T> $path
+     * @return T
      */
-    public function setLayoutContent(string $layout_name)
-    {
-        $this->layout_content = $layout_name;
+    private function generateStyleLink(string $path): string {
+        return '<link rel="stylesheet" type="text/css" href="' . $path . '">';
     }
 
-    /**
-     * Reset view to default configuration
-     * @return void
-     */
-    public function flush(){
-        $this->reset = true;
-        $this->layout = '';
-        $this->folder_name = '';
-    }
 }
