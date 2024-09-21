@@ -5,13 +5,14 @@
 
 namespace Wepesi\Core\Http;
 
+use Wepesi\Core\Http\Providers\BaseControllerMiddleware;
 use Wepesi\Core\Views\Provider\Contract\ViewsContract;
 use Wepesi\Core\Views\View;
 
 /**
  *
  */
-abstract class Controller
+abstract class Controller extends BaseControllerMiddleware
 {
     /**
      * @var View
