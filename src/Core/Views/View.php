@@ -144,7 +144,7 @@ class View extends ViewBuilderProvider
     protected function renderLayout(string $view)
     {
         if ($this->layout_content === '') {
-            $this->layout_content = Application::getLayoutContent();
+            $this->layout_content = Application::getLayoutContentParam();
         }
         if ($this->layout && is_file($this->layout)) {
             $layout_data = $this->data;
@@ -228,5 +228,4 @@ class View extends ViewBuilderProvider
     private function generateStyleLink(string $path): string {
         return '<link rel="stylesheet" type="text/css" href="' . $path . '">';
     }
-
 }

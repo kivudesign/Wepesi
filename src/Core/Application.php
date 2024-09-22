@@ -36,7 +36,7 @@ class Application
     /**
      * @var string
      */
-    public static string $LAYOUT_CONTENT;
+    public static string $layout_content_param;
     /**
      * @var string
      */
@@ -63,7 +63,7 @@ class Application
         self::$APP_DOMAIN = serverDomain()->domain;
         self::$APP_LANG = self::$config_params['lang'] ?? 'fr';
         self::$APP_TEMPLATE = self::$config_params['app_template'] ?? '';
-        self::$LAYOUT_CONTENT = 'layout_content';
+        self::$layout_content_param = 'layout_content';
         self::$layout = '';
         self::$VIEW_FOLDER = '';
         $this->router = new Router();
@@ -105,9 +105,9 @@ class Application
      * @param string $layout_name
      * @return void
      */
-    public static function setLayoutContent(string $layout_name)
+    public static function setLayoutcontentparam(string $layout_name)
     {
-        self::$LAYOUT_CONTENT = $layout_name;
+        self::$layout_content_param = $layout_name;
     }
 
     /**
@@ -130,9 +130,9 @@ class Application
     /**
      * @return string
      */
-    public static function getLayoutContent()
+    public static function getLayoutContentParam(): string
     {
-        return self::$LAYOUT_CONTENT ;
+        return self::$layout_content_param ;
     }
 
     /**
