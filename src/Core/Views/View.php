@@ -96,7 +96,7 @@ class View extends ViewBuilderProvider
         $folder = strlen(trim($this->folder_name)) > 0 ? $this->folder_name : Application::getViewFolder();;
         $view_file = Escape::checkFileExtension($file_name);
         $file_source = $folder . Escape::addSlashes($view_file);
-        return Application::$ROOT_DIR . '/views' . $file_source;
+        return Application::getRootDir() . '/views' . $file_source;
     }
 
     /**

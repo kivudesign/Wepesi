@@ -87,7 +87,7 @@ abstract class ViewBuilderProvider implements ViewsContract
      */
     public function setLayout(string $template): void
     {
-        $this->layout = Application::$ROOT_DIR . '/views' . $template;
+        $this->layout = Application::getRootDir() . '/views' . $template;
     }
 
     /**

@@ -10,12 +10,12 @@ class Bundles
     private static array $header_link = [];
 
     /**
-     * manage to add a javascript script on the page
+     * manage to add a JavaScript script on the page
      * @param string $file
      */
     static function insertCSS(string $file)
     {
-        if (is_file(Application::$ROOT_DIR . '/assets/css/' . $file . '.css')) {
+        if (is_file(Application::getRootDir() . '/assets/css/' . $file . '.css')) {
             $href = WEB_ROOT . "assets/css/$file.css";
             $link = <<<EOF
                     <link rel="stylesheet" type="text/css" href="$href"/>

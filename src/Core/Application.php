@@ -13,38 +13,39 @@ use Wepesi\Core\Routing\Router;
 class Application
 {
     /**
+     * @var array
+     */
+    private static array $config_params = [];
+    /**
      * define application global configuration
      * @var string
      */
-    public static string $ROOT_DIR;
+    private static string $root_dir;
     /**
      * @var string
      */
     public static string $APP_DOMAIN;
     /**
-     * @var string|mixed
+     * @var string
      */
     public static string $APP_LANG;
     /**
-     * @var string|mixed|null
+     * @var string
      */
-    public static ?string $APP_TEMPLATE;
+    public static string $APP_TEMPLATE;
     /**
      * @var string
      */
-    private static string $LAYOUT_CONTENT = 'layout_content';
+    public static string $LAYOUT_CONTENT;
+    /**
+     * @var string|null
+     */
+    public static string $LAYOUT;
+
     /**
      * @var string
      */
-    private static string $LAYOUT = '';
-    /**
-     * @var string
-     */
-    private static string $VIEW_FOLDER = '';
-    /**
-     * @var array
-     */
-    private static array $params = [];
+    private static string $VIEW_FOLDER;
     /**
      * @var Router
      */
@@ -52,59 +53,33 @@ class Application
 
     /**
      * Application constructor.
-     * @param string $path path root directory of the application
+     * @param string $path root path directory of the application
      * @param AppConfiguration $config
      */
     public function __construct(string $path, AppConfiguration $config)
     {
-
-        self::$ROOT_DIR = str_replace("\\", '/', $path);
-        self::$APP_DOMAIN = $this->domainSetup()->app_domain;
-        self::$params = $config->generate();
-        self::$APP_TEMPLATE = self::$params['app_template'] ?? null;
-        self::$APP_LANG = self::$params['lang'] ?? 'fr';
-        $this->router = new Router();
+        self::$config_params = $config->generate();
+        self::$root_dir = str_replace("\\", '/', $path);
+        self::$APP_DOMAIN = serverDomain()->domain;
+        self::$APP_LANG = self::$config_params['lang'] ?? 'fr';
+        self::$APP_TEMPLATE = self::$config_params['app_template'] ?? '';
         self::$LAYOUT_CONTENT = 'layout_content';
+        self::$LAYOUT = '';
+        self::$VIEW_FOLDER = '';
+        $this->router = new Router();
     }
 
-    /**
-     * @return object
-     */
-    private function domainSetup(): object
+    public static function getRootDir(): string
     {
-        $server_name = $_SERVER['SERVER_NAME'];
-        $protocol = strtolower(explode('/', $_SERVER['SERVER_PROTOCOL'])[0]);
-        $domain = self::getDomainIp() === '127.0.0.1' ? "$protocol://$server_name" : $server_name;
-        return (object)[
-            'server_name' => $server_name,
-            'protocol' => $protocol,
-            'app_domain' => $domain,
-        ];
+        return self::$root_dir;
     }
 
-    /**
-     * use method to get domain ip
-     * @return string
-     */
-    public static function getDomainIp() : string
-    {
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        if (! empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif ($ip == '::1') {
-            $ip = gethostbyname(getHostName());
-        }
-        return $ip;
-    }
     /**
      * simple builtin dumper for dump data
      * @param $ex
-     * @return void
+     *
      */
-    public static function dumper($ex)
+    public static function dumper($ex): void
     {
         print('<pre>');
         var_dump($ex);
@@ -119,7 +94,7 @@ class Application
      */
     public static function setLayout(string $layout)
     {
-        self::$LAYOUT = self::$ROOT_DIR.'/views/'.$layout;
+        self::$LAYOUT = self::getRootDir().'/views/'.$layout;
     }
     public static function setLayoutContent(string $layout_name)
     {
