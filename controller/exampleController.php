@@ -16,7 +16,7 @@ use Wepesi\Core\Http\Input;
 use Wepesi\Core\Http\Redirect;
 use Wepesi\Core\Session;
 
-class indexController extends Controller
+class exampleController extends Controller
 {
     public function __construct()
     {

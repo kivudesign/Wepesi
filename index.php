@@ -17,7 +17,7 @@ require_once $ROOT_DIR . '/config/init.php';
 (new DotEnv($ROOT_DIR . '/.env'))->load();
 
 /**
- *  Generate and index file for redirection (protection) while APP_DEV in production
+ *  Generate and index a file for redirection (protection) while APP_DEV in production
  */
 if (getenv('APP_ENV') === 'prod') {
     autoIndexFolder(['assets']);
@@ -30,7 +30,5 @@ $configuration = $appConfiguration
     ->timezone(getenv('TIME_ZONE'));
 
 $app = new Application($ROOT_DIR, $configuration);
-
-require_once $app::getRootDir() . '/router/route.php';
 
 $app->run();
