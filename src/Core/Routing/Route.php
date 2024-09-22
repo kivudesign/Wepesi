@@ -5,12 +5,14 @@
 
 namespace Wepesi\Core\Routing;
 
+use Wepesi\Core\Routing\Providers\Contracts\RouteContract;
 use Wepesi\Core\Routing\Traits\routeBuilder;
 
 /**
- *
+ * @template T
+ * @template-implements RouteContract<T>
  */
-class Route
+class Route implements RouteContract
 {
     /**
      * @var string
@@ -42,10 +44,11 @@ class Route
     use routeBuilder;
 
     /**
-     * @param $path
+     * @param class-string<T> $path
      * @param $callable
+     * @param array $middleware
      */
-    function __construct($path, $callable, array $middleware = [])
+    function __construct(string $path, $callable, array $middleware = [])
     {
         $this->pattern = trim($path, '/');
         $this->callable = $callable;
@@ -56,10 +59,10 @@ class Route
     }
 
     /**
-     * @param $url
+     * @param class-string<T> $url
      * @return bool
      */
-    function match($url): bool
+    function match(string $url): bool
     {
         $url = trim($url, '/');
         $path = preg_replace_callback('#:([\w]+)#', [$this, 'paramMatch'], $this->pattern);
@@ -80,16 +83,16 @@ class Route
     /**
      *
      */
-    public function call()
+    public function call(): void
     {
         try {
             if (count($this->middleware_tab) > 0) {
                 foreach ($this->middleware_tab as $middleware) {
-                    $this->routeFunctionCall($middleware, true, $this->_matches);
+                    $this->executeMiddleware($middleware, $this->_matches);
                 }
                 $this->middleware_tab = [];
             }
-            $this->routeFunctionCall($this->callable, false, $this->_matches);
+            $this->executeController($this->callable, $this->_matches);
         } catch (\Exception $ex) {
             echo $ex->getMessage();
         }
@@ -126,7 +129,7 @@ class Route
      * @param $params
      * @return array|string|string[]
      */
-    public function getUrl($params)
+    public function getUrl($params): array|string
     {
         $path = $this->pattern;
         foreach ($params as $k => $v) {

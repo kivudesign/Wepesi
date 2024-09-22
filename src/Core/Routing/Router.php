@@ -5,18 +5,23 @@
 
 namespace Wepesi\Core\Routing;
 
+use Closure;
 use Wepesi\Core\Application;
+use Wepesi\Core\Escape;
 use Wepesi\Core\Exceptions\RoutingException;
 use Wepesi\Core\Http\Response;
+use Wepesi\Core\Routing\Providers\Contracts\RouteContract;
+use Wepesi\Core\Routing\Providers\Contracts\RouterContract;
 use Wepesi\Core\Routing\Traits\routeBuilder;
 
 /**
- *  Wepesi API Router provider
+ * @template T
+ * @template-implements RouterContract<T>
  */
-class  Router
+class  Router implements RouterContract
 {
     /**
-     * @var array|null
+     * @var array
      */
     protected array $baseMiddleware;
     /**
@@ -56,7 +61,7 @@ class  Router
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param $callable
      * @param null $name
      * @return Route
@@ -73,9 +78,9 @@ class  Router
      * @param string $methode
      * @return Route
      */
-    private function add(string $pattern, $callable, ?string $name, string $methode): Route
+    private function add(string $pattern, $callable, ?string $name, string $methode): RouteContract
     {
-        $pattern = $this->baseRoute . '/' . trim($pattern, '/');
+        $pattern = $this->baseRoute . Escape::addSlashes(trim($pattern, '/'));
         $pattern = $this->baseRoute ? rtrim($pattern, '/') : $pattern;
         $route = new Route($pattern, $callable, $this->baseMiddleware);
         $this->routes[$methode][] = $route;
@@ -91,7 +96,7 @@ class  Router
     }
 
     /**
-     * @param $path
+     * @param string $path
      * @param $callable
      * @param null $name
      * @return Route
@@ -118,31 +123,13 @@ class  Router
     }
 
     /**
-     * API base group routing
-     * @param string|array $base_route it can be defined as we did for group routing, but you don't need to specify api, it will be added automatically
-     * @param callable $callable
-     * @return null
-     */
-    public function api($base_route, callable $callable)
-    {
-        $api_pattern = '/api';
-        if (is_array($base_route)) {
-            $base_route['pattern'] = $api_pattern . (isset($base_route['pattern']) ? $this->trimPath($base_route['pattern']) : '');
-        } else {
-
-            $base_route = $api_pattern . $this->trimPath($base_route);
-        }
-        return $this->group($base_route, $callable);
-    }
-
-    /**
      * @param string $path
      * @return string
      */
     private function trimPath(string $path): string
     {
         $trim_path = trim($path, '/');
-        return strlen($trim_path) > 0 ? '/' . $trim_path : '';
+        return strlen($trim_path) > 0 ? Escape::addSlashes($trim_path) : '';
     }
 
     /**
@@ -151,7 +138,7 @@ class  Router
      * @param array|string $base_route can be a string or an array to defined middleware for the group routing
      * @param callable $callable a callable method can be a controller method or an anonymous callable method
      */
-    public function group($base_route, callable $callable)
+    public function group(array|string $base_route, $callable): void
     {
         $pattern = $base_route;
         if (is_array($base_route)) {
@@ -162,7 +149,12 @@ class  Router
         }
         $cur_base_route = $this->baseRoute;
         $this->baseRoute .= $pattern;
-        call_user_func($callable);
+
+        if ($callable instanceof Closure) {
+            call_user_func($callable, $this);
+        } else {
+            (new RouteFileRegistrar($this))->register($callable);
+        }
         $this->baseRoute = $cur_base_route;
     }
 
@@ -206,12 +198,12 @@ class  Router
     }
 
     /**
-     * Set the 404 handling function.
+     * Set the 404 handling functions.
      *
-     * @param object|callable|string $match_fn The function to be executed
+     * @param callable|object|string $match_fn The function to be executed
      * @param $callable
      */
-    public function set404($match_fn, $callable = null)
+    public function set404(callable|object|string $match_fn, $callable = null): void
     {
         if (!$callable) {
             $this->notFoundCallback = $match_fn;
@@ -221,7 +213,15 @@ class  Router
     }
 
     /**
-     * @return void
+     * list all routes elements
+     * @return array
+     */
+    public function getRoutes(): array
+    {
+        return $this->routes;
+    }
+    /**
+     * Execute the route request
      */
     public function run()
     {
@@ -240,7 +240,6 @@ class  Router
             }
             if (count($routesRequestMethod) === $i) {
                 $this->trigger404($this->notFoundCallback);
-                Response::setStatusCode(404);
             }
         } catch (RoutingException $ex) {
             Application::dumper($ex);
@@ -250,9 +249,9 @@ class  Router
     }
 
     /**
-     * @return void
+     * trigger 404 error while no route match
      */
-    protected function trigger404($match = null)
+    protected function trigger404($match = null): void
     {
         if ($match) {
             $this->routeFunctionCall($match);
