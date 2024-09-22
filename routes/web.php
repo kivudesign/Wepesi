@@ -1,10 +1,16 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
+global $app;
 
-use Wepesi\Controller\indexController;
+use Wepesi\Controller\exampleController;
+use Wepesi\Core\Http\Response;
 use Wepesi\Core\Views\View;
 use Wepesi\Middleware\Validation\exampleValidation;
 
 $router = $app->router();
+
 // setup get started pages index
 $router->get('/', function () {
     (new View)->display('/home');
@@ -13,9 +19,12 @@ $router->get('/', function () {
 $router->get('/helloworld', function () {
     (new View)->renderHTML('<h1>Hello World!</h1>');
 });
-$router->get('/home', [\Wepesi\Controller\indexController::class,'home']);
+
+$router->get('/home', [exampleController::class,'home']);
 //
-$router->post('/changelang', [indexController::class, 'changeLang'])
+$router->post('/changelang', [exampleController::class, 'changeLang'])
     ->middleware([exampleValidation::class, 'changeLang']);
 
-include \Wepesi\Core\Application::$ROOT_DIR . './router/api.php';
+$router->set404(function(){
+    Response::send('route not defined', 404);
+});

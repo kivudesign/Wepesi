@@ -13,38 +13,39 @@ use Wepesi\Core\Routing\Router;
 class Application
 {
     /**
+     * @var array
+     */
+    private static array $config_params = [];
+    /**
      * define application global configuration
      * @var string
      */
-    public static string $ROOT_DIR;
+    private static string $root_dir;
     /**
      * @var string
      */
     public static string $APP_DOMAIN;
     /**
-     * @var string|mixed
+     * @var string
      */
     public static string $APP_LANG;
     /**
-     * @var string|mixed|null
+     * @var string
      */
-    public static ?string $APP_TEMPLATE;
+    public static string $APP_TEMPLATE;
     /**
      * @var string
      */
-    private static string $LAYOUT_CONTENT = 'layout_content';
+    public static string $layout_content_param;
     /**
      * @var string
      */
-    private static string $LAYOUT = '';
+    private static string $layout;
+
     /**
      * @var string
      */
-    private static string $VIEW_FOLDER = '';
-    /**
-     * @var array
-     */
-    private static array $params = [];
+    private static string $VIEW_FOLDER;
     /**
      * @var Router
      */
@@ -52,59 +53,36 @@ class Application
 
     /**
      * Application constructor.
-     * @param string $path path root directory of the application
+     * @param string $path root path directory of the application
      * @param AppConfiguration $config
      */
     public function __construct(string $path, AppConfiguration $config)
     {
-
-        self::$ROOT_DIR = str_replace("\\", '/', $path);
-        self::$APP_DOMAIN = $this->domainSetup()->app_domain;
-        self::$params = $config->generate();
-        self::$APP_TEMPLATE = self::$params['app_template'] ?? null;
-        self::$APP_LANG = self::$params['lang'] ?? 'fr';
+        self::$config_params = $config->generate();
+        self::$root_dir = str_replace("\\", '/', $path);
+        self::$APP_DOMAIN = serverDomain()->domain;
+        self::$APP_LANG = self::$config_params['lang'] ?? 'fr';
+        self::$APP_TEMPLATE = self::$config_params['app_template'] ?? '';
+        self::$layout_content_param = 'layout_content';
+        self::$layout = '';
+        self::$VIEW_FOLDER = '';
         $this->router = new Router();
-        self::$LAYOUT_CONTENT = 'layout_content';
     }
 
     /**
-     * @return object
-     */
-    private function domainSetup(): object
-    {
-        $server_name = $_SERVER['SERVER_NAME'];
-        $protocol = strtolower(explode('/', $_SERVER['SERVER_PROTOCOL'])[0]);
-        $domain = self::getDomainIp() === '127.0.0.1' ? "$protocol://$server_name" : $server_name;
-        return (object)[
-            'server_name' => $server_name,
-            'protocol' => $protocol,
-            'app_domain' => $domain,
-        ];
-    }
-
-    /**
-     * use method to get domain ip
      * @return string
      */
-    public static function getDomainIp() : string
+    public static function getRootDir(): string
     {
-        $ip = $_SERVER['REMOTE_ADDR'];
-
-        if (! empty($_SERVER['HTTP_CLIENT_IP'])) {
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (! empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        } elseif ($ip == '::1') {
-            $ip = gethostbyname(getHostName());
-        }
-        return $ip;
+        return self::$root_dir;
     }
+
     /**
      * simple builtin dumper for dump data
      * @param $ex
-     * @return void
+     *
      */
-    public static function dumper($ex)
+    public static function dumper($ex): void
     {
         print('<pre>');
         var_dump($ex);
@@ -113,32 +91,53 @@ class Application
     }
 
     /**
-     * Set the layout at the top of your application to be available everywhere.
+     * Define a layout to be used by all pages in the application.
+     * can be set at the top of your application to be available everywhere.
      * @param string $layout
      * @return void
      */
     public static function setLayout(string $layout)
     {
-        self::$LAYOUT = self::$ROOT_DIR.'/views/'.$layout;
-    }
-    public static function setLayoutContent(string $layout_name)
-    {
-        self::$LAYOUT_CONTENT = $layout_name;
+        self::$layout = self::getRootDir() . '/views/' . trim($layout, '/');
     }
 
+    /**
+     * @param string $layout_name
+     * @return void
+     */
+    public static function setLayoutcontentparam(string $layout_name)
+    {
+        self::$layout_content_param = $layout_name;
+    }
+
+    /**
+     * @param string $folder_name
+     * @return void
+     */
     public static function setViewFolder(string $folder_name)
     {
         self::$VIEW_FOLDER = $folder_name;
     }
-    public static function getLayout()
+
+    /**
+     * @return string
+     */
+    public static function getLayout(): string
     {
-        return self::$LAYOUT ;
-    }
-    public static function getLayoutContent()
-    {
-        return self::$LAYOUT_CONTENT ;
+        return trim(self::$layout );
     }
 
+    /**
+     * @return string
+     */
+    public static function getLayoutContentParam(): string
+    {
+        return self::$layout_content_param ;
+    }
+
+    /**
+     * @return string
+     */
     public static function getViewFolder()
     {
         return self::$VIEW_FOLDER ;
@@ -154,9 +153,69 @@ class Application
 
     /**
      * @return void
+     * @throws \Exception
      */
-    public function run()
+    protected function routeProvider(): void
     {
+        $base_route_path = self::getRootDir() . '/routes';
+        $api_route_path = $base_route_path . '/api.php';
+        if (file_exists($api_route_path)) {
+            $this->router->group([
+                'pattern' => '/api'
+            ], function (Router $router) {
+                if (isset($_SERVER['HTTP_ORIGIN'])) {
+                    // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
+                    // you want to allow, and if so:
+                    header('Access-Control-Allow-Origin: *');
+                    header('Access-Control-Allow-Credentials: true');
+                    header('Access-Control-Max-Age: 86400');    // cache for 1 day
+                }
+                header('Access-Control-Allow-Methods: GET, POST,PUT, PATCH, HEAD, OPTIONS');
+                // Access-Control headers are received during OPTIONS requests
+                if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+                    // may also be using PUT, PATCH, HEAD etc.
+                    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+                        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
+
+                    exit(0);
+                }
+                $router->group([], $this->registerRoute('/api.php'));
+            });
+        }
+        $web_route_path = $base_route_path . '/web.php';
+        if (file_exists($web_route_path)) {
+            $this->router->group([], $this->registerRoute('/web.php'));
+        }
+        if (!file_exists($web_route_path) && !file_exists($api_route_path)) {
+            throw new \Exception('No Route file not found.');
+        }
+    }
+
+    /**
+     * route path
+     * @param string $path
+     * @return string
+     */
+    public function registerRoute(string $path): string
+    {
+        return $this->basePath('/routes' . '/' . trim($path,'/'));
+    }
+    /**
+     * @param string $path
+     * @return string
+     */
+    public function basePath(string $path): string
+    {
+        return self::$root_dir . '/' . trim($path,'/');
+    }
+
+    /**
+     * @return void
+     * @throws \Exception
+     */
+    public function run(): void
+    {
+        $this->routeProvider();
         $this->router->run();
     }
 }

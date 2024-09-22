@@ -77,15 +77,22 @@ class View extends ViewBuilderProvider
     {
         $view_file = $this->buildFilePath($view);
         $render = $this->renderView($view_file);
-        if ($this->layout === '' && !$this->reset) {
+        if (! $this->getLayout() && !$this->reset) {
             $this->layout = Application::getLayout();
         }
-        if ($this->layout !== '') {
+        if ($this->getLayout()) {
             $render = $this->renderLayout($render);
         }
         $this->buildAssetHead($render);
     }
 
+    /**
+     * @return string|null
+     */
+    public function getLayout(): ?string
+    {
+        return strlen(trim($this->layout)) > 0 ? $this->layout : null;
+    }
     /**
      * @param class-string<T> $file_name
      *
@@ -96,7 +103,7 @@ class View extends ViewBuilderProvider
         $folder = strlen(trim($this->folder_name)) > 0 ? $this->folder_name : Application::getViewFolder();;
         $view_file = Escape::checkFileExtension($file_name);
         $file_source = $folder . Escape::addSlashes($view_file);
-        return Application::$ROOT_DIR . '/views' . $file_source;
+        return Application::getRootDir() . '/views' . $file_source;
     }
 
     /**
@@ -137,7 +144,7 @@ class View extends ViewBuilderProvider
     protected function renderLayout(string $view)
     {
         if ($this->layout_content === '') {
-            $this->layout_content = Application::getLayoutContent();
+            $this->layout_content = Application::getLayoutContentParam();
         }
         if ($this->layout && is_file($this->layout)) {
             $layout_data = $this->data;
@@ -221,5 +228,4 @@ class View extends ViewBuilderProvider
     private function generateStyleLink(string $path): string {
         return '<link rel="stylesheet" type="text/css" href="' . $path . '">';
     }
-
 }
