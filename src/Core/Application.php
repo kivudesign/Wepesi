@@ -5,6 +5,7 @@
 
 namespace Wepesi\Core;
 
+use Wepesi\Core\Orm\DBConfig;
 use Wepesi\Core\Routing\Router;
 
 /**
@@ -208,13 +209,26 @@ class Application
     {
         return self::$root_dir . '/' . trim($path,'/');
     }
-
+    /**
+     * Initialise the database configuration
+     * @return void
+     */
+    private function initDB(): void
+    {
+        (new DBConfig())
+            ->host($_ENV['DB_HOST'])
+            ->port($_ENV['DB_PORT'])
+            ->db($_ENV['DB_NAME'])
+            ->username($_ENV['DB_USER'])
+            ->password($_ENV['DB_PASSWORD']);
+    }
     /**
      * @return void
      * @throws \Exception
      */
     public function run(): void
     {
+        $this->initDB();
         $this->routeProvider();
         $this->router->run();
     }
