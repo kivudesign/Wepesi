@@ -38,9 +38,9 @@ class Application
      */
     public static string $LAYOUT_CONTENT;
     /**
-     * @var string|null
+     * @var string
      */
-    public static string $LAYOUT;
+    private static string $layout;
 
     /**
      * @var string
@@ -64,11 +64,14 @@ class Application
         self::$APP_LANG = self::$config_params['lang'] ?? 'fr';
         self::$APP_TEMPLATE = self::$config_params['app_template'] ?? '';
         self::$LAYOUT_CONTENT = 'layout_content';
-        self::$LAYOUT = '';
+        self::$layout = '';
         self::$VIEW_FOLDER = '';
         $this->router = new Router();
     }
 
+    /**
+     * @return string
+     */
     public static function getRootDir(): string
     {
         return self::$root_dir;
@@ -88,32 +91,53 @@ class Application
     }
 
     /**
-     * Set the layout at the top of your application to be available everywhere.
+     * Define a layout to be used by all pages in the application.
+     * can be set at the top of your application to be available everywhere.
      * @param string $layout
      * @return void
      */
     public static function setLayout(string $layout)
     {
-        self::$LAYOUT = self::getRootDir().'/views/'.$layout;
+        self::$layout = self::getRootDir() . '/views/' . trim($layout, '/');
     }
+
+    /**
+     * @param string $layout_name
+     * @return void
+     */
     public static function setLayoutContent(string $layout_name)
     {
         self::$LAYOUT_CONTENT = $layout_name;
     }
 
+    /**
+     * @param string $folder_name
+     * @return void
+     */
     public static function setViewFolder(string $folder_name)
     {
         self::$VIEW_FOLDER = $folder_name;
     }
-    public static function getLayout()
+
+    /**
+     * @return string|null
+     */
+    public static function getLayout(): ?string
     {
-        return self::$LAYOUT ;
+        return strlen(trim(self::$layout )) > 0 ? self::$layout : null;
     }
+
+    /**
+     * @return string
+     */
     public static function getLayoutContent()
     {
         return self::$LAYOUT_CONTENT ;
     }
 
+    /**
+     * @return string
+     */
     public static function getViewFolder()
     {
         return self::$VIEW_FOLDER ;

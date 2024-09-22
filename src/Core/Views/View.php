@@ -77,15 +77,22 @@ class View extends ViewBuilderProvider
     {
         $view_file = $this->buildFilePath($view);
         $render = $this->renderView($view_file);
-        if ($this->layout === '' && !$this->reset) {
+        if (! $this->getLayout() && !$this->reset) {
             $this->layout = Application::getLayout();
         }
-        if ($this->layout !== '') {
+        if ($this->getLayout()) {
             $render = $this->renderLayout($render);
         }
         $this->buildAssetHead($render);
     }
 
+    /**
+     * @return string|null
+     */
+    public function getLayout(): ?string
+    {
+        return strlen(trim($this->layout)) > 0 ? $this->layout : null;
+    }
     /**
      * @param class-string<T> $file_name
      *
