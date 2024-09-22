@@ -23,8 +23,7 @@ class AppConfiguration
      */
     public function lang(string $lang = 'fr'): AppConfiguration
     {
-        $this->params['lang'] = $lang;
-        return $this;
+        return $this->setParams('lang', $lang);
     }
 
     /**
@@ -33,20 +32,21 @@ class AppConfiguration
      */
     public function timezone(string $timezone = 'Africa/Kigali'): AppConfiguration
     {
-        $this->params['timezone'] = $timezone;
-        return $this;
+        return $this->setParams('timezone', $timezone);
     }
 
     /**
      * @param string $path
      * @return $this
      */
-    public function setNotFound(string $path = '404.php'): AppConfiguration
+    public function setNotFound(string $path = '/views/404.php'): AppConfiguration
     {
-        $this->params['not_found'] = $path;
+        return $this->setParams('not_found', $path);
+    }
+    private function setParams(string $key, $value): AppConfiguration {
+        $this->params[$key] = $value;
         return $this;
     }
-
     /**
      * @return array
      */

@@ -15,32 +15,23 @@ class DBConfig
      * @var array
      */
     protected array $dbConfig = [];
-    /*
-     * Get Default configuration
-     * @return array
-     */
-    private function defaultConfig (): array
-    {
-        return  [
-            'host' => $_ENV['DB_HOST'],
-            'port' => $_ENV['DB_PORT'],
-            'db' => $_ENV['DB_NAME'],
-            'password' => $_ENV['DB_USER'],
-            'username' => $_ENV['DB_PASSWORD']
-        ];
-    }
+
     /**
      * Get database connection information's
      * @return object
+     * @throws \Exception
      */
     protected function getDBConfig(): object
     {
-        return (object) (count($this->dbConfig)>0 ? $this->dbConfig : $this->defaultConfig());
+        if (count($this->dbConfig) > 0) {
+            return (object)$this->dbConfig ;
+        }
+        throw new \Exception('database connection information is not defined');
     }
 
     /**
      * Set database host name
-     * @param string $host_name
+     * @param string $host_name database host name default 127.0.0.1
      * @return $this
      */
     public function host(string $host_name): DBConfig
@@ -51,7 +42,7 @@ class DBConfig
 
     /**
      * Set database connection user  password
-     * @param string $password
+     * @param string $password database password
      * @return $this
      */
     public function password(string $password): DBConfig
@@ -62,7 +53,7 @@ class DBConfig
 
     /**
      * Set database connection username
-     * @param string $username
+     * @param string $username database username
      * @return $this
      */
     public function username(string $username): DBConfig
@@ -73,7 +64,7 @@ class DBConfig
 
     /**
      * set database connection default 3306
-     * @param string $port
+     * @param string $port database port default 3306
      * @return $this
      */
     public function port(string $port): DBConfig
@@ -84,7 +75,7 @@ class DBConfig
 
     /**
      * Set database name to be selected
-     * @param string $db_name
+     * @param string $db_name database name
      * @return $this
      */
     public function db(string $db_name): DBConfig
