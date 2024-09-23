@@ -32,7 +32,7 @@ class DB extends DBConfig
     /**
      * @var string|null
      */
-    private string $request_error;
+    private ?string $request_error;
     /**
      * @var array
      */
@@ -50,13 +50,14 @@ class DB extends DBConfig
      */
     private int $result_count;
     /**
-     * @var false|mixed
+     * @var string
      */
-    private $db_name;
+    private string $db_name;
     use QueryExecuter;
 
     /**
      *
+     * @throws Exception|PDOException
      */
     private function __construct()
     {
@@ -64,7 +65,7 @@ class DB extends DBConfig
             if (!Config::get('mysql/usable')) {
                 throw new Exception('you should authorized user database on config file.');
             }
-            $this->initialisation();
+            $this->flush();
             $config = $this->getDBConfig();
             $this->db_name = $config->db;
             $this->pdoObject = new PDO('mysql:host=' . $config->host . ';port=' . $config->port . ';dbname=' . $this->db_name . ';charset=utf8mb4', $config->username, $config->password);
@@ -78,8 +79,9 @@ class DB extends DBConfig
     }
 
     /**
-     * @string :$table =>this is the name of the table where to get information
-     * this method allow to do a select field from  a $table with all the conditions defined ;
+     * Select field from a $table_name with all the conditions defined ;
+     * @param string $table_name provide the table name
+     *
      * @throws Exception
      */
     public function get(string $table_name): ?DBSelect
@@ -88,13 +90,14 @@ class DB extends DBConfig
     }
 
     /**
-     * @string : $table=> this is the name of the table where to get information
-     * @string : @action=> this is the type of action tu do while want to do a request
+     * @param string $table_name table where to get information
+     * @param string|null $action action type to do while want to do a request [select, count]
+     * @return DBSelect
      * @throws Exception
      */
     private function select_option(string $table_name, string $action = null): DBSelect
     {
-        if (strlen($table_name) < 1) {
+        if (strlen(trim($table_name)) < 1) {
             throw new Exception('table name should be a string');
         }
         $this->queryResult = new DBSelect($this->pdoObject, $table_name, $action);
@@ -102,9 +105,9 @@ class DB extends DBConfig
     }
 
     /**
-     * Initialise all
+     * Reset all request results
      */
-    private function initialisation()
+    private function flush(): void
     {
         $this->request_results = [];
         $this->result_count = 0;
@@ -135,10 +138,10 @@ class DB extends DBConfig
     }
 
     /**
+     * Delete row data information from a table
      * @param string $table :  this is the name of the table where to get information
      * @return DBDelete
-     * @throws Exception
-     * this method will help delete row data information
+     * @throws Exception     *
      */
     public function delete(string $table): DBDelete
     {
@@ -147,10 +150,9 @@ class DB extends DBConfig
     }
 
     /**
-     * @param string $table : this is the name of the table where to get information
+     * Update row information of a selected tables
+     * @param string $table this is the name of the table where to get information
      * @return DBUpdate
-     * @throws Exception
-     * this methode will help update row information of a selected tables
      */
     public function update(string $table): DBUpdate
     {
@@ -169,7 +171,7 @@ class DB extends DBConfig
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     public function error(): string
     {
@@ -186,8 +188,9 @@ class DB extends DBConfig
     }
 
     /**
-     * @string :$table =>this is the name of the table where to get information
-     * this method allow to do a count the number of field on a $table with all the possible condition
+     * Count the number of items on a $table_name with all the possible condition
+     * @param string $table_name table where to get information
+     * @return DBSelect
      * @throws Exception
      */
     public function count(string $table_name): DBSelect
@@ -196,10 +199,10 @@ class DB extends DBConfig
     }
 
     /**
-     *
+     * Start transaction and execute your own code
      * @throws Exception
      */
-    public function transaction(Closure $callable)
+    public function transaction(Closure $callable): void
     {
         try {
             $this->convertToInnoDB();
@@ -215,12 +218,13 @@ class DB extends DBConfig
     }
 
     /**
+     * Convert all tables to InnoDB
      * @throws Exception
      */
     public function convertToInnoDB()
     {
         try {
-            $result = $this->get_db_engine_table();
+            $result = $this->getDBEngineTable();
             foreach ($result as $table) {
                 $sql = "ALTER TABLE $table->TABLE_NAME ENGINE=InnoDB";
                 $this->query($sql);
@@ -231,12 +235,13 @@ class DB extends DBConfig
     }
 
     /**
-     * @param string $engine : default "MyISAM"
+     * Get all table names with engine type default MyISAM
+     * @param string $engine default "MyISAM"
      * @return array
      * @throws Exception
      */
 
-    protected function get_db_engine_table(string $engine = 'MyISAM'): array
+    protected function getDBEngineTable(string $engine = 'MyISAM'): array
     {
         try {
             $params = [$this->db_name, $engine];
@@ -248,7 +253,8 @@ class DB extends DBConfig
     }
 
     /**
-     * @return array|null
+     * Get all request results
+     * @return array
      */
     public function result(): array
     {
@@ -256,6 +262,7 @@ class DB extends DBConfig
     }
 
     /**
+     * Execute your own sql query
      * @param string $sql
      * @param array $params
      * @return $this
@@ -271,6 +278,7 @@ class DB extends DBConfig
     }
 
     /**
+     * Start database transaction
      * @return bool
      */
     public function beginTransaction(): bool
@@ -279,14 +287,16 @@ class DB extends DBConfig
     }
 
     /**
-     * @return mixed
+     * Commit transaction while transaction started success
+     * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         return $this->pdoObject->commit();
     }
 
     /**
+     * Rollback transaction while transaction started failed
      * @return bool
      */
     public function rollBack(): bool
