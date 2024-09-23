@@ -15,12 +15,12 @@ use Wepesi\Core\Exceptions\DatabaseException;
 /**
  *
  */
-class DB extends DBConfig
+class Database extends DatabaseConfig
 {
     /**
-     * @var DB
+     * @var Database
      */
-    private static DB $_instance;
+    private static Database $_instance;
     /**
      * @var
      */
@@ -116,13 +116,13 @@ class DB extends DBConfig
     }
 
     /**
-     * @return DB
+     * @return Database
      */
-    static function getInstance(): DB
+    static function getInstance(): Database
     {
 
         if (!isset(self::$_instance)) {
-            self::$_instance = new DB();
+            self::$_instance = new Database();
         }
         return self::$_instance;
     }
@@ -266,7 +266,7 @@ class DB extends DBConfig
      * @param array $params
      * @return $this
      */
-    public function query(string $sql, array $params = []): DB
+    public function query(string $sql, array $params = []): Database
     {
         $q = $this->executeQuery($this->pdoObject, $sql, $params, -1, true);
         $this->request_results = $q['result'];

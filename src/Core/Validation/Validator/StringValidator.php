@@ -175,7 +175,7 @@ final class StringValidator extends ValidatorProvider
      */
     public function unique(string $table_name)
     {
-        $db = \Wepesi\Core\Database\DB::getInstance();
+        $db = \Wepesi\Core\Database\Database::getInstance();
         $condition = (new \Wepesi\Core\Database\WhereQueryBuilder\WhereConditions($this->field_name))->isEqualTo(\Wepesi\Core\Escape::encode($this->field_value));
         $where = (new \Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder())->andOption($condition);
         $check_uniq = $db->get($table_name)->where($where)->result();

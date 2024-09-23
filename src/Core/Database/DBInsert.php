@@ -2,12 +2,12 @@
 
 namespace Wepesi\Core\Database;
 
-use Wepesi\Core\Database\Provider\DbProvider;
+use Wepesi\Core\Database\Providers\DatabaseProviders;
 
 /**
  *
  */
-class DBInsert extends DbProvider
+class DBInsert extends DatabaseProviders
 {
     /**
      * @var array

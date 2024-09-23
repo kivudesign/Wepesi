@@ -7,7 +7,7 @@ namespace Wepesi\Core\Database;
 
 use Exception;
 use PDO;
-use Wepesi\Core\Database\Provider\DbProvider;
+use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 use Wepesi\Core\Escape;
@@ -15,7 +15,7 @@ use Wepesi\Core\Escape;
 /**
  *
  */
-class DBSelect extends DbProvider
+class DBSelect extends DatabaseProviders
 {
     /**
      * @var string|null

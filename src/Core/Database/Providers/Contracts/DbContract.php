@@ -1,6 +1,6 @@
 <?php
 
-namespace Wepesi\Core\Database\Provider\Contract;
+namespace Wepesi\Core\Database\Providers\Contracts;
 
 interface DbContract
 {

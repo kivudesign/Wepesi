@@ -1,23 +1,24 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
 
-namespace Wepesi\Core\Database\EntityModel\Provider;
+namespace Wepesi\Core\Database\Providers;
 
-use Wepesi\Core\Database\DB;
-use Wepesi\Core\Database\EntityModel\EntityReflexionTrait;
-use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Database\Database;
+use Wepesi\Core\Database\Entity;
+use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
 use Wepesi\Core\Database\Relations\HasMany;
 use Wepesi\Core\Database\Relations\HasOne;
+use Wepesi\Core\Database\Traits\EntityReflexionTrait;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
-/**
- *
- */
-abstract class Entity implements EntityInterface
+abstract class BaseEntity implements EntityContracts
 {
     /**
-     * @var DB
+     * @var Database
      */
-    private DB $db;
+    private Database $db;
     /**
      * @var array
      */
@@ -33,7 +34,7 @@ abstract class Entity implements EntityInterface
      */
     public function __construct()
     {
-        $this->db = DB::getInstance();
+        $this->db = Database::getInstance();
         $this->include_entity = [];
         $this->param = [];
     }
@@ -145,11 +146,11 @@ abstract class Entity implements EntityInterface
     }
 
     /**
-     * @param EntityInterface $entityName
+     * @param EntityContracts $entityName
      * @param bool $inner
      * @return $this
      */
-    public function include(EntityInterface $entityName, bool $inner = false): Entity
+    public function include(EntityContracts $entityName, bool $inner = false): Entity
     {
         try {
             $entity_table_object = $this->getEntityRelation($entityName);
@@ -334,19 +335,19 @@ abstract class Entity implements EntityInterface
     }
 
     /**
-     * @param EntityInterface $entity
+     * @param EntityContracts $entity
      * @return object|HasMany
      */
-    protected function hasMany(EntityInterface $entity): object
+    protected function hasMany(EntityContracts $entity): object
     {
         return (new HasMany($this, $entity));
     }
 
     /**
-     * @param EntityInterface $entity
+     * @param EntityContracts $entity
      * @return object|HasOne
      */
-    protected function hasOne(EntityInterface $entity): object
+    protected function hasOne(EntityContracts $entity): object
     {
         return (new HasOne($this, $entity));
     }

@@ -5,7 +5,7 @@
 
 namespace Wepesi\Core;
 
-use Wepesi\Core\Database\DBConfig;
+use Wepesi\Core\Database\DatabaseConfig;
 use Wepesi\Core\Routing\Router;
 
 /**
@@ -215,7 +215,7 @@ class Application
      */
     private function initDB(): void
     {
-        (new DBConfig())
+        (new DatabaseConfig())
             ->host($_ENV['DB_HOST'])
             ->port($_ENV['DB_PORT'])
             ->db($_ENV['DB_NAME'])

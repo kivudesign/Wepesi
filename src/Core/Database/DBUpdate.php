@@ -2,14 +2,14 @@
 
 namespace Wepesi\Core\Database;
 
-use Wepesi\Core\Database\Provider\DbProvider;
+use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
  *
  */
-class DBUpdate extends DbProvider
+class DBUpdate extends DatabaseProviders
 {
     /**
      * @var array

@@ -2,14 +2,14 @@
 
 namespace Wepesi\Core\Database;
 
-use Wepesi\Core\Database\Provider\DbProvider;
+use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
  * ORM DELETE QUERY
  */
-class DBDelete extends DbProvider
+class DBDelete extends DatabaseProviders
 {
     /**
      * @var array

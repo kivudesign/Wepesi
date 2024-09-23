@@ -1,14 +1,14 @@
 <?php
 
-namespace Wepesi\Core\Database\Provider;
+namespace Wepesi\Core\Database\Providers;
 
-use Wepesi\Core\Database\Provider\Contract\DbContract;
+use Wepesi\Core\Database\Providers\Contracts\DbContract;
 use Wepesi\Core\Database\Traits\QueryExecuter;
 
 /**
  *
  */
-abstract class DbProvider implements DbContract
+abstract class DatabaseProviders implements DbContract
 {
     /**
      * @var string

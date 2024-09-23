@@ -1,8 +1,8 @@
 <?php
 
-namespace Wepesi\Core\Database\EntityModel\Provider\Contract;
+namespace Wepesi\Core\Database\Providers\Contracts;
 
-interface EntityInterface
+interface EntityContracts
 {
     public function findAll(): array;
 

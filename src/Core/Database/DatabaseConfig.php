@@ -5,11 +5,13 @@
 
 namespace Wepesi\Core\Database;
 
+use Wepesi\Core\Database\Providers\Contracts\DatabaseConfigContracts;
+
 /**
  * Provide DataBase connection connection configurations.
  * By default set up from `.env`.
  */
-class DBConfig
+class DatabaseConfig implements DatabaseConfigContracts
 {
     /**
      * @var array
@@ -34,7 +36,7 @@ class DBConfig
      * @param string $host_name database host name default 127.0.0.1
      * @return $this
      */
-    public function host(string $host_name): DBConfig
+    public function host(string $host_name): DatabaseConfig
     {
         $this->dbConfig['host'] = $host_name;
         return $this;
@@ -45,7 +47,7 @@ class DBConfig
      * @param string $password database password
      * @return $this
      */
-    public function password(string $password): DBConfig
+    public function password(string $password): DatabaseConfig
     {
         $this->dbConfig['password'] = $password;
         return $this;
@@ -56,7 +58,7 @@ class DBConfig
      * @param string $username database username
      * @return $this
      */
-    public function username(string $username): DBConfig
+    public function username(string $username): DatabaseConfig
     {
         $this->dbConfig['username'] = $username;
         return $this;
@@ -67,7 +69,7 @@ class DBConfig
      * @param string $port database port default 3306
      * @return $this
      */
-    public function port(string $port): DBConfig
+    public function port(string $port): DatabaseConfig
     {
         $this->dbConfig['port'] = $port;
         return $this;
@@ -78,7 +80,7 @@ class DBConfig
      * @param string $db_name database name
      * @return $this
      */
-    public function db(string $db_name): DBConfig
+    public function db(string $db_name): DatabaseConfig
     {
         $this->dbConfig['db'] = $db_name;
         return $this;

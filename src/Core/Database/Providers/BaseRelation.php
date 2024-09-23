@@ -1,11 +1,14 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
 
-namespace Wepesi\Core\Database\Relations;
+namespace Wepesi\Core\Database\Providers;
 
 use ReflectionClass;
-use Wepesi\Core\Database\EntityModel\EntityReflexionTrait;
-use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
-use Wepesi\Core\Database\Relations\Provider\Contract\BaseRelationInterface;
+use Wepesi\Core\Database\Providers\Contracts\BaseRelationInterface;
+use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
+use Wepesi\Core\Database\Traits\EntityReflexionTrait;
 
 /**
  *
@@ -27,10 +30,10 @@ abstract class BaseRelation implements BaseRelationInterface
     use EntityReflexionTrait;
 
     /**
-     * @param EntityInterface $entity_parent
-     * @param EntityInterface $entity_child
+     * @param EntityContracts $entity_parent
+     * @param EntityContracts $entity_child
      */
-    public function __construct(EntityInterface $entity_parent, EntityInterface $entity_child)
+    public function __construct(EntityContracts $entity_parent, EntityContracts $entity_child)
     {
         $this->parent_table = $this->getEntityName($entity_parent)->table;
         $this->child_table = $this->getEntityName($entity_child)->table;
@@ -72,7 +75,7 @@ abstract class BaseRelation implements BaseRelationInterface
      * Get relation type information about two entities
      *  parent the parent entity table,
      *  child the child entity table,
-     *  type the entity relation type (hasOne, hasMany,...),
+     *  type the entity relation type (hasOne, hasMany, ...),
      *  primary_key entity primary key references not for table,
      *  foreign_key entity primary key references
      * @return object

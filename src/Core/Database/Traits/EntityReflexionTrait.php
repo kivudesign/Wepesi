@@ -1,12 +1,15 @@
 <?php
+/*
+ * Copyright (c) 2024. Wepesi Dev Framework
+ */
 
-namespace Wepesi\Core\Database\EntityModel;
+namespace Wepesi\Core\Database\Traits;
 
 use Exception;
 use ReflectionClass;
 use ReflectionProperty;
-use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
-use Wepesi\Core\Database\Relations\Provider\Contract\BaseRelationInterface;
+use Wepesi\Core\Database\Providers\Contracts\BaseRelationInterface;
+use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
 
 /**
  *
@@ -41,7 +44,7 @@ trait EntityReflexionTrait
 
     /**
      * Get entity information's it can be for table information's related to the table
-     * @param $entity EntityInterface|BaseRelationInterface
+     * @param $entity EntityContracts|BaseRelationInterface
      * @param bool $entity_relation default false, use true in case we want to get more information about entity relation
      * @param bool $get_only_entity_name default false, use True in cas ww want to get only entity name or object.
      * @return array|object
