@@ -4,10 +4,10 @@
  */
 
 namespace Wepesi\Core\Exceptions;
-
-use Wepesi\Core\Exceptions\WepesiException;
-
-class ValidationException extends WepesiException
+/**
+ * @package Wepesi\Core\Exceptions
+ */
+final class ValidationException extends WepesiException
 {
 
 }

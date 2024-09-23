@@ -61,12 +61,12 @@ abstract class DbProvider implements DbContract
     abstract function result(): array;
 
     /**
+     * Execute a sql query
      * @param string $sql
-     * @param array $params
+     * @param array $values
      * @return void
-     * this module is use to execute sql request
      */
-    protected function query(string $sql, array $values)
+    protected function query(string $sql, array $values): void
     {
         $q = $this->executeQuery($this->pdo, $sql, $values);
         $this->result = $q['result'];

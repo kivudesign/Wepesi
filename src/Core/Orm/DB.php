@@ -6,10 +6,10 @@
 namespace Wepesi\Core\Orm;
 
 use Closure;
-use Exception;
 use PDO;
 use PDOException;
 use Wepesi\Core\Config;
+use Wepesi\Core\Exceptions\DatabaseException;
 use Wepesi\Core\Orm\Traits\QueryExecuter;
 
 /**
@@ -57,13 +57,13 @@ class DB extends DBConfig
 
     /**
      *
-     * @throws Exception|PDOException
+     * @throws DatabaseException|PDOException
      */
     private function __construct()
     {
         try {
             if (!Config::get('mysql/usable')) {
-                throw new Exception('you should authorized user database on config file.');
+                throw new DatabaseException('you should authorized user database on config file.');
             }
             $this->flush();
             $config = $this->getDBConfig();
@@ -82,7 +82,7 @@ class DB extends DBConfig
      * Select field from a $table_name with all the conditions defined ;
      * @param string $table_name provide the table name
      *
-     * @throws Exception
+     * @throws DatabaseException
      */
     public function get(string $table_name): ?DBSelect
     {
@@ -93,12 +93,12 @@ class DB extends DBConfig
      * @param string $table_name table where to get information
      * @param string|null $action action type to do while want to do a request [select, count]
      * @return DBSelect
-     * @throws Exception
+     * @throws DatabaseException
      */
     private function select_option(string $table_name, string $action = null): DBSelect
     {
         if (strlen(trim($table_name)) < 1) {
-            throw new Exception('table name should be a string');
+            throw new DatabaseException('table name should be a string');
         }
         $this->queryResult = new DBSelect($this->pdoObject, $table_name, $action);
         return $this->queryResult;
@@ -141,7 +141,7 @@ class DB extends DBConfig
      * Delete row data information from a table
      * @param string $table :  this is the name of the table where to get information
      * @return DBDelete
-     * @throws Exception     *
+     * @throws DatabaseException     *
      */
     public function delete(string $table): DBDelete
     {
@@ -159,7 +159,6 @@ class DB extends DBConfig
         $this->queryResult = new DBUpdate($this->pdoObject, $table);
         return $this->queryResult;
     }
-    //
 
     /**
      * @return int
@@ -191,7 +190,7 @@ class DB extends DBConfig
      * Count the number of items on a $table_name with all the possible condition
      * @param string $table_name table where to get information
      * @return DBSelect
-     * @throws Exception
+     * @throws DatabaseException
      */
     public function count(string $table_name): DBSelect
     {
@@ -200,7 +199,7 @@ class DB extends DBConfig
 
     /**
      * Start transaction and execute your own code
-     * @throws Exception
+     * @throws DatabaseException
      */
     public function transaction(Closure $callable): void
     {
@@ -209,7 +208,7 @@ class DB extends DBConfig
             $this->pdoObject->beginTransaction();
             $callable($this);
             $this->pdoObject->commit();
-        } catch (Exception $ex) {
+        } catch (DatabaseException $ex) {
             if ($this->pdoObject->inTransaction()) {
                 $this->pdoObject->rollBack();
             }
@@ -219,7 +218,7 @@ class DB extends DBConfig
 
     /**
      * Convert all tables to InnoDB
-     * @throws Exception
+     * @throws DatabaseException
      */
     public function convertToInnoDB()
     {
@@ -229,7 +228,7 @@ class DB extends DBConfig
                 $sql = "ALTER TABLE $table->TABLE_NAME ENGINE=InnoDB";
                 $this->query($sql);
             }
-        } catch (Exception $ex) {
+        } catch (DatabaseException $ex) {
             throw $ex;
         }
     }
@@ -238,7 +237,7 @@ class DB extends DBConfig
      * Get all table names with engine type default MyISAM
      * @param string $engine default "MyISAM"
      * @return array
-     * @throws Exception
+     * @throws DatabaseException
      */
 
     protected function getDBEngineTable(string $engine = 'MyISAM'): array
@@ -247,7 +246,7 @@ class DB extends DBConfig
             $params = [$this->db_name, $engine];
             $sql = 'SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = ? AND `ENGINE` = ?';
             return self::query($sql, $params)->result();
-        } catch (Exception $ex) {
+        } catch (DatabaseException $ex) {
             throw $ex;
         }
     }
