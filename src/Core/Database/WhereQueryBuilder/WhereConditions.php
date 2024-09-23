@@ -1,8 +1,6 @@
 <?php
 
-namespace Wepesi\Core\Orm\WhereQueryBuilder;
-
-use PhpParser\Node\Expr\Cast\Object_;
+namespace Wepesi\Core\Database\WhereQueryBuilder;
 
 /**
  *

@@ -1,6 +1,6 @@
 <?php
 
-namespace Wepesi\Core\Orm\WhereQueryBuilder;
+namespace Wepesi\Core\Database\WhereQueryBuilder;
 
 /**
  *

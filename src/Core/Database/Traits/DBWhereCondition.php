@@ -1,9 +1,9 @@
 <?php
 
-namespace Wepesi\Core\Orm\Traits;
+namespace Wepesi\Core\Database\Traits;
 
 use PhpParser\Node\Expr\Cast\Object_;
-use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
  *

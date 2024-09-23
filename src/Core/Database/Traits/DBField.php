@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Wepesi\Core\Orm\Traits;
+namespace Wepesi\Core\Database\Traits;
 
 
 /**

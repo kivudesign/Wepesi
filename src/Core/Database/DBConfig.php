@@ -3,7 +3,7 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Orm;
+namespace Wepesi\Core\Database;
 
 /**
  * Provide DataBase connection connection configurations.

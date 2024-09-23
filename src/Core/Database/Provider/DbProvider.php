@@ -1,9 +1,9 @@
 <?php
 
-namespace Wepesi\Core\Orm\Provider;
+namespace Wepesi\Core\Database\Provider;
 
-use Wepesi\Core\Orm\Provider\Contract\DbContract;
-use Wepesi\Core\Orm\Traits\QueryExecuter;
+use Wepesi\Core\Database\Provider\Contract\DbContract;
+use Wepesi\Core\Database\Traits\QueryExecuter;
 
 /**
  *

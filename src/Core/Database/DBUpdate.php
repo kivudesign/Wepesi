@@ -1,10 +1,10 @@
 <?php
 
-namespace Wepesi\Core\Orm;
+namespace Wepesi\Core\Database;
 
-use Wepesi\Core\Orm\Provider\DbProvider;
-use Wepesi\Core\Orm\Traits\DBWhereCondition;
-use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Database\Provider\DbProvider;
+use Wepesi\Core\Database\Traits\DBWhereCondition;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
  *

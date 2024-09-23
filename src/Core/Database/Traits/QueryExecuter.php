@@ -6,7 +6,7 @@
  * https://github.com/bim-g
  */
 
-namespace Wepesi\Core\Orm\Traits;
+namespace Wepesi\Core\Database\Traits;
 
 use PDO;
 use PDOException;

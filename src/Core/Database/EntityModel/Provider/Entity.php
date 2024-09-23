@@ -1,13 +1,13 @@
 <?php
 
-namespace Wepesi\Core\Orm\EntityModel\Provider;
+namespace Wepesi\Core\Database\EntityModel\Provider;
 
-use Wepesi\Core\Orm\DB;
-use Wepesi\Core\Orm\EntityModel\EntityReflexionTrait;
-use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
-use Wepesi\Core\Orm\Relations\HasMany;
-use Wepesi\Core\Orm\Relations\HasOne;
-use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Database\DB;
+use Wepesi\Core\Database\EntityModel\EntityReflexionTrait;
+use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Database\Relations\HasMany;
+use Wepesi\Core\Database\Relations\HasOne;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
  *

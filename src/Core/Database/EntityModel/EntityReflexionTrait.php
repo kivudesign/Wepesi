@@ -1,12 +1,12 @@
 <?php
 
-namespace Wepesi\Core\Orm\EntityModel;
+namespace Wepesi\Core\Database\EntityModel;
 
 use Exception;
 use ReflectionClass;
 use ReflectionProperty;
-use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
-use Wepesi\Core\Orm\Relations\Provider\Contract\BaseRelationInterface;
+use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Database\Relations\Provider\Contract\BaseRelationInterface;
 
 /**
  *

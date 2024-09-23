@@ -3,14 +3,14 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Orm;
+namespace Wepesi\Core\Database;
 
 use Exception;
 use PDO;
+use Wepesi\Core\Database\Provider\DbProvider;
+use Wepesi\Core\Database\Traits\DBWhereCondition;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 use Wepesi\Core\Escape;
-use Wepesi\Core\Orm\Provider\DbProvider;
-use Wepesi\Core\Orm\Traits\DBWhereCondition;
-use Wepesi\Core\Orm\WhereQueryBuilder\WhereBuilder;
 
 /**
  *

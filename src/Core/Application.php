@@ -5,7 +5,7 @@
 
 namespace Wepesi\Core;
 
-use Wepesi\Core\Orm\DBConfig;
+use Wepesi\Core\Database\DBConfig;
 use Wepesi\Core\Routing\Router;
 
 /**

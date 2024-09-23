@@ -1,8 +1,8 @@
 <?php
 
-namespace Wepesi\Core\Orm\Relations;
+namespace Wepesi\Core\Database\Relations;
 
-use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
 
 /**
  *

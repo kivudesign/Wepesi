@@ -1,6 +1,6 @@
 <?php
 
-namespace Wepesi\Core\Orm\EntityModel\Provider\Contract;
+namespace Wepesi\Core\Database\EntityModel\Provider\Contract;
 
 interface EntityInterface
 {

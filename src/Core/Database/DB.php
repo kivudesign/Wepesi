@@ -3,14 +3,14 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Orm;
+namespace Wepesi\Core\Database;
 
 use Closure;
 use PDO;
 use PDOException;
 use Wepesi\Core\Config;
+use Wepesi\Core\Database\Traits\QueryExecuter;
 use Wepesi\Core\Exceptions\DatabaseException;
-use Wepesi\Core\Orm\Traits\QueryExecuter;
 
 /**
  *

@@ -1,11 +1,11 @@
 <?php
 
-namespace Wepesi\Core\Orm\Relations;
+namespace Wepesi\Core\Database\Relations;
 
 use ReflectionClass;
-use Wepesi\Core\Orm\EntityModel\EntityReflexionTrait;
-use Wepesi\Core\Orm\EntityModel\Provider\Contract\EntityInterface;
-use Wepesi\Core\Orm\Relations\Provider\Contract\BaseRelationInterface;
+use Wepesi\Core\Database\EntityModel\EntityReflexionTrait;
+use Wepesi\Core\Database\EntityModel\Provider\Contract\EntityInterface;
+use Wepesi\Core\Database\Relations\Provider\Contract\BaseRelationInterface;
 
 /**
  *

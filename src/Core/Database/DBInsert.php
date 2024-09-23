@@ -1,8 +1,8 @@
 <?php
 
-namespace Wepesi\Core\Orm;
+namespace Wepesi\Core\Database;
 
-use Wepesi\Core\Orm\Provider\DbProvider;
+use Wepesi\Core\Database\Provider\DbProvider;
 
 /**
  *
