@@ -2,6 +2,7 @@
 
 namespace Wepesi\Core\Database;
 
+use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
@@ -9,7 +10,7 @@ use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 /**
  * ORM DELETE QUERY
  */
-class DBDelete extends DatabaseProviders
+class DBDelete extends DatabaseProviders implements DatabaseQueryContracts
 {
     /**
      * @var array
