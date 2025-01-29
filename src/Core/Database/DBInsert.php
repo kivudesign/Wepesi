@@ -2,12 +2,17 @@
 
 namespace Wepesi\Core\Database;
 
+use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 
 /**
- *
+ * Insert Query Object
+ * @package Wepesi\Core\Database
+ * @template DBInsert of DatabaseQueryContracts
+ * @template-implements DatabaseQueryContracts<T>
+ * @template-extends DatabaseProviders<T>
  */
-class DBInsert extends DatabaseProviders
+class DBInsert extends DatabaseProviders implements DatabaseQueryContracts
 {
     /**
      * @var array
@@ -75,13 +80,13 @@ class DBInsert extends DatabaseProviders
     /**
      *
      */
-    private function insert()
+    private function insert(): void
     {
         $fields = $this->_fields['keys'];
         $values = $this->_fields['values'];
         $params = $this->_fields['params'];
         $sql = "INSERT INTO $this->table ($fields) VALUES ($values)";
-        $this->query($sql, $params);
+        $this->prepareQueryExecution($sql, $params);
     }
 
     /**
