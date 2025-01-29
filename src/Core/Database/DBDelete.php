@@ -8,7 +8,11 @@ use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
- * ORM DELETE QUERY
+ * Delete Query object
+ * @package Wepesi\Core\Database
+ * @template DBDelete of DatabaseQueryContracts
+ * @template-implements DatabaseQueryContracts<T>
+ * @template-extends DatabaseProviders<T>
  */
 class DBDelete extends DatabaseProviders implements DatabaseQueryContracts
 {
@@ -64,6 +68,6 @@ class DBDelete extends DatabaseProviders implements DatabaseQueryContracts
         $where = $this->where['field'] ?? '';
         $params = $this->where['params'] ?? [];
         $sql = "DELETE FROM $this->table $where";
-        $this->query($sql, $params);
+        $this->prepareQueryExecution($sql, $params);
     }
 }
