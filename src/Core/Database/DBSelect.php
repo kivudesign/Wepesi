@@ -7,15 +7,20 @@ namespace Wepesi\Core\Database;
 
 use Exception;
 use PDO;
+use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 use Wepesi\Core\Escape;
 
 /**
- *
+ * Select Query Object
+ * @package Wepesi\Core\Database
+ * @template DBSelect of DatabaseQueryContracts
+ * @template-implements DatabaseQueryContracts<DBSelect>
+ * @template-extends DatabaseProviders<DBSelect>
  */
-class DBSelect extends DatabaseProviders
+class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
 {
     /**
      * @var string|null
@@ -36,11 +41,11 @@ class DBSelect extends DatabaseProviders
     /**
      * @var string|null
      */
-    private string $orderBy;
+    private ?string $orderBy;
     /**
      * @var string|null
      */
-    private string $groupBY;
+    private ?string $groupBY;
     /**
      * @var string
      */
@@ -195,36 +200,16 @@ class DBSelect extends DatabaseProviders
      */
     public function offset(int $offset): DBSelect
     {
-        if ($offset) $this->_offset = " OFFSET {$offset}";
+        if ($offset) $this->_offset = " OFFSET $offset";
         return $this;
     }
 
     /**
      *
-     * @return array
-     * execute query to get result
      */
-    public function result(): array
+    private function build(): void
     {
-        $this->build();
-        $operation_result = $this->result;
-        if (!isset($this->result['exception']) ) {
-            if ($this->isCount) {
-                $this->isCount = false;
-            } else if (count($this->result) > 0) {
-                $operation_result = $this->formatData($operation_result);
-            }
-        }
-        $this->include_object = [];
-        return $operation_result;
-    }
-
-    /**
-     *
-     */
-    private function build()
-    {
-        if ($this->action && $this->action == 'count') {
+        if ($this->action == 'count') {
             $this->count_all();
         } else {
             $this->select();
@@ -239,14 +224,14 @@ class DBSelect extends DatabaseProviders
         $this->isCount = true;
         $WHERE = $this->where['field'] ?? '';
         $params = $this->where['value'] ?? [];
-        $sql = "SELECT COUNT(*) as count FROM {$this->table} " . $WHERE;
-        $this->query($sql, $params);
+        $sql = "SELECT COUNT(*) as count FROM $this->table " . $WHERE;
+        $this->prepareQueryExecution($sql, $params);
     }
 
     /**
-     *
+     * Execute select query
      */
-    private function select()
+    private function select(): void
     {
         $fields = $this->_fields['keys'] ?? '*';
         //
@@ -261,11 +246,30 @@ class DBSelect extends DatabaseProviders
         if ($this->orderBy == '' && $this->ascending != '') {
             $this->result['exception'] = 'You should provide the order by which field name to which field you to apply the `' . $this->ascending . '`.';
         } else {
-            $sql = "SELECT {$fields} FROM {$this->table} " . $WHERE . $this->groupBY . $this->orderBy . $this->ascending . $this->_limit . $this->_offset;
-            $this->query($sql, $params);
+            $sql = "SELECT $fields FROM $this->table $WHERE  $this->groupBY  $this->orderBy  $this->ascending  $this->_limit  $this->_offset";
+            $this->prepareQueryExecution($sql, $params);
         }
     }
 
+    /**
+     *
+     * @return array
+     * execute query to get result
+     */
+    public function result(): array
+    {
+        $this->build();
+        $operation_result = $this->result;
+        if (!isset($this->result['exception']) ) {
+            if ($this->isCount) {
+                $this->isCount = false;
+            } else if (count($operation_result) > 0) {
+                $operation_result = $this->formatData($this->result);
+            }
+        }
+        $this->include_object = [];
+        return $operation_result;
+    }
     /**
      * @param array $result
      * @return array

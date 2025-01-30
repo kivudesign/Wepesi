@@ -35,9 +35,8 @@ trait QueryExecute
                 'count' => 0,
                 'error' => "",
             ];
-            $sql_string = explode(' ', strtolower($sql));
-            $fetchObject = $isQuery || (isset($this->isCount) && $this->isCount);
-            if ($sql_string[0] == 'select' && $fetchObject) {
+
+            if (strpos(strtolower($sql),'select') > -1) {
                 $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
             }
 
@@ -53,10 +52,10 @@ trait QueryExecute
 
             if ($query_result) {
                 $data_result['result'] = ['query_result' => true];
-
+                $sql_string = explode(' ', strtolower($sql));
                 switch ($sql_string[0]) {
                     case 'select' :
-                        if ($fetchObject) {
+                        if ((isset($this->isCount) && $this->isCount) || $isQuery) {
                             $fetch_result = $query->fetchAll(PDO::FETCH_OBJ);
                             if ( $isQuery ){
                                 $data_result['count'] = $query->columnCount();
