@@ -2,10 +2,14 @@
 
 namespace Wepesi\Core\Database\WhereQueryBuilder;
 
+use Wepesi\Core\Database\Providers\Contracts\WhereConditionContracts;
+
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template WhereConditions of WhereConditionContracts
+ * @template-implements  WhereConditionContracts<WhereConditions>
  */
-final class WhereConditions
+class WhereConditions implements WhereConditionContracts
 {
     /**
      * @var object
@@ -26,100 +30,84 @@ final class WhereConditions
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isGreaterThan($field_comparison): WhereConditions
+    public function isGreaterThan(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '>';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('>', $field_comparison);
     }
 
     /**
      * @param $field_value
      * @return void
      */
-    private function conditionIsString($field_value)
+    private function validateStringOrNumeric($field_value): void
     {
-        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : "" . $field_value . "";
+        $this->field_condition->field_value = is_numeric($field_value) ? $field_value : (string) $field_value ;
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isGreaterEqualThan($field_comparison): WhereConditions
+    public function isGreaterEqualThan(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '>=';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('>=', $field_comparison);
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isLessThan($field_comparison): WhereConditions
+    public function isLessThan(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '<';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('<', $field_comparison);
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isLessEqualThan($field_comparison): WhereConditions
+    public function isLessEqualThan(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '<=';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('<=', $field_comparison);
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isEqualTo($field_comparison): WhereConditions
+    public function isEqualTo(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '=';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('=', $field_comparison);
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isDifferentTo($field_comparison): WhereConditions
+    public function isDifferentTo(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '<>';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('<>', $field_comparison);
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isNotEqualTo($field_comparison): WhereConditions
+    public function isNotEqualTo(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = '!=';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('!=', $field_comparison);
     }
 
     /**
-     * @param $field_comparison
+     * @param int|string $field_comparison
      * @return $this
      */
-    public function isLike($field_comparison): WhereConditions
+    public function isLike(int| string $field_comparison): WhereConditionContracts
     {
-        $this->field_condition->comparison = 'like';
-        $this->conditionIsString($field_comparison);
-        return $this;
+        return $this->setCondition('like', $field_comparison );
     }
 
     /**
@@ -132,6 +120,18 @@ final class WhereConditions
         if (method_exists($this, $name)) {
             return call_user_func_array([$this, $name], $arguments);
         }
+    }
+
+    /**
+     * @param string $comparison_sign
+     * @param int|string $value
+     * @return WhereConditionContracts
+     */
+    private function setCondition(string $comparison_sign, int| string $value): WhereConditionContracts
+    {
+        $this->field_condition->comparison = $comparison_sign;
+        $this->validateStringOrNumeric($value);
+        return $this;
     }
 
     /**

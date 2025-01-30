@@ -2,10 +2,15 @@
 
 namespace Wepesi\Core\Database\WhereQueryBuilder;
 
+use Wepesi\Core\Database\Providers\Contracts\WhereBuilderContracts;
+use Wepesi\Core\Database\Providers\Contracts\WhereConditionContracts;
+
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template WhereBuilder of WhereBuilderContracts
+ * @template-implements WhereBuilderContracts<WhereBuilder>
  */
-final class WhereBuilder
+final class WhereBuilder implements WhereBuilderContracts
 {
     /**
      * @var array
@@ -21,25 +26,23 @@ final class WhereBuilder
     }
 
     /**
-     * @param WhereConditions $where_condition
+     * @param WhereConditionContracts $where_condition
      * @return $this
      */
-    public function orOption(WhereConditions $where_condition): WhereBuilder
+    public function orOption(WhereConditionContracts $where_condition): WhereBuilderContracts
     {
         $condition = $where_condition->getCondition();
         $condition->operator = ' OR ';
-        $this->operator[] = $condition;
-        return $this;
+        return $this->buildConditionOperator($condition);
     }
 
     /**
-     * @param WhereConditions $where_condition
+     * @param WhereConditionContracts $where_condition
      * @return $this
      */
-    public function andOption(WhereConditions $where_condition): WhereBuilder
+    public function andOption(WhereConditionContracts $where_condition): WhereBuilderContracts
     {
-        $this->operator[] = $where_condition->getCondition();;
-        return $this;
+        return $this->buildConditionOperator($where_condition->getCondition());
     }
 
     /**
@@ -55,13 +58,12 @@ final class WhereBuilder
     }
 
     /**
-     * @param WhereBuilder $builder
+     * @param WhereBuilderContracts $where_builder
      * @return array[]
      */
-    protected function groupOption(WhereBuilder $builder): array
+    public function groupOption(WhereBuilderContracts $where_builder): array
     {
         // TODO implement group conditions.
-        // return ['groupe' => $builder->generate()];
         return [];
     }
 
@@ -71,5 +73,10 @@ final class WhereBuilder
     protected function generate(): array
     {
         return $this->operator;
+    }
+
+    private function buildConditionOperator($buildCondition): WhereBuilderContracts {
+        $this->operator[] = $buildCondition;
+        return  $this;
     }
 }
