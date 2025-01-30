@@ -2,14 +2,20 @@
 
 namespace Wepesi\Core\Database;
 
+use PDO;
+use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
 /**
- *
+ * Update Query Object
+ * @package Wepesi\Core\Database
+ * @template DBUpdate of DatabaseQueryContracts
+ * @template-implements DatabaseQueryContracts<DBUpdate>
+ * @template-extends DatabaseProviders<DBUpdate>
  */
-class DBUpdate extends DatabaseProviders
+class DBUpdate extends DatabaseProviders implements DatabaseQueryContracts
 {
     /**
      * @var array
@@ -26,10 +32,10 @@ class DBUpdate extends DatabaseProviders
     use DBWhereCondition;
 
     /**
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @param string $table
      */
-    public function __construct(\PDO $pdo, string $table)
+    public function __construct(PDO $pdo, string $table)
     {
         $this->table = $table;
         $this->pdo = $pdo;
@@ -60,12 +66,12 @@ class DBUpdate extends DatabaseProviders
             $keys = array_keys($fields);
             $values = null;
             $_trim_key = [];
-            foreach ($fields as $field) {
+            foreach ($fields as $ignored) {
                 $values .= '? ';
                 if ($x < count($fields)) {
                     $values .= ', ';
                 }
-                //remove white space around the collum name
+                //remove white space around the column name
                 $_trim_key[] = trim($keys[($x - 1)]);
                 $x++;
             }
@@ -96,15 +102,15 @@ class DBUpdate extends DatabaseProviders
     /**
      *
      */
-    private function update()
+    private function update(): void
     {
         $where = $this->where['field'] ?? null;
         $where_params = $this->where['params'] ?? [];
         $fields = $this->_fields['keys'];
         $field_params = $this->_fields['params'] ?? [];
         $params = array_merge(array_values($field_params), array_values($where_params));
-        //generate the sql query to be executed
+        //generate the SQL query to be executed
         $sql = "UPDATE $this->table SET $fields  $where";
-        $this->query($sql, $params);
+        $this->prepareQueryExecution($sql, $params);
     }
 }
