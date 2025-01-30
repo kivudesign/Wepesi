@@ -9,13 +9,17 @@ use Closure;
 use PDO;
 use PDOException;
 use Wepesi\Core\Config;
-use Wepesi\Core\Database\Traits\QueryExecuter;
+use Wepesi\Core\Database\Providers\Contracts\DatabaseContracts;
+use Wepesi\Core\Database\Traits\QueryExecute;
 use Wepesi\Core\Exceptions\DatabaseException;
 
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template Database of DatabaseContracts
+ * @template-extends DatabaseConfig<Database>
+ * @template-implements DatabaseContracts<Database>
  */
-class Database extends DatabaseConfig
+class Database extends DatabaseConfig implements DatabaseContracts
 {
     /**
      * @var Database
@@ -53,7 +57,7 @@ class Database extends DatabaseConfig
      * @var string
      */
     private string $db_name;
-    use QueryExecuter;
+    use QueryExecute;
 
     /**
      *
@@ -61,14 +65,25 @@ class Database extends DatabaseConfig
      */
     private function __construct()
     {
+        $this->setUp();
+    }
+
+    /**
+     * @throws DatabaseException
+     */
+    protected function setUp(): void
+    {
         try {
             if (!Config::get('mysql/usable')) {
                 throw new DatabaseException('you should authorized user database on config file.');
             }
             $this->flush();
             $config = $this->getDBConfig();
+            if (! $config) {
+                throw new DatabaseException('database connection information is not defined');
+            }
             $this->db_name = $config->db;
-            $this->pdoObject = new PDO('mysql:host=' . $config->host . ';port=' . $config->port . ';dbname=' . $this->db_name . ';charset=utf8mb4', $config->username, $config->password);
+            $this->pdoObject = new PDO($this->getDNS(), $config->username, $config->password);
             $this->pdoObject->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
             $this->pdoObject->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
             $this->pdoObject->setAttribute(PDO::MYSQL_ATTR_FOUND_ROWS, true);
@@ -118,7 +133,7 @@ class Database extends DatabaseConfig
     /**
      * @return Database
      */
-    static function getInstance(): Database
+    static function getInstance(): DatabaseContracts
     {
 
         if (!isset(self::$_instance)) {
@@ -141,7 +156,6 @@ class Database extends DatabaseConfig
      * Delete row data information from a table
      * @param string $table :  this is the name of the table where to get information
      * @return DBDelete
-     * @throws DatabaseException     *
      */
     public function delete(string $table): DBDelete
     {
@@ -242,13 +256,9 @@ class Database extends DatabaseConfig
 
     protected function getDBEngineTable(string $engine = 'MyISAM'): array
     {
-        try {
-            $params = [$this->db_name, $engine];
-            $sql = 'SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = ? AND `ENGINE` = ?';
-            return self::query($sql, $params)->result();
-        } catch (DatabaseException $ex) {
-            throw $ex;
-        }
+        $params = [$this->db_name, $engine];
+        $sql = "SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = ? AND `ENGINE` = ?";
+        return self::query($sql, $params)->result();
     }
 
     /**
