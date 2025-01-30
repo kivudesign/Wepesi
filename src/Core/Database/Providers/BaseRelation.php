@@ -11,7 +11,9 @@ use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
 use Wepesi\Core\Database\Traits\EntityReflexionTrait;
 
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template BaseRelation of BaseRelationInterface
+ * @template-implements BaseRelationInterface<BaseRelation>
  */
 abstract class BaseRelation implements BaseRelationInterface
 {
@@ -19,10 +21,12 @@ abstract class BaseRelation implements BaseRelationInterface
      * @var string|mixed
      */
     protected string $parent_table;
+
     /**
      * @var string|mixed
      */
     protected string $child_table;
+
     /**
      * @var array
      */
@@ -41,13 +45,13 @@ abstract class BaseRelation implements BaseRelationInterface
     }
 
     /**
-     * create link relation between to two entity.
+     * create link relation between to two entities.
      *
      * @param string $reference_key The parent entity relation id
      * @param string $foreignKey the child entity relation id
-     * @return BaseRelation
+     * @return BaseRelationInterface
      */
-    public function linkOn(string $reference_key, string $foreignKey): BaseRelation
+    public function linkOn(string $reference_key, string $foreignKey): BaseRelationInterface
     {
         $this->table_relations = [
             'parent' => $this->parent_table,
