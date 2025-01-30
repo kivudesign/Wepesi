@@ -1,5 +1,6 @@
 <?php
 /*
+ * @package Wepesi\Framework
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 global $app;

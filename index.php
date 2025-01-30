@@ -1,5 +1,6 @@
 <?php
 /*
+ * @package Wepesi\framework
  * Copyright (c) 2023. wepesi dev framework
  */
 
