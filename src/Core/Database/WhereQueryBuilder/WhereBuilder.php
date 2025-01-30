@@ -36,6 +36,12 @@ final class WhereBuilder implements WhereBuilderContracts
         return $this->buildConditionOperator($condition);
     }
 
+    private function buildConditionOperator($buildCondition): WhereBuilderContracts
+    {
+        $this->operator[] = $buildCondition;
+        return $this;
+    }
+
     /**
      * @param WhereConditionContracts $where_condition
      * @return $this
@@ -73,10 +79,5 @@ final class WhereBuilder implements WhereBuilderContracts
     protected function generate(): array
     {
         return $this->operator;
-    }
-
-    private function buildConditionOperator($buildCondition): WhereBuilderContracts {
-        $this->operator[] = $buildCondition;
-        return  $this;
     }
 }

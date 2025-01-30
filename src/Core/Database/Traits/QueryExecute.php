@@ -26,7 +26,7 @@ trait QueryExecute
      * @param bool $isQuery define if we use the query method directly
      * @return array
      */
-    protected function executeQuery(PDO $pdo, string $sql, array $params = [], int $last_id = -1,bool $isQuery = false): array
+    protected function executeQuery(PDO $pdo, string $sql, array $params = [], int $last_id = -1, bool $isQuery = false): array
     {
         try {
             $data_result = [
@@ -36,7 +36,7 @@ trait QueryExecute
                 'error' => "",
             ];
 
-            if (strpos(strtolower($sql),'select') > -1) {
+            if (strpos(strtolower($sql), 'select') > -1) {
                 $pdo->setAttribute(PDO::ATTR_FETCH_TABLE_NAMES, true);
             }
 
@@ -57,7 +57,7 @@ trait QueryExecute
                     case 'select' :
                         if ((isset($this->isCount) && $this->isCount) || $isQuery) {
                             $fetch_result = $query->fetchAll(PDO::FETCH_OBJ);
-                            if ( $isQuery ){
+                            if ($isQuery) {
                                 $data_result['count'] = $query->columnCount();
                             } else {
                                 if (isset($fetch_result[0]->{'.count'})) {

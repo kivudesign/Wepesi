@@ -44,6 +44,12 @@ class DatabaseConfig implements DatabaseConfigContracts
         return $this->setConfig('host', $host_name);
     }
 
+    private function setConfig(string $key, string $value): DatabaseConfigContracts
+    {
+        self::$db_config[$key] = $value;
+        return $this;
+    }
+
     /**
      * Set database connection user  password
      * @param string $password database password
@@ -84,12 +90,6 @@ class DatabaseConfig implements DatabaseConfigContracts
         return $this->setConfig('db', $db_name);
     }
 
-    private function setConfig(string $key, string $value): DatabaseConfigContracts
-    {
-        self::$db_config[$key] = $value;
-        return $this;
-    }
-
     /**
      * Get DataBase connection string
      * @return class-string<DatabaseConfig>
@@ -98,6 +98,7 @@ class DatabaseConfig implements DatabaseConfigContracts
     {
         return sprintf('mysql:host=%s;port=%s;dbname=%s;charset=utf8mb4', self::$db_config['host'], self::$db_config['port'], self::$db_config['db']);
     }
+
     /**
      * @param $name
      * @param $arguments

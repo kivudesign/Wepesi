@@ -6,6 +6,7 @@
 namespace Wepesi\Core\Database\Traits;
 
 use ReflectionClass;
+use ReflectionException;
 use ReflectionProperty;
 use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
 use Wepesi\Core\Exceptions\DatabaseException;
@@ -27,32 +28,12 @@ trait EntityReflexionTrait
     }
 
     /**
-     * Get an Entity data object
-     * @param EntityContracts $entity
-     * @return object
-     */
-    protected function getEntityRelation(EntityContracts $entity): object
-    {
-        return $this->getClassEntityDefinition($entity, true);
-    }
-
-    /**
-     * Get entity object name
-     * @param EntityContracts $entity
-     * @return object
-     */
-    protected function getEntityName(EntityContracts $entity): object
-    {
-        return $this->getClassEntityDefinition($entity, false, true);
-    }
-
-    /**
      * Get entity information's it can be for table information's related to the table
      * @param EntityContracts $entity EntityContracts|BaseRelationInterface
      * @param bool $entity_relation set to true to get more information about entity relation
      * @param bool $get_entity_name_only set to True to get entity name only otherwise get a data object.
      * @return object
-     * @throws \ReflectionException|DatabaseException
+     * @throws ReflectionException|DatabaseException
      */
     private function getClassEntityDefinition(EntityContracts $entity, bool $entity_relation = false, bool $get_entity_name_only = false): object
     {
@@ -105,5 +86,25 @@ trait EntityReflexionTrait
             $entity_prop['table'] = $get_table_name->invoke($object_instance);
         }
         return (object)$entity_prop;
+    }
+
+    /**
+     * Get an Entity data object
+     * @param EntityContracts $entity
+     * @return object
+     */
+    protected function getEntityRelation(EntityContracts $entity): object
+    {
+        return $this->getClassEntityDefinition($entity, true);
+    }
+
+    /**
+     * Get entity object name
+     * @param EntityContracts $entity
+     * @return object
+     */
+    protected function getEntityName(EntityContracts $entity): object
+    {
+        return $this->getClassEntityDefinition($entity, false, true);
     }
 }

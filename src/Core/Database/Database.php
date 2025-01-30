@@ -79,7 +79,7 @@ class Database extends DatabaseConfig implements DatabaseContracts
             }
             $this->flush();
             $config = $this->getDBConfig();
-            if (! $config) {
+            if (!$config) {
                 throw new DatabaseException('database connection information is not defined');
             }
             $this->db_name = $config->db;

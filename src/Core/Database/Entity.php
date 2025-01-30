@@ -12,4 +12,6 @@ use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
  * @template Entity of EntityContracts
  * @template-extends BaseEntity<Entity>
  */
-abstract class Entity extends BaseEntity implements EntityContracts{}
+abstract class Entity extends BaseEntity implements EntityContracts
+{
+}

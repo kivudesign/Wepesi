@@ -206,6 +206,26 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
 
     /**
      *
+     * @return array
+     * execute query to get result
+     */
+    public function result(): array
+    {
+        $this->build();
+        $operation_result = $this->result;
+        if (!isset($this->result['exception'])) {
+            if ($this->isCount) {
+                $this->isCount = false;
+            } else if (count($operation_result) > 0) {
+                $operation_result = $this->formatData($this->result);
+            }
+        }
+        $this->include_object = [];
+        return $operation_result;
+    }
+
+    /**
+     *
      */
     private function build(): void
     {
@@ -252,25 +272,6 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
     }
 
     /**
-     *
-     * @return array
-     * execute query to get result
-     */
-    public function result(): array
-    {
-        $this->build();
-        $operation_result = $this->result;
-        if (!isset($this->result['exception']) ) {
-            if ($this->isCount) {
-                $this->isCount = false;
-            } else if (count($operation_result) > 0) {
-                $operation_result = $this->formatData($this->result);
-            }
-        }
-        $this->include_object = [];
-        return $operation_result;
-    }
-    /**
      * @param array $result
      * @return array
      */
@@ -307,7 +308,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
                         break;
                 }
             }
-            return $this->buildStructure($result, $parent_entity[0] ?? $this->table , $children_entity, $other_entity);
+            return $this->buildStructure($result, $parent_entity[0] ?? $this->table, $children_entity, $other_entity);
 
         } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];

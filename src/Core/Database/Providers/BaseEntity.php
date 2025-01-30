@@ -115,15 +115,6 @@ abstract class BaseEntity implements EntityContracts
     }
 
     /**
-     * @param WhereBuilder $where
-     * @return $this
-     */
-    public function buildWhere(WhereBuilder $where): EntityContracts
-    {
-        return $this->setParam('where', $where);
-    }
-
-    /**
      * Build your array where
      * @param array $where
      * @return array
@@ -141,6 +132,17 @@ abstract class BaseEntity implements EntityContracts
     public function limit(int $limit): EntityContracts
     {
         return $this->setParam('limit', $limit);
+    }
+
+    /**
+     * @param string $key
+     * @param $value
+     * @return EntityContracts
+     */
+    private function setParam(string $key, $value): EntityContracts
+    {
+        $this->param[$key] = $value;
+        return $this;
     }
 
     /**
@@ -198,6 +200,15 @@ abstract class BaseEntity implements EntityContracts
     public function error(): array
     {
         return ['exception' => $this->db->error()];
+    }
+
+    /**
+     * @param WhereBuilder $where
+     * @return $this
+     */
+    public function buildWhere(WhereBuilder $where): EntityContracts
+    {
+        return $this->setParam('where', $where);
     }
 
     /**
@@ -356,17 +367,6 @@ abstract class BaseEntity implements EntityContracts
     protected function hasMany(EntityContracts $entity): object
     {
         return (new HasMany($this, $entity));
-    }
-
-    /**
-     * @param string $key
-     * @param $value
-     * @return EntityContracts
-     */
-    private function setParam(string $key, $value): EntityContracts
-    {
-        $this->param[$key] = $value;
-        return $this;
     }
 
     /**
