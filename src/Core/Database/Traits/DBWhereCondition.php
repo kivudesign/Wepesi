@@ -2,19 +2,20 @@
 
 namespace Wepesi\Core\Database\Traits;
 
-use PhpParser\Node\Expr\Cast\Object_;
-use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Database\Providers\Contracts\WhereBuilderContracts;
 
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template DBWhereCondition
+ * *
  */
 trait DBWhereCondition
 {
     /**
-     * @param WhereBuilder $whereBuilder
+     * @param WhereBuilderContracts $whereBuilder
      * @return array|void
      */
-    public function condition(WhereBuilder $whereBuilder)
+    public function condition(WhereBuilderContracts $whereBuilder)
     {
         $where = $whereBuilder->generate();
         if (count($where) == 0) return;
@@ -24,7 +25,7 @@ trait DBWhereCondition
          * defined comparison operator to avoid error while passing operation witch does not exist
          */
         $logicalOperator = ["or", "not"];
-        // check if the array is multidimensional array
+        // check if the array is a multidimensional array
         $len = count($where);
         $where_condition_string = '';
         $index = 1;

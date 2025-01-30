@@ -4,19 +4,24 @@
 namespace Wepesi\Core\Database\Traits;
 
 
+use Exception;
+
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template DBField
  */
 trait DBField
 {
     /**
      * @param array $fields
      * @param string $action
-     * @return array|string
+     * @return array
+     * @throws Exception
      */
-    public function field_params(array $fields = [], string $action)
+    public function field_params(array $fields, string $action): array
     {
-        if (count($fields) && !$this->_fields && (strtolower($action) != "insert" || strtolower($action) != "update")) {
+        $action = strtolower($action);
+        if (count($fields) && ($action != "insert" || $action != "update")) {
             $keys = $fields;
             $params = $keys;
             $x = 1;
@@ -28,8 +33,8 @@ trait DBField
                 if ($x < count($fields)) {
                     $values .= ', ';
                 }
-                //remove white space around the collum name
-                array_push($_trim_key, trim($keys[($x - 1)]));
+                //remove white space around the column name
+                $_trim_key[] = trim($keys[($x - 1)]);
                 $x++;
             }
             $keys = $_trim_key;
@@ -45,7 +50,7 @@ trait DBField
             ];
 
         } else {
-            return ("This method try to access undefined method");
+            throw new Exception("This method try to access undefined method");
         }
     }
 }

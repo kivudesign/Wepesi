@@ -2,11 +2,14 @@
 
 namespace Wepesi\Core\Database\Providers;
 
+use PDO;
 use Wepesi\Core\Database\Providers\Contracts\DbContract;
-use Wepesi\Core\Database\Traits\QueryExecuter;
+use Wepesi\Core\Database\Traits\QueryExecute;
 
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template DatabaseProviders of DbContract
+ * @template-implements DbContract<DatabaseProviders>
  */
 abstract class DatabaseProviders implements DbContract
 {
@@ -19,9 +22,9 @@ abstract class DatabaseProviders implements DbContract
      */
     protected string $_error = '';
     /**
-     * @var \PDO
+     * @var PDO
      */
-    protected \PDO $pdo;
+    protected PDO $pdo;
     /**
      * @var array
      */
@@ -39,7 +42,7 @@ abstract class DatabaseProviders implements DbContract
      */
     protected array $include_object;
     protected bool $isCount = false;
-    use QueryExecuter;
+    use QueryExecute;
 
     /**
      * @return string
@@ -58,17 +61,22 @@ abstract class DatabaseProviders implements DbContract
         return $this->_count;
     }
 
+    /**
+     * @return array
+     */
     abstract function result(): array;
 
     /**
      * Execute a sql query
      * @param string $sql
      * @param array $values
+     * @param int $last_id
+     * @param bool $is_query_string
      * @return void
      */
-    protected function query(string $sql, array $values): void
+    protected function prepareQueryExecution(string $sql, array $values, int $last_id = -1, bool $is_query_string = false): void
     {
-        $q = $this->executeQuery($this->pdo, $sql, $values);
+        $q = $this->executeQuery($this->pdo, $sql, $values, $last_id, $is_query_string);
         $this->result = $q['result'];
         $this->lastID = $q['lastID'] ?? 0;
         $this->_count = $q['count'] ?? 0;

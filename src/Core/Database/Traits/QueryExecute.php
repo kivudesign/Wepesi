@@ -12,12 +12,13 @@ use PDO;
 use PDOException;
 
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template QueryExecute
  */
-trait QueryExecuter
+trait QueryExecute
 {
     /**
-     * Execute sql request pass by the user
+     * Execute SQL request pass by the user
      * @param PDO $pdo pdo object
      * @param string $sql query string
      * @param array $params for prepare request provide params value
@@ -83,7 +84,6 @@ trait QueryExecuter
                         $data_result['count'] = $query->rowCount();
                         $sql = "SELECT * FROM $this->table WHERE id=?";
                         return $this->executeQuery($pdo, $sql, [$last_id], $last_id);
-                        break;
                     case 'update':
                         $data_result['count'] = $query->rowCount();
                         break;
@@ -96,6 +96,7 @@ trait QueryExecuter
             return $data_result;
         } catch (PDOException $ex) {
             $data_result['error'] = $ex->getmessage();
+            $data_result['exception'] = $ex;
             return $data_result;
         }
     }

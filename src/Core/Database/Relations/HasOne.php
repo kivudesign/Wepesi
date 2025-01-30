@@ -6,7 +6,9 @@ use Wepesi\Core\Database\Providers\BaseRelation;
 use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
 
 /**
- *
+ * @package Wepesi\Core\Database
+ * @template HasOne
+ * @template-extends BaseRelation<HasOne>
  */
 class HasOne extends BaseRelation
 {

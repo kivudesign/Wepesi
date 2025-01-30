@@ -2,6 +2,7 @@
 
 namespace Wepesi\Core\Database;
 
+use PDO;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 
@@ -9,8 +10,8 @@ use Wepesi\Core\Database\Providers\DatabaseProviders;
  * Insert Query Object
  * @package Wepesi\Core\Database
  * @template DBInsert of DatabaseQueryContracts
- * @template-implements DatabaseQueryContracts<T>
- * @template-extends DatabaseProviders<T>
+ * @template-implements DatabaseQueryContracts<DBInsert>
+ * @template-extends DatabaseProviders<DBInsert>
  */
 class DBInsert extends DatabaseProviders implements DatabaseQueryContracts
 {
@@ -19,23 +20,21 @@ class DBInsert extends DatabaseProviders implements DatabaseQueryContracts
      */
     private array $_fields;
 
-
     /**
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @param string $table
      */
-    public function __construct(\PDO $pdo, string $table)
+    public function __construct(PDO $pdo, string $table)
     {
         $this->table = $table;
         $this->pdo = $pdo;
         $this->_fields = [];
-        $this->_results = [];
         $this->lastID = 0;
         $this->_error = '';
     }
 
     /**
-     * profide field to be saved
+     * profile field to be saved
      * @param array $fields
      * @return $this
      */
@@ -46,7 +45,7 @@ class DBInsert extends DatabaseProviders implements DatabaseQueryContracts
             $keys = array_keys($fields);
             $values = null;
             $trim_key = [];
-            foreach ($fields as $field) {
+            foreach ($fields as $ignored) {
                 $values .= '? ';
                 if (count($fields) > ($field_key_position + 1)) {
                     $values .= ', ';

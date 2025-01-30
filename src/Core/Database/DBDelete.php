@@ -2,6 +2,7 @@
 
 namespace Wepesi\Core\Database;
 
+use PDO;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
@@ -11,8 +12,8 @@ use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
  * Delete Query object
  * @package Wepesi\Core\Database
  * @template DBDelete of DatabaseQueryContracts
- * @template-implements DatabaseQueryContracts<T>
- * @template-extends DatabaseProviders<T>
+ * @template-implements DatabaseQueryContracts<DBDelete>
+ * @template-extends DatabaseProviders<DBDelete>
  */
 class DBDelete extends DatabaseProviders implements DatabaseQueryContracts
 {
@@ -27,10 +28,10 @@ class DBDelete extends DatabaseProviders implements DatabaseQueryContracts
     use DBWhereCondition;
 
     /**
-     * @param \PDO $pdo
+     * @param PDO $pdo
      * @param string $table
      */
-    public function __construct(\PDO $pdo, string $table)
+    public function __construct(PDO $pdo, string $table)
     {
         $this->table = $table;
         $this->pdo = $pdo;
