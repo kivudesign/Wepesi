@@ -5,28 +5,36 @@
 
 namespace Wepesi\Core\Database\Providers;
 
+use Exception;
 use Wepesi\Core\Database\Database;
-use Wepesi\Core\Database\Entity;
 use Wepesi\Core\Database\Providers\Contracts\EntityContracts;
 use Wepesi\Core\Database\Relations\HasMany;
 use Wepesi\Core\Database\Relations\HasOne;
 use Wepesi\Core\Database\Traits\EntityReflexionTrait;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 
+/**
+ * @package Wepesi\Core\Database
+ * @template BaseEntity of EntityContracts
+ * @template-implements EntityContracts<BaseEntity>
+ */
 abstract class BaseEntity implements EntityContracts
 {
     /**
      * @var Database
      */
     private Database $db;
+
     /**
      * @var array
      */
     private array $include_entity;
+
     /**
-     * @var array|mixed
+     * @var array
      */
     private array $param;
+
     use EntityReflexionTrait;
 
     /**
@@ -47,14 +55,13 @@ abstract class BaseEntity implements EntityContracts
         try {
             $table = $this->getTableName();
 
-            if (count($this->include_entity) > 0) {
-                foreach ($this->include_entity as $value) {
-                    $table .= ' ' . $value['join'] . ' JOIN ' . $value['table'];
-                    if (isset($value['on'])) {
-                        $table .= $value['on'];
-                    }
+            foreach ($this->include_entity as $value) {
+                $table .= ' ' . $value['join'] . ' JOIN ' . $value['table'];
+                if (isset($value['on'])) {
+                    $table .= $value['on'];
                 }
             }
+
             $query = $this->db->get($table);
             if (isset($this->param['where'])) {
                 $query->where($this->param['where']);
@@ -81,10 +88,10 @@ abstract class BaseEntity implements EntityContracts
             $result = $query->result();
             $this->param = [];
             if ($this->db->error()) {
-                throw new \Exception($this->db->error());
+                throw new Exception($this->db->error());
             }
             return $result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
@@ -94,68 +101,77 @@ abstract class BaseEntity implements EntityContracts
      */
     private function getTableName(): string
     {
-        return trim($this->getName()) !== '' ? trim($this->getName()) : $this->extractEntityDefinition($this)->table;
+        $table_name = $this->getName() ? trim($this->getName()) : '';
+        return strlen($table_name) > 0 ? $table_name : $this->extractEntityDefinition($this)->table;
     }
 
     /**
-     * @return string
+     * set/get table name set as class entity.
+     * @return string|null
      */
-    protected function getName(): string
+    protected function getName(): ?string
     {
-        return '';
+        return null;
     }
 
     /**
      * @param WhereBuilder $where
      * @return $this
      */
-    public function where(WhereBuilder $where): Entity
+    public function buildWhere(WhereBuilder $where): EntityContracts
     {
-        $this->param['where'] = $where;
-        return $this;
+        return $this->setParam('where', $where);
+    }
+
+    /**
+     * Build your array where
+     * @param array $where
+     * @return array
+     */
+    public function where(array $where): array
+    {
+        // To Do implement where condition for a simple condition.
+        return [];
     }
 
     /**
      * @param int $limit
-     * @return $this
+     * @return EntityContracts
      */
-    public function limit(int $limit): Entity
+    public function limit(int $limit): EntityContracts
     {
-        $this->param['limit'] = $limit;
-        return $this;
+        return $this->setParam('limit', $limit);
     }
 
     /**
      * @param int $offset
-     * @return $this
+     * @return EntityContracts
      */
-    public function offset(int $offset): Entity
+    public function offset(int $offset): EntityContracts
     {
-        $this->param['offset'] = $offset;
-        return $this;
+        return $this->setParam('offset', $offset);
     }
 
     /**
      * @param string $field_name provide the field name to ordered by
-     * @return $this
+     * @return EntityContracts
      */
-    public function orderby(string $field_name): Entity
+    public function orderby(string $field_name): EntityContracts
     {
-        $this->param['orderby'] = $field_name;
-        return $this;
+        return $this->setParam('orderby', $field_name);
     }
 
     /**
      * @param EntityContracts $entityName
      * @param bool $inner
-     * @return $this
+     * @return EntityContracts
      */
-    public function include(EntityContracts $entityName, bool $inner = false): Entity
+    public function include(EntityContracts $entityName, bool $inner = false): EntityContracts
     {
         try {
             $entity_table_object = $this->getEntityRelation($entityName);
             if (is_array($entity_table_object) && isset($entity_table_object['exception'])) {
-                throw new \Exception($entity_table_object['exception']);
+                throw new Exception($entity_table_object['exception']);
             }
             $entity_object = $entity_table_object->entity_object;
             $relation = [
@@ -169,8 +185,8 @@ abstract class BaseEntity implements EntityContracts
             $foreign_key = $entity_table_object->table . '.' . $entity_relation->foreign_key;
             $relation['on'] = ' ON ' . $primary_key . '=' . $foreign_key;
 
-            $this->include_entity [] = $relation;
-        } catch (\Exception $ex) {
+            $this->include_entity[] = $relation;
+        } catch (Exception $ex) {
             print_r(['exception' => $ex->getMessage()]);
         }
         return $this;
@@ -199,10 +215,10 @@ abstract class BaseEntity implements EntityContracts
             $result = $query->result();
             $this->param = [];
             if ($this->db->error()) {
-                throw new \Exception($this->db->error());
+                throw new Exception($this->db->error());
             }
             return $result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
@@ -222,40 +238,39 @@ abstract class BaseEntity implements EntityContracts
             $result = $query->result();
             $this->param = [];
             if ($this->db->error()) {
-                throw new \Exception($this->db->error());
+                throw new Exception($this->db->error());
             }
             return $result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
 
     /**
      * @param array $fields
-     * @return $this
+     * @return EntityContracts
      */
-    public function fields(array $fields): Entity
+    public function fields(array $fields): EntityContracts
     {
         $this->param['fields'] = $fields;
         return $this;
     }
 
     /**
-     * @return $this
+     * @return EntityContracts
      */
-    public function desc(): Entity
+    public function desc(): EntityContracts
     {
         $this->param['ascending'] = 'DESC';
         return $this;
     }
 
     /**
-     * @return $this
+     * @return EntityContracts
      */
-    public function asc(): Entity
+    public function asc(): EntityContracts
     {
-        $this->param['ascending'] = 'ASC';
-        return $this;
+        return $this->setParam('ascending', 'ASC');
     }
 
     /**
@@ -272,10 +287,10 @@ abstract class BaseEntity implements EntityContracts
             $result = $query->result();
             $this->param = [];
             if ($this->db->error()) {
-                throw new \Exception($this->db->error());
+                throw new Exception($this->db->error());
             }
             return $result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
@@ -289,14 +304,14 @@ abstract class BaseEntity implements EntityContracts
         try {
             $result = $this->db->insert($this->getTableName())->field($fields)->result();
             if ($this->db->error()) {
-                throw new \Exception($this->db->error());
+                throw new Exception($this->db->error());
             }
             $id = $this->db->lastId();
             if ($id < 1) {
-                throw new \Exception('no field has been recorded');
+                throw new Exception('no field has been recorded');
             }
             return $result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
@@ -318,10 +333,10 @@ abstract class BaseEntity implements EntityContracts
             $result = $query->result();
             $this->param = [];
             if ($query->error()) {
-                throw new \Exception($query->error());
+                throw new Exception($query->error());
             }
             return $result;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ['exception' => $ex->getMessage()];
         }
     }
@@ -336,7 +351,7 @@ abstract class BaseEntity implements EntityContracts
 
     /**
      * @param EntityContracts $entity
-     * @return object|HasMany
+     * @return object
      */
     protected function hasMany(EntityContracts $entity): object
     {
@@ -344,8 +359,19 @@ abstract class BaseEntity implements EntityContracts
     }
 
     /**
+     * @param string $key
+     * @param $value
+     * @return EntityContracts
+     */
+    private function setParam(string $key, $value): EntityContracts
+    {
+        $this->param[$key] = $value;
+        return $this;
+    }
+
+    /**
      * @param EntityContracts $entity
-     * @return object|HasOne
+     * @return object
      */
     protected function hasOne(EntityContracts $entity): object
     {
