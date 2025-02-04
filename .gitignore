@@ -1,3 +1,5 @@
 /nbproject/private/
 /vendor/
 /cache
+/.idea
+.env

@@ -7,7 +7,7 @@ namespace Wepesi\Core\Exceptions;
 /**
  * @package Wepesi\Core\Exceptions
  */
-final class ValidationException extends WepesiException
+final class DatabaseException extends WepesiException
 {
 
 }

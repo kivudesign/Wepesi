@@ -46,6 +46,7 @@
         "ext-mbstring": "*",
         "ext-libxml": "*",
         "ext-dom": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-pdo": "*"
     }
 }

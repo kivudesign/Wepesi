@@ -42,6 +42,18 @@ if (! function_exists('checkFileExtension')) {
     }
 }
 
+if (! function_exists('url')) {
+    /**
+     * get a formatted application url route path
+     * @param string $path
+     * @return string
+     */
+    function url(string $path): string
+    {
+        return WEB_ROOT . ltrim($path, '/');
+    }
+}
+
 if (! function_exists('autoIndexFolder')) {
     /**
      * @param array $exclude_folder

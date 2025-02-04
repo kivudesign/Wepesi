@@ -6,9 +6,9 @@
 namespace Wepesi\Core\Exceptions;
 
 /**
- *
+ * @package Wepesi\Core\Exceptions
  */
-class RoutingException extends WepesiException
+final class RoutingException extends WepesiException
 {
 
 }
