@@ -115,17 +115,6 @@ abstract class BaseEntity implements EntityContracts
     }
 
     /**
-     * Build your array where
-     * @param array $where
-     * @return array
-     */
-    public function where(array $where): array
-    {
-        // To Do implement where condition for a simple condition.
-        return [];
-    }
-
-    /**
      * @param int $limit
      * @return EntityContracts
      */
@@ -200,6 +189,16 @@ abstract class BaseEntity implements EntityContracts
     public function error(): array
     {
         return ['exception' => $this->db->error()];
+    }
+
+    /**
+     * Build your array where
+     * @param array $where
+     * @return EntityContracts
+     */
+    public function where(array $where): EntityContracts
+    {
+        return $this->setParam('where', $where);
     }
 
     /**
@@ -290,7 +289,6 @@ abstract class BaseEntity implements EntityContracts
     public function delete(): array
     {
         try {
-
             $query = $this->db->delete($this->getTableName());
             if (isset($this->param['where'])) {
                 $query->where($this->param['where']);
@@ -333,7 +331,6 @@ abstract class BaseEntity implements EntityContracts
     public function update(): array
     {
         try {
-            $field = [];
             $query = $this->db->update($this->getTableName());
             if (isset($this->param['where'])) {
                 $query->where($this->param['where']);

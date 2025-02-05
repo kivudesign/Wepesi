@@ -12,41 +12,71 @@ use Wepesi\Core\Database\Providers\Contracts\WhereBuilderContracts;
 trait DBWhereCondition
 {
     /**
-     * @param WhereBuilderContracts $whereBuilder
+     * @param WhereBuilderContracts|array $whereBuilder
      * @return array|void
      */
-    public function condition(WhereBuilderContracts $whereBuilder)
+    public function getCondition(WhereBuilderContracts|array $whereBuilder)
     {
-        $where = $whereBuilder->generate();
+        $isObjectBuilder = false;
+        $where = $whereBuilder;
+        if ($whereBuilder instanceof WhereBuilderContracts) {
+            $isObjectBuilder = true;
+            $where = $whereBuilder->generate();
+            $len = count($where);
+        } else {
+            $where = is_array($where[0]) ? $where : [$where];
+            $len = count($where);
+        }
         if (count($where) == 0) return;
+        $fieldValues = [];
         $params = [];
-
-        /**
-         * defined comparison operator to avoid error while passing operation witch does not exist
-         */
-        $logicalOperator = ["or", "not"];
-        // check if the array is a multidimensional array
-        $len = count($where);
-        $where_condition_string = '';
-        $index = 1;
-        $fieldValue = [];
+        // attribute for array conditions
+        $logicalOperators = ['or', 'not'];
+        $comparisonOperator = '=';
         //
+        $index = 1;
+        $whereConditionParams = '';
         foreach ($where as $object) {
-            $notComparison = null;
-            // check the field exist and defined by default one
-            $where_condition_string .= $object->field_name . $object->comparison . " ? ";
-            $field_value[] = $object->field_value;
+            if ($isObjectBuilder) {
+                // check the field exist and defined by default one
+                $whereConditionParams .= $object->field_name . $object->comparison . ' ? ';
+                $fieldValues[] = $object->field_value;
 
-            $params[$object->field_name] = $object->field_value;
-            if ($index < $len) {
-                $where_condition_string .= $object->operator;
+                $params[$object->field_name] = $object->field_value;
+                if ($index < $len) {
+                    $whereConditionParams .= $object->operator;
+                }
+            } else {
+                $logicalOperator = ' and ';
+                $notComparison = '';
+                // check if there is a logical operator `or`||`and`
+                if (isset($object[3])) {
+                    // check id the defined operation exists in our defined tables
+                    $logicalOperator = in_array(strtolower($object[3]), $logicalOperators) ? $object[3] : ' and ';
+                    if (trim($logicalOperator) === 'not') {
+                        $notComparison = ' not ';
+                    }
+                }
+                $fieldValue = $object[2] ?? '';
+                $fieldName = strlen(trim($object[0])) > 0 ? trim($object[0]) : 'id';
+                $params[$fieldName] = $fieldValue;
+                $fieldValues[] = $fieldValue;
+                // check the field exist and defined by default one
+                $whereConditionParams .= $notComparison . $fieldName . $comparisonOperator . ' ? ';
+                //
+                if ($index < $len) {
+                    if ($logicalOperator != 'not') {
+                        $whereConditionParams .= $logicalOperator;
+                    }
+                }
             }
             $index++;
         }
+
         return [
-            "field" => "WHERE " . $where_condition_string,
-            "value" => $field_value,
-            "params" => $params
+            'field' => 'WHERE ' . $whereConditionParams,
+            'value' => $fieldValues,
+            'params' => $params
         ];
     }
 }

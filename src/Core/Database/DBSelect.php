@@ -8,9 +8,9 @@ namespace Wepesi\Core\Database;
 use Exception;
 use PDO;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
+use Wepesi\Core\Database\Providers\Contracts\WhereBuilderContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
-use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
 use Wepesi\Core\Escape;
 
 /**
@@ -92,19 +92,19 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
     }
 
     /**
-     * @param WhereBuilder $where_builder
+     * @param WhereBuilderContracts|array $where_builder
      * @return $this
      */
-    public function where(WhereBuilder $where_builder): DBSelect
+    public function where(WhereBuilderContracts|array $where_builder): DatabaseQueryContracts
     {
-        $this->where = $this->condition($where_builder);
+        $this->where = $this->getCondition($where_builder) ;
         return $this;
     }
 
     /**
      * @return $this
      */
-    public function between(string $field, array $value): DBSelect
+    public function between(string $field, array $value): DatabaseQueryContracts
     {
         if (count($value) == 2 && !is_array($value[0]) && !is_array($value[1])) {
             $this->_between = " $field between ? AND ?";
@@ -119,7 +119,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      * @param array $fields
      * @return $this
      */
-    public function field(array $fields = []): DBSelect
+    public function field(array $fields = []): DatabaseQueryContracts
     {
         if (count($fields) > 0) {
             $keys = $fields;
@@ -137,7 +137,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      * @param string $field
      * @return $this
      */
-    public function groupBY(string $field): DBSelect
+    public function groupBY(string $field): DatabaseQueryContracts
     {
         if ($field) $this->groupBY = " group by $field";
         return $this;
@@ -148,7 +148,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      * @param string $order
      * @return $this
      */
-    public function orderBy(string $order): DBSelect
+    public function orderBy(string $order): DatabaseQueryContracts
     {
         if ($order) $this->orderBy = " order by $order";
         return $this;
@@ -157,7 +157,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
     /**
      * @return $this
      */
-    public function random(): DBSelect
+    public function random(): DatabaseQueryContracts
     {
         $this->orderBy = ' order by RAND()';
         return $this;
@@ -167,7 +167,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      *
      * @return $this
      */
-    public function ASC(): DBSelect
+    public function ASC(): DatabaseQueryContracts
     {
         $this->ascending = ' ASC ';
         return $this;
@@ -177,7 +177,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      *
      * @return $this
      */
-    public function DESC(): DBSelect
+    public function DESC(): DatabaseQueryContracts
     {
         $this->ascending = ' DESC ';
         return $this;
@@ -188,7 +188,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      * @param int $limit
      * @return $this
      */
-    public function limit(int $limit): DBSelect
+    public function limit(int $limit): DatabaseQueryContracts
     {
         if ($limit) $this->_limit = " LIMIT $limit";
         return $this;
@@ -198,7 +198,7 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
      * @param int $offset
      * @return $this
      */
-    public function offset(int $offset): DBSelect
+    public function offset(int $offset): DatabaseQueryContracts
     {
         if ($offset) $this->_offset = " OFFSET $offset";
         return $this;
@@ -469,9 +469,9 @@ class DBSelect extends DatabaseProviders implements DatabaseQueryContracts
 
     /**
      * @param array $includes
-     * @return DBSelect
+     * @return DatabaseQueryContracts
      */
-    private function include(array $includes): DBSelect
+    private function include(array $includes): DatabaseQueryContracts
     {
         $this->include_object = $includes;
         return $this;

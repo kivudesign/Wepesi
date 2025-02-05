@@ -15,7 +15,7 @@ final class WhereBuilder implements WhereBuilderContracts
     /**
      * @var array
      */
-    private array $operator;
+    protected array $operator;
 
     /**
      *
