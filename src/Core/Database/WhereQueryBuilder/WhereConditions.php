@@ -123,6 +123,22 @@ class WhereConditions implements WhereConditionContracts
     }
 
     /**
+     * @param int $int
+     * @return WhereConditionContracts
+     */
+    public function eq(int $int): WhereConditionContracts
+    {
+        return $this->isEqualTo($int);
+    }
+
+    public function notGreaterThan(int|string $field_comparison): WhereConditionContracts{
+        return $this->setCondition('!>', $field_comparison);
+    }
+
+    public function notLessThan(int|string $field_comparison): WhereConditionContracts{
+        return $this->setCondition('!<', $field_comparison);
+    }
+    /**
      * @param $name
      * @param $arguments
      * @return mixed|void
@@ -133,6 +149,7 @@ class WhereConditions implements WhereConditionContracts
             return call_user_func_array([$this, $name], $arguments);
         }
     }
+
 
     /**
      * @return object

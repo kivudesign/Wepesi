@@ -58,4 +58,16 @@ interface WhereConditionContracts
      * @return WhereConditionContracts
      */
     public function isLike(int|string $field_comparison): WhereConditionContracts;
+
+    /**
+     * @param int|string $field_comparison
+     * @return WhereConditionContracts
+     */
+    public function notGreaterThan(int|string $field_comparison): WhereConditionContracts;
+
+    /**
+     * @param int|string $field_comparison
+     * @return WhereConditionContracts
+     */
+    public function notLessThan(int|string $field_comparison): WhereConditionContracts;
 }

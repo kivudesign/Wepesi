@@ -4,6 +4,7 @@ namespace Wepesi\Core\Database;
 
 use PDO;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseQueryContracts;
+use Wepesi\Core\Database\Providers\Contracts\WhereBuilderContracts;
 use Wepesi\Core\Database\Providers\DatabaseProviders;
 use Wepesi\Core\Database\Traits\DBWhereCondition;
 use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
@@ -41,12 +42,12 @@ class DBDelete extends DatabaseProviders implements DatabaseQueryContracts
     }
 
     /**
-     * @param WhereBuilder $where_builder
+     * @param WhereBuilderContracts|array $where_builder
      * @return $this
      */
-    function where(WhereBuilder $where_builder): DBDelete
+    function where(WhereBuilderContracts|array $where_builder): DBDelete
     {
-        $this->where = $this->condition($where_builder);
+        $this->where = $this->getCondition($where_builder);
         return $this;
     }
 
