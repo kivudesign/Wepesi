@@ -232,7 +232,7 @@ class Application
      */
     private function initErrorHandler(): void
     {
-        $isDevelopment = getenv('APP_ENV') === 'dev';
+        $isDevelopment = $_ENV['APP_ENV'] === 'dev';
         ErrorHandler::register($isDevelopment);
     }
     
