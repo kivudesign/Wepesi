@@ -144,9 +144,9 @@ class ErrorHandler
      */
     private static function displayError(Throwable $exception): void
     {
-        // Clear any previous output
-        if (ob_get_level() > 0) {
-            ob_clean();
+        // Clear any previous output - properly handle all buffer levels
+        while (ob_get_level() > 0) {
+            ob_end_clean();
         }
 
         // Only set HTTP response code if headers haven't been sent yet

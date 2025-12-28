@@ -59,6 +59,9 @@ class Application
      */
     public function __construct(string $path, AppConfiguration $config)
     {
+        // Register error handler first to catch any initialization errors
+        $this->initErrorHandler();
+        
         self::$config_params = $config->generate();
         self::$root_dir = str_replace("\\", '/', $path);
         self::$APP_DOMAIN = serverDomain()->domain;
@@ -68,9 +71,6 @@ class Application
         self::$layout = '';
         self::$VIEW_FOLDER = '';
         $this->router = new Router();
-        
-        // Register error handler
-        $this->initErrorHandler();
     }
 
     /**
