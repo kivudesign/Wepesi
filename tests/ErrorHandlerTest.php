@@ -17,6 +17,9 @@ class ErrorHandlerTest extends TestCase
     {
         parent::setUp();
         
+        // Reset error handler state
+        ErrorHandler::reset();
+        
         // Create temporary log directory for tests
         $this->testLogPath = sys_get_temp_dir() . '/wepesi_error_logs_' . uniqid();
         mkdir($this->testLogPath, 0755, true);
@@ -26,16 +29,36 @@ class ErrorHandlerTest extends TestCase
     {
         parent::tearDown();
         
+        // Reset error handler state
+        ErrorHandler::reset();
+        
         // Clean up test log files
         if (is_dir($this->testLogPath)) {
-            $files = glob($this->testLogPath . '/*');
-            foreach ($files as $file) {
-                if (is_file($file)) {
-                    unlink($file);
-                }
-            }
-            rmdir($this->testLogPath);
+            $this->removeDirectory($this->testLogPath);
         }
+    }
+    
+    /**
+     * Recursively remove directory
+     * @param string $dir
+     * @return void
+     */
+    private function removeDirectory(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . '/' . $file;
+            if (is_dir($path)) {
+                $this->removeDirectory($path);
+            } else {
+                unlink($path);
+            }
+        }
+        rmdir($dir);
     }
 
     public function testCaptureExceptionWritesToFileTransport()

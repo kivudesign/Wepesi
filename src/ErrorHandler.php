@@ -424,4 +424,20 @@ class ErrorHandler
 
         return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
     }
+
+    /**
+     * Reset the error handler state (for testing purposes)
+     * @return void
+     */
+    public static function reset(): void
+    {
+        self::$config = [];
+        self::$user = [];
+        self::$transports = [];
+        self::$registered = false;
+        
+        // Restore default handlers
+        restore_error_handler();
+        restore_exception_handler();
+    }
 }
