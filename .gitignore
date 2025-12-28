@@ -2,4 +2,4 @@
 /vendor/
 /cache
 /.idea
-.env
+.envstorage/logs/

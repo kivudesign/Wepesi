@@ -197,3 +197,22 @@ if (! function_exists('directoryExists')) {
         return true;
     }
 }
+
+if (! function_exists('storage_path')) {
+    /**
+     * Get the path to the storage directory
+     * @param string $path
+     * @return string
+     */
+    function storage_path(string $path = ''): string
+    {
+        $root = $GLOBALS['ROOT_DIR'] ?? __DIR__ . '/..';
+        $storagePath = $root . '/storage';
+        
+        if (empty($path)) {
+            return $storagePath;
+        }
+        
+        return $storagePath . '/' . ltrim($path, '/');
+    }
+}
