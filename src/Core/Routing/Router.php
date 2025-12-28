@@ -225,26 +225,20 @@ class  Router implements RouterContract
      */
     public function run()
     {
-        try {
-            if (!isset($this->routes[$_SERVER['REQUEST_METHOD']])) {
-                throw new RoutingException('Request method is not defined ', 501);
+        if (!isset($this->routes[$_SERVER['REQUEST_METHOD']])) {
+            throw new RoutingException('Request method is not defined ', 501);
+        }
+        $routesRequestMethod = $this->routes[$_SERVER['REQUEST_METHOD']];
+        $i = 0;
+        foreach ($routesRequestMethod as $route) {
+            if ($route->match($this->url)) {
+                return $route->call();
+            } else {
+                $i++;
             }
-            $routesRequestMethod = $this->routes[$_SERVER['REQUEST_METHOD']];
-            $i = 0;
-            foreach ($routesRequestMethod as $route) {
-                if ($route->match($this->url)) {
-                    return $route->call();
-                } else {
-                    $i++;
-                }
-            }
-            if (count($routesRequestMethod) === $i) {
-                $this->trigger404($this->notFoundCallback);
-            }
-        } catch (RoutingException $ex) {
-            Application::dumper($ex);
-            Response::setStatusCode(500);
-            exit;
+        }
+        if (count($routesRequestMethod) === $i) {
+            $this->trigger404($this->notFoundCallback);
         }
     }
 

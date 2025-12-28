@@ -68,6 +68,9 @@ class Application
         self::$layout = '';
         self::$VIEW_FOLDER = '';
         $this->router = new Router();
+        
+        // Register error handler
+        $this->initErrorHandler();
     }
 
     /**
@@ -222,6 +225,17 @@ class Application
             ->username($_ENV['DB_USER'])
             ->password($_ENV['DB_PASSWORD']);
     }
+    
+    /**
+     * Initialize the error handler
+     * @return void
+     */
+    private function initErrorHandler(): void
+    {
+        $isDevelopment = getenv('APP_ENV') === 'dev';
+        ErrorHandler::register($isDevelopment);
+    }
+    
     /**
      * @return void
      * @throws \Exception
