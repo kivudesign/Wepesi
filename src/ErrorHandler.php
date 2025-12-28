@@ -389,18 +389,21 @@ class ErrorHandler
      */
     private static function sendEvent(array $event): void
     {
-        if (!self::$config['send_reports'] && self::$config['environment'] === 'dev') {
-            // In dev mode with send_reports disabled, still write to file for debugging
-            if (!empty(self::$transports)) {
-                foreach (self::$transports as $transport) {
-                    if ($transport instanceof FileTransport) {
+        // In dev mode without send_reports, only write to file transport
+        if (self::$config['environment'] === 'dev' && !self::$config['send_reports']) {
+            foreach (self::$transports as $transport) {
+                if ($transport instanceof FileTransport) {
+                    try {
                         $transport->send($event);
+                    } catch (\Throwable $e) {
+                        error_log('Transport failed: ' . $e->getMessage());
                     }
                 }
             }
             return;
         }
 
+        // In prod or dev with send_reports, send to all transports
         foreach (self::$transports as $transport) {
             try {
                 $transport->send($event);

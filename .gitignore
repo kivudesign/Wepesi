@@ -2,5 +2,7 @@
 /vendor/
 /cache
 /.idea
-.envstorage/logs/
+.env
+storage/logs/
+!.gitkeep
 .phpunit.result.cache

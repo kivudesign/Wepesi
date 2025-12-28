@@ -22,7 +22,7 @@ class ErrorHandlerTest extends TestCase
         
         // Create temporary log directory for tests
         $this->testLogPath = sys_get_temp_dir() . '/wepesi_error_logs_' . uniqid();
-        mkdir($this->testLogPath, 0755, true);
+        mkdir($this->testLogPath, 0700, true);
     }
 
     protected function tearDown(): void

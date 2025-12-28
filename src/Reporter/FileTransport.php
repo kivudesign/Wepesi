@@ -30,7 +30,7 @@ class FileTransport implements TransportInterface
         try {
             // Ensure directory exists
             if (!is_dir($this->logPath)) {
-                mkdir($this->logPath, 0755, true);
+                mkdir($this->logPath, 0750, true);
             }
 
             // Create filename with date pattern
