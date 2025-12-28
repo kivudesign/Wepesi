@@ -149,7 +149,10 @@ class ErrorHandler
             ob_clean();
         }
 
-        http_response_code(500);
+        // Only set HTTP response code if headers haven't been sent yet
+        if (!headers_sent()) {
+            http_response_code(500);
+        }
 
         if (self::$detailedErrors) {
             self::displayDetailedError($exception);
@@ -202,7 +205,9 @@ class ErrorHandler
     private static function displayProductionError(): void
     {
         if (self::isAjaxRequest()) {
-            header('Content-Type: application/json');
+            if (!headers_sent()) {
+                header('Content-Type: application/json');
+            }
             echo json_encode([
                 'status' => 'error',
                 'message' => 'An internal server error occurred'
@@ -287,7 +292,9 @@ class ErrorHandler
      */
     private static function sendJsonError(Throwable $exception): void
     {
-        header('Content-Type: application/json');
+        if (!headers_sent()) {
+            header('Content-Type: application/json');
+        }
         
         $response = [
             'status' => 'error',
