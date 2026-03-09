@@ -15,4 +15,8 @@ $GLOBALS['config'] = [
     'vendor' => true,
     'autoload' => ['src', 'controller', 'middleware', 'models', 'helpers'],
     'helpers' => WEB_ROOT,
+    'bundles' => [
+       'js' => WEB_ROOT . 'assets/js',
+        'css' => WEB_ROOT . 'assets/css'
+    ],
 ];
