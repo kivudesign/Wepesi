@@ -3,12 +3,12 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Views\Provider\Contract;
+namespace Wepesi\Core\View\Provider\Contract;
 
 /**
  * @template T
  */
-interface ViewsContract
+interface ViewEngineContracts
 {
     /**
      * Setup new folder location for layout template
@@ -34,12 +34,6 @@ interface ViewsContract
      * @return array
      */
     public function getAssignData(): array;
-
-    /**
-     * Render html string text
-     * @var class-string<T> $html
-     */
-    public function renderHTML(string $html): void;
 
     /**
      * @var class-string<T> $template

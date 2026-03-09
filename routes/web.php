@@ -7,7 +7,7 @@ global $app;
 
 use Wepesi\Controller\exampleController;
 use Wepesi\Core\Http\Response;
-use Wepesi\Core\Views\View;
+use Wepesi\Core\View\View;
 use Wepesi\Middleware\Validation\exampleValidation;
 
 $router = $app->router();

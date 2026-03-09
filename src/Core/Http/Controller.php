@@ -6,8 +6,8 @@
 namespace Wepesi\Core\Http;
 
 use Wepesi\Core\Http\Providers\BaseControllerMiddleware;
-use Wepesi\Core\Views\Provider\Contract\ViewsContract;
-use Wepesi\Core\Views\View;
+use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
+use Wepesi\Core\View\View;
 
 /**
  *
@@ -17,7 +17,7 @@ abstract class Controller extends BaseControllerMiddleware
     /**
      * @var View
      */
-    protected ViewsContract $view;
+    protected ViewEngineContracts $view;
 
     /**
      *
