@@ -3,59 +3,63 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Views;
+namespace Wepesi\Core\View;
 
 use DOMDocument;
+use DOMElement;
+use DOMException;
 use DOMXPath;
 use Exception;
 use Wepesi\Core\Application;
 use Wepesi\Core\Escape;
 use Wepesi\Core\Http\Response;
 use Wepesi\Core\MetaData;
-use Wepesi\Core\Views\Provider\ViewBuilderProvider;
+use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
+use Wepesi\Core\View\Provider\ViewBuilderProviders;
 use function libxml_clear_errors;
 use function libxml_use_internal_errors;
 
 /**
+ * @package Wepesi\Core\View
  * @template T
- * @template-extends ViewBuilderProvider<T>
+ * @template-extends ViewBuilderProviders<T>
+ * @template-implements ViewEngineContracts<T>
  */
-class View extends ViewBuilderProvider
+class View extends ViewBuilderProviders implements ViewEngineContracts
 {
     /**
      * @var T[]
      */
-    private static array $js_link_path = [];
+    private static array $js_path = [];
     /**
      * @var array
      */
-    private static array $style_link_path = [];
+    private static array $style_path = [];
     /**
      * @var string|null
      */
     private static ?string $metadata = null;
 
-
     /**
-     * Provide js link to be set up on the page header
-     * @param class-string<T> $path_file
+     * Add a js module link file path to the header of the page
+     * @param string $file_path
      * @return void
      */
-    public static function setJsToHead(string $path_file): void
+    public static function addModuleJsFile(string $file_path): void
     {
-        self::$js_link_path[] = $path_file;
+        self::$js_path['module'][] = $file_path;
     }
 
     /**
-     * Provide CSS link path to set up stylesheet on the page header
+     * Add a CSS link file path to the header of the page
      *
      * @param string $path
      * @return void
      *
      */
-    public static function setStyleToHead(string $path): void
+    public static function addCssFile(string $path): void
     {
-        self::$style_link_path[] = $path;
+        self::$style_path[] = $path;
     }
 
     /**
@@ -63,7 +67,7 @@ class View extends ViewBuilderProvider
      *
      * @return void
      */
-    public static function setMetaData(MetaData $metadata): void
+    public static function addMetaData(MetaData $metadata): void
     {
         self::$metadata = $metadata->build();
     }
@@ -76,14 +80,14 @@ class View extends ViewBuilderProvider
     public function display(string $view): void
     {
         $view_file = $this->buildFilePath($view);
-        $render = $this->renderView($view_file);
+        $this->view_render = $this->renderView($view_file);
         if (! $this->getLayout() && !$this->reset) {
             $this->layout = Application::getLayout();
         }
         if ($this->getLayout()) {
-            $render = $this->renderLayout($render);
+            $this->view_render = $this->renderLayout($this->view_render);
         }
-        $this->buildAssetHead($render);
+        print($this->view_render);
     }
 
     /**
@@ -164,17 +168,17 @@ class View extends ViewBuilderProvider
 
 
     /**
-     *   this module will help to create a dom document to add
-     *   asset js | CSS on the head of your file.
-     * @param $html
+     * build the asset head of the page to be displayed.
+     * @param ?string $html veb page content
      *
      * @return void
-    */
-    private function buildAssetHead($html): void
+     * @throws DOMException
+     */
+    private function buildAssetHead(?string $html): void
     {
         try {
             if (!$html) {
-                throw new Exception('Unable to render empty file');
+                print('');
             }
             $dom = new DOMDocument();
             libxml_use_internal_errors(true);
@@ -182,50 +186,82 @@ class View extends ViewBuilderProvider
                 mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8'),
                 LIBXML_HTML_NODEFDTD | LIBXML_HTML_NOIMPLIED
             );
-//            $errors = libxml_get_errors();
+            $errors = libxml_get_errors();
+            if ($errors) {
+                throw $errors;
+            }
             libxml_clear_errors();
             $xpath = new DOMXPath($dom);
-            $head = $xpath->query('//head/title');
-            $template = $dom->createDocumentFragment();
+            $headNodes  = $xpath->query('//head');
+            $head = null;
+            if ($headNodes->length == 0) {
+                // Create a new head element
+                $head = $dom->createElement('head');
+                // Optionally add a title or meta tag
+                $title = $dom->createElement('title', 'App Title');
+                $head->appendChild($title);
+                // Append head to HTML
+                $html = $dom->getElementsByTagName('html')->item(0);
+                $html->insertBefore($head, $html->firstChild);
+            } else {
+                $head = $headNodes->item(0);
+            }
+            $documentFragment = $dom->createDocumentFragment();
             // add a style link to the head tag of the page
-            foreach (self::$style_link_path as $key => $value) {
-                $src = $this->generateStyleLink($value);
-                $template->appendXML($src);
-                $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+            foreach (self::$style_path as $value) {
+                $link = $this->buildStyleLink($dom, $value);
+                $head->appendChild($link);
             }
             // add a script link to the head of the page
-            foreach (self::$js_link_path as $key => $value) {
-                $src = $this->generateStyleLink($value['link']);
-                $template->appendXML($src);
-                $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+            foreach (self::$js_path as $key => $array) {
+                $type = $key != 'module' ? null : 'module';
+                foreach ($array as $value) {
+                    $link = $this->buildJSLink($dom, $value, $type);
+                    $head->appendChild($link);
+                }
             }
             // add metadata to the head of the page
             if (self::$metadata) {
-                $template->appendXML(self::$metadata);
+                $documentFragment->appendXML(self::$metadata);
                 if ($head[0]) {
-                    $head[0]->parentNode->insertbefore($template, $head[0]->nextSibling);
+                    $head[0]->parentNode->insertbefore($documentFragment, $head[0]->nextSibling);
                 }
             }
             print(html_entity_decode($dom->saveHTML()));
         } catch (Exception $ex) {
-            print_r(['exception' => $ex->getMessage()]);
+            throw $ex;
         }
     }
 
     /**
-     * @param class-string<T> $path
-     * @return T
+     * Use DomDocument to build javascript tag object
+     *
+     * @param DOMDocument $dom dom object
+     * @param string $path JavaScript file path for script type
+     * @return DOMElement
+     * @throws DOMException
      */
-    private function generateJSLink(string $path): string
+    private function buildJSLink(DOMDocument $dom, string $path, string $type = 'text/javascript'): DOMElement
     {
-        return '<script src="' . $path . '" type="text/javascript"></script>';
+        $link = $dom->createElement('script');
+        $link->setAttribute('type', $type);
+        $link->setAttribute('src', $path);
+        return $link;
     }
 
     /**
-     * @param class-string<T> $path
-     * @return T
+     * Use DomDocument to build style lik for HTML output.
+     *
+     * @param DOMDocument $dom dom object
+     * @param string $path css file path
+     * @return DOMElement     *
+     * @throws DOMException
      */
-    private function generateStyleLink(string $path): string {
-        return '<link rel="stylesheet" type="text/css" href="' . $path . '">';
+    private function buildStyleLink(DOMDocument $dom, string $path): DOMElement {
+        $link = $dom->createElement('link');
+        $link->setAttribute('rel', 'stylesheet');
+        $link->setAttribute('type', 'text/css');
+        $link->setAttribute('href', $path);
+        return $link;
     }
 }

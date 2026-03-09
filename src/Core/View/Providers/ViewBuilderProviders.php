@@ -3,17 +3,17 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Views\Provider;
+namespace Wepesi\Core\View\Provider;
 
 use Wepesi\Core\Application;
 use Wepesi\Core\Escape;
-use Wepesi\Core\Views\Provider\Contract\ViewsContract;
+use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
 
 /**
  * @template T
- * @template-implements ViewsContract<T>
+ * @template-implements ViewEngineContracts<T>
  */
-abstract class ViewBuilderProvider implements ViewsContract
+abstract class ViewBuilderProviders implements ViewEngineContracts
 {
     /**
      * @var T[]
@@ -54,8 +54,8 @@ abstract class ViewBuilderProvider implements ViewsContract
     /**
      * assign variables data to be displayed on file_page
      *
-     * @param class-string<T> $variable
-     * @param        $value
+     * @param string $variable variable name
+     * @param mixed $value value to be assigned
      */
     public function assign(string $variable, $value): void
     {
@@ -81,12 +81,14 @@ abstract class ViewBuilderProvider implements ViewsContract
     }
 
     /**
-     * you should provide the extension of your file,
-     * in another case the file will be missing
+     * Set layout template file,
+     * by default all file should be located on views directory.
+     *
      * @param class-string<T> $template
      */
     public function setLayout(string $template): void
     {
+        $template = Escape::checkFileExtension($template);
         $this->layout = Application::getRootDir() . '/views' . $template;
     }
 
