@@ -1,0 +1,1 @@
+{"id":"42d5f31c-c99b-4c2a-ab3a-4e6e626ead5b","timestamp":"2025-12-28T13:15:53+00:00","level":"error","environment":"prod","release":null,"exception":{"class":"Exception","message":"Test production error logging","code":0,"file":"Command line code","line":19,"stack":[]},"request":{"method":"CLI","path":"","headers":[]}}

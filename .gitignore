@@ -3,3 +3,6 @@
 /cache
 /.idea
 .env
+storage/logs/
+!.gitkeep
+.phpunit.result.cache

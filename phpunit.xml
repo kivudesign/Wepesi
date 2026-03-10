@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         failOnWarning="true">
+    <testsuites>
+        <testsuite name="Wepesi Test Suite">
+            <directory>tests</directory>
+            <directory>src/Test</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
