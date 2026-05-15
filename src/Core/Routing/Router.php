@@ -242,9 +242,22 @@ class  Router implements RouterContract
                 $this->trigger404($this->notFoundCallback);
             }
         } catch (RoutingException $ex) {
+            error_log(
+                sprintf(
+                    'RoutingException: %s in %s:%d%s%s',
+                    $ex->getMessage(),
+                    $ex->getFile(),
+                    $ex->getLine(),
+                    PHP_EOL,
+                    $ex->getTraceAsString()
+                )
+            );
             Response::setStatusCode(500);
-            print_r($ex);
-            exit;
+            Response::send([
+                'status' => '500',
+                'message' => 'Internal Server Error'
+            ], 500);
+            return;
         }
     }
 
