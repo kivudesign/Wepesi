@@ -104,10 +104,10 @@ class View extends ViewBuilderProviders implements ViewEngineContracts
      */
     private function buildFilePath(string $file_name): ?string
     {
-        $folder = strlen(trim($this->folder_name)) > 0 ? $this->folder_name : Application::getViewFolder();;
+        $folder = strlen(trim($this->folder_name)) > 0 ? $this->folder_name : Application::getViewPath();
         $view_file = Escape::checkFileExtension($file_name);
         $file_source = $folder . Escape::addSlashes($view_file);
-        return Application::getRootDir() . '/app/Views' . $file_source;
+        return Application::getRootDir() . $file_source;
     }
 
     /**
