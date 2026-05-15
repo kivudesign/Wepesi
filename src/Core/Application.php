@@ -22,10 +22,7 @@ class Application
      * @var string
      */
     private static string $APP_ROUTE_PATH;
-    /**
-     * @var array
-     */
-    private static array $config_params = [];
+
     /**
      * define application global configuration
      * @var string
@@ -144,31 +141,16 @@ class Application
     {
         $base_route_path = self::getRootDir() . self::$APP_ROUTE_PATH;
         $api_route_path = $base_route_path . '/api.php';
+        // register Api route
         if (file_exists($api_route_path)) {
-            $this->router->group('/api', function (Router $router) {
-                if (isset($_SERVER['HTTP_ORIGIN'])) {
-                    // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
-                    // you want to allow, and if so:
-                    header('Access-Control-Allow-Origin: *');
-                    header('Access-Control-Allow-Credentials: true');
-                    header('Access-Control-Max-Age: 86400');    // cache for 1 day
-                }
-                header('Access-Control-Allow-Methods: GET, POST,PUT, PATCH, HEAD, OPTIONS');
-                // Access-Control headers are received during OPTIONS requests
-                if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-                    // may also be using PUT, PATCH, HEAD etc.
-                    if (isset($_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
-                        header("Access-Control-Allow-Headers: {$_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']}");
-
-                    exit(0);
-                }
-                $router->group([], $this->registerRoute('/api.php'));
-            });
+            $this->router->api($this->registerRoute('/api.php'));
         }
+        // register web route
         $web_route_path = $base_route_path . '/web.php';
         if (file_exists($web_route_path)) {
             $this->router->group([], $this->registerRoute('/web.php'));
         }
+        // missing route source
         if (!file_exists($web_route_path) && !file_exists($api_route_path)) {
             throw new \Exception('No Route file not found.');
         }
@@ -192,7 +174,7 @@ class Application
         return self::$root_dir . '/' . trim($path,'/');
     }
     /**
-     * Initialise the database configuration
+     * Initialize the database configuration
      * @return void
      */
     private function initDB(): void

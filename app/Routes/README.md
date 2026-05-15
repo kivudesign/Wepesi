@@ -1,0 +1,316 @@
+# wepesi/routing
+
+A lightweight and simple object oriented PHP Router.
+Built by  _([Boss Ibrahim Mussa](https://www.github.com/bim-g))_ and [Contributors](https://github.com/bim-g/wepesi-router/graphs/contributors)
+
+
+## Features
+
+- Supports `GET`, `POST`, `PUT`, `DELETE`,`PATCH` request methods
+- [Routing shorthands such as `get()`, `post()`, `put()`, …](#routing-shorthands)
+- [Static Route Patterns](#route-patterns)
+- Dynamic Route Patterns: [Dynamic PCRE-based Route Patterns](#dynamic-pcre-based-route-patterns) or [Dynamic Placeholder-based Route Patterns](#dynamic-placeholder-based-route-patterns)
+- [Optional Route Subpatterns](#optional-route-subpatterns)
+- [Sub routing / Group Routing](#Subrouting-/-Groupe-Routing)
+- [Allowance of `Class@Method` calls](#classmethod-calls)
+- [Before Route Middleware](#before-route-middleware)
+- [API Groupe Routing](#api-groupe-routing)
+- [Supports `X-HTTP-Method-Override` header](#overriding-the-request-method)
+- [Custom 404](#custom-404)
+
+
+
+## Installation
+
+Installation is possible using Composer
+
+```shell
+composer require wepesi/routing
+```
+
+### Routing
+
+`Wepesi/routing` supports `GET`, `POST`, `PUT`, `PATCH`, `DELETE` HTTP request methods. Pass in a single request method.
+
+When a route matches against the current URL (e.g. `$_SERVER['REQUEST_URI']`), the attached __route handling function__ will be executed. The route handling function must be a [callable](http://php.net/manual/en/language.types.callable.php). Only the first route matched will be handled. When no matching route is found, a 404 handler will be executed.
+
+### Routing Shorthands
+
+Shorthands for single request methods are provided:
+
+```php
+$router->get('pattern', function() { /* ... */ });
+$router->post('pattern', function() { /* ... */ });
+$router->put('pattern', function() { /* ... */ });
+$router->delete('pattern', function() { /* ... */ });
+```
+
+Note: Routes must be hooked before `$router->run();` is being called.
+
+### Route Patterns
+
+Route Patterns can be static or dynamic:
+
+- __Static Route Patterns__ contain no dynamic parts and must match exactly against the `path` part of the current URL.
+- __Dynamic Route Patterns__ contain dynamic parts that can vary per request. The varying parts are named __subpatterns__ and are defined using either Perl-compatible regular expressions (PCRE) or by using __placeholders__
+
+#### Static Route Patterns
+
+A static route pattern is a regular string representing a URI. It will be compared directly against the `path` part of the current URL.
+
+Examples:
+
+-  `/about`
+-  `/contact`
+
+Usage Examples:
+
+```php
+// This route handling function will only be executed when visiting http(s)://www.example.org/about
+$router->get('/about', function() {
+    echo 'About Page Contents';
+});
+```
+#### Dynamic Placeholder-based Route Patterns
+
+This type of Route Patterns are the same as __Dynamic PCRE-based Route Patterns__, but with one difference: they don't use regexes to do the pattern matching but they use the more easy __placeholders__ instead. Placeholders are strings surrounded by collumn, e.g. `:name`.
+
+Examples:
+
+- `/movies/:id`
+- `/profile/:username`
+
+Placeholders are easier to use than PRCEs, but offer you less control as they internally get translated to a PRCE that matches any character (`.*`).
+
+```php
+$router->get('/movies/:movieId/photos/:photoId', function($movieId, $photoId) {
+    echo 'Movie #' . $movieId . ', photo #' . $photoId;
+});
+```
+
+Note: `the name of the placeholder should match with the name of the parameter that is passed into the route handling function.`
+
+#### Dynamic PCRE-based Route Patterns
+
+This type of Route Patterns contain dynamic parts which can vary per request. The varying parts are named __subpatterns__ and are defined using regular expressions.
+
+Usage Examples:
+
+```php
+// This route handling function will only be executed when visiting http(s)://www.example.org/movies/3
+$router->get('/movies/:id', function($id) {
+    echo 'Get a movie by ID:'.$id;
+})->with('id','[0-9]+');
+```
+
+Commonly used PCRE-based subpatterns within Dynamic Route Patterns are:
+
+- `\d+` = One or more digits (0-9)
+- `\w+` = One or more word characters (a-z 0-9 _)
+- `[a-z0-9_-]+` = One or more word characters (a-z 0-9 _) and the dash (-)
+- `.*` = Any character (including `/`), zero or more
+- `[^/]+` = Any character but `/`, one or more
+
+When multiple subpatterns are defined, the resulting __route handling parameters__ are passed into the route handling 'with` function  in the order they are defined in:
+
+```php
+// http(s)://www.example.org/articles/12-nyiragongo-volcano`
+$router->get('/artilces/:id-:name', function($id, $title) {
+    echo 'Articles #' . $id . ', title #' . $title;
+})
+->with('id','[0-9]+')
+->with('title','[a-z\0-9]+');
+```
+This will be like a kind of validation of your parameters.
+
+### Subroutine / Group Routing
+
+Use `$router->group($baseroute, $fn)` to group a collection of routes in to a subroute pattern. The subroute pattern is prefixed into all following routes defined in the scope. e.g. Mounting a callback `$fn` onto `/movies` will prefix `/movies` onto all following routes.
+
+```php
+$router->group('/movies', function() use ($router) {
+
+    // will result in '/movies/'
+    $router->get('/', function() {
+        echo 'movies overview';
+    });
+
+    // will result in '/movies/id'
+    $router->get('/:id', function($id) {
+        echo 'movie id ' . $id;
+    });
+
+});
+```
+
+Nesting of subroutes is possible, just define a second `$router->group()` in the callable that's already contained within a preceding `$router->group()`.
+
+```php
+$router->group('/articles', function() use ($router) {
+
+    // will result in '/articles/'
+    $router->get('/', function() {
+        echo 'articles overview';
+    });
+    
+    //
+	$router->group('/themes', function() use ($router) {	
+	    // will result in '/articles/themes'
+	    $router->get('/', function() {
+	        echo 'Articles themes overview';
+	    });	
+	    // will result in '/articles/themes/4'
+	    $router->get('/:id', function($id) {
+	        echo 'Articles themes detail id: ' . $id;
+	    });
+	
+	});
+
+});
+```
+Register or Group sub folder with Group, It's possible with the group method to combine multiple golder on one pattern and have a using pattern.
+```php
+$router->group('articles', function() {
+    include __DIR__ . '/articles.php'
+});
+```
+
+### `Class#Method` calls
+
+We can route to the class action like so:
+
+```php
+$router->get('/users/:id', '\Wepesi\Controller\UserController#get_users_detail');
+```
+or
+```php
+$router->get('/users/:id', [\Wepesi\Controller\UserController::class,'get_users_detail']);
+```
+
+When a request matches the specified route URI, the `get_users` method on the `UserController` class will be executed. The defined route parameters will be passed to the class method.
+
+The method can be static(not-recommend)  or non-static (recommend). In case of a non-static method, a new instance of the class will be created.
+
+```php
+$router->get('/users/profile', \Wepesi\Controller\Users::profile());
+
+```
+Note: In case you are using static method, dont pass as string or in array.
+
+### Before Route Middleware
+
+`wepesi/routing` supports __Before Route Middlewares__, which are executed before the route handling is processed.
+by using a `middleware` method
+```php
+$router->get('/articles/:id', function($id) {
+    echo "article id is:".$id;
+})->middleware(function($id){
+	if(!filter_var($id,FILTER_VALIDATE_INT)){
+	    echo "you should provide an integer";
+	    exit;
+	}
+});
+```
+Route middlewares are route specific, one or middleware can be set and will be executed before route function.
+
+```php
+$router->get('/admin/:id', function($id) {
+    echo "admin id is:".$id;
+})
+    ->middleware(function($id){
+        print_r("First middleware");
+    })->middleware(function($id){
+        print_r("Second middleware");
+    })
+    ->middleware(function($id){
+        print_r("Last middleware before Route function");
+    });
+```
+### API Groupe Routing
+
+You can define your API route inside the api method, and will auto complet api route fro you.
+```php
+$router->api(function(Router $router){
+    $router->group('/v1', function (Router $route){
+        $router->group('/users',function(Router $router){
+            $router->get('/',[adminController::class,'dashboard']);
+        });
+    });
+});
+// the patter is 
+// /api/v1/users
+```
+### Register Api sub folder support
+```php
+$router->api(__DIR__.'/v1.php');
+```
+
+### Overriding the request method
+
+Use `X-HTTP-Method-Override` to override the HTTP Request Method. Only works when the original Request Method is `POST`. Allowed values for `X-HTTP-Method-Override` are `PUT`, `DELETE`, or `PATCH`.
+
+### Custom 404
+
+The default 404 handler sets a 404 status code and exits. You can override this default 404 handler by using `$router->set404(callable);`
+
+```php
+$router->set404(function() {
+    header('HTTP/1.1 404 Not Found');
+    // ... do something special here
+});
+```
+
+You can also define multiple custom routes e.x. you want to define an `/api` route, you can print a custom 404 page:
+
+```php
+$router->set404('**)?', function() {
+    header('HTTP/1.1 404 Not Found');
+    header('Content-Type: application/json');
+
+    $jsonArray = array();
+    $jsonArray['status'] = "404";
+    $jsonArray['status_text'] = "route not defined";
+
+    echo json_encode($jsonArray);
+});
+```
+
+Also supported are `Class@Method` callables:
+
+```php
+$router->set404([appController::class,'notfound']);
+```
+The 404 handler will be executed when no route pattern was matched to the current URL.
+
+💡 You can also manually trigger the 404 handler by calling `$router->trigger404()`
+
+## Integration with other libraries
+
+Integrate other libraries with `wepesi/routing` by making good use of the `use` keyword to pass dependencies into the handling functions.
+
+```php
+
+$router->get('/', function() {
+    $view = new \Wepesi\View();
+    $view->assign('email','ibmussafb@gmail.com');
+    $view->assign('github','bim-g');
+    $view->display("profile");
+});
+
+$router->run();
+```
+
+Given this structure it is still possible to manipulate the output from within the After Router Middleware
+
+## A note on working with PUT
+
+There's no such thing as `$_PUT` in PHP. One must fake it:
+
+```php
+$router->put('/movies/:username', function() {
+    $data  = [];
+    parse_str(file_get_contents('php://input'), $data);
+    // ...
+});
+```
+
