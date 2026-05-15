@@ -78,7 +78,7 @@ class Application
      */
     public static function getViewPath(): string
     {
-        return self::$APP_VIEW_PATH;
+        return self::$root_dir . self::$APP_VIEW_PATH;
     }
 
     /**

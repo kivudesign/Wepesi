@@ -107,7 +107,7 @@ class View extends ViewBuilderProviders implements ViewEngineContracts
         $folder = strlen(trim($this->folder_name)) > 0 ? $this->folder_name : Application::getViewPath();
         $view_file = Escape::checkFileExtension($file_name);
         $file_source = $folder . Escape::addSlashes($view_file);
-        return Application::getRootDir() . $file_source;
+        return $file_source;
     }
 
     /**
