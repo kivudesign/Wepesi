@@ -13,6 +13,7 @@ use Wepesi\Core\Routing\Router;
  */
 class Application
 {
+    private static string $APP_ROOT_PATH;
     /**
      * @var array
      */
@@ -59,6 +60,7 @@ class Application
      */
     public function __construct(string $path, AppConfiguration $config)
     {
+        self::$APP_ROOT_PATH = '/app';
         self::$config_params = $config->generate();
         self::$root_dir = str_replace("\\", '/', $path);
         self::$APP_DOMAIN = serverDomain()->domain;
@@ -99,7 +101,7 @@ class Application
      */
     public static function setLayout(string $layout)
     {
-        self::$layout = self::getRootDir() . '/views/' . trim($layout, '/');
+        self::$layout = self::getRootDir() . '/app/Views/' . trim($layout, '/');
     }
 
     /**
@@ -158,7 +160,7 @@ class Application
      */
     protected function routeProvider(): void
     {
-        $base_route_path = self::getRootDir() . '/routes';
+        $base_route_path = self::getRootDir() . '/app/Routes';
         $api_route_path = $base_route_path . '/api.php';
         if (file_exists($api_route_path)) {
             $this->router->group([
@@ -199,7 +201,7 @@ class Application
      */
     public function registerRoute(string $path): string
     {
-        return $this->basePath('/routes' . '/' . trim($path,'/'));
+        return $this->basePath('app/Routes' . '/' . trim($path,'/'));
     }
     /**
      * @param string $path

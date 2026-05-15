@@ -1,6 +1,9 @@
 <?php
+/*
+ * Copyright (c) 2026. Wepesi Dev Framework
+ */
 
-namespace Wepesi\Middleware\Validation;
+namespace app\Middleware;
 
 use Wepesi\Core\Http\MiddleWare;
 

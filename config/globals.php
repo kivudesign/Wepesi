@@ -13,7 +13,7 @@ $GLOBALS['config'] = [
     ],
     'lang' => 'fr',
     'vendor' => true,
-    'autoload' => ['src', 'controller', 'middleware', 'models', 'helpers'],
+    'autoload' => ['src', 'app'],
     'helpers' => WEB_ROOT,
     'bundles' => [
        'js' => WEB_ROOT . 'assets/js',

@@ -21,8 +21,8 @@ $language = new I18n($lang);
     <title><?= $language->translate('Welcome') ?></title>
 
     <!-- Favicons -->
-    <link href='assets/img/favicon.ico' rel='icon'>
-    <link href='assets/img/logo.jpg' rel='wepesi-icon'>
+    <link href='../../assets/img/favicon.ico' rel='icon'>
+    <link href='../../assets/img/logo.jpg' rel='wepesi-icon'>
     <?php
     Bundles::insertCSS('w3');
     ?>
