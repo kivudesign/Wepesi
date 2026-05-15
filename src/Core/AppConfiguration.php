@@ -27,6 +27,15 @@ class AppConfiguration
     }
 
     /**
+     * Set application view location files
+     * @param string $key
+     * @param string $value
+     * @return AppConfiguration
+     */
+    public function view(string $key = 'view', string $value = 'app/Views'): AppConfiguration {
+        return $this->setParams($key, $value);
+    }
+    /**
      * @param string $timezone
      * @return AppConfiguration
      */
@@ -43,6 +52,12 @@ class AppConfiguration
     {
         return $this->setParams('not_found', $path);
     }
+
+    /**
+     * @param string $key
+     * @param $value
+     * @return AppConfiguration
+     */
     private function setParams(string $key, $value): AppConfiguration {
         $this->params[$key] = $value;
         return $this;
