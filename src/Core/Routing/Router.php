@@ -136,9 +136,9 @@ class  Router implements RouterContract
      * The group method help to group a collection of routes in to a sub-route pattern.
      * The sub-route pattern is prefixed into all following routes defined in the scope.
      * @param array|string $base_route can be a string or an array to defined middleware for the group routing
-     * @param callable|string|closure $callable a callable method can be a controller method or an anonymous callable method
+     * @param string|Closure $callable a callable method can be a controller method or an anonymous callable method
      */
-    public function group(array|string $base_route, $callable): void
+    public function group(array|string $base_route, string|Closure $callable): void
     {
         $pattern = $base_route;
         if (is_array($base_route)) {
