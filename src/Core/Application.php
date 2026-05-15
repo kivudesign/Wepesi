@@ -13,7 +13,15 @@ use Wepesi\Core\Routing\Router;
  */
 class Application
 {
-    private static string $APP_ROOT_PATH;
+    /**
+     * @var string
+     */
+    private static string $APP_VIEW_PATH;
+
+    /***
+     * @var string
+     */
+    private static string $APP_ROUTE_PATH;
     /**
      * @var array
      */
@@ -45,10 +53,6 @@ class Application
     private static string $layout;
 
     /**
-     * @var string
-     */
-    private static string $VIEW_FOLDER;
-    /**
      * @var Router
      */
     private Router $router;
@@ -60,16 +64,24 @@ class Application
      */
     public function __construct(string $path, AppConfiguration $config)
     {
-        self::$APP_ROOT_PATH = '/app';
-        self::$config_params = $config->generate();
+        $config_params = $config->getCongigurations();
         self::$root_dir = str_replace("\\", '/', $path);
         self::$APP_DOMAIN = serverDomain()->domain;
-        self::$APP_LANG = self::$config_params['lang'] ?? 'fr';
-        self::$APP_TEMPLATE = self::$config_params['app_template'] ?? '';
+        self::$APP_LANG = $config_params['lang'] ?? 'fr';
+        self::$APP_TEMPLATE = $config_params['app_template'] ?? '';
         self::$layout_content_param = 'layout_content';
         self::$layout = '';
-        self::$VIEW_FOLDER = '';
+        self::$APP_VIEW_PATH = $config_params['view'];
+        self::$APP_ROUTE_PATH = $config_params['route'];
         $this->router = new Router();
+    }
+
+    /**
+     * @return string
+     */
+    public static function getViewPath(): string
+    {
+        return self::$APP_VIEW_PATH;
     }
 
     /**
@@ -81,45 +93,23 @@ class Application
     }
 
     /**
-     * simple builtin dumper for dump data
-     * @param $ex
-     *
-     */
-    public static function dumper($ex): void
-    {
-        print('<pre>');
-        var_dump($ex);
-        print('</pre>');
-        exit();
-    }
-
-    /**
      * Define a layout to be used by all pages in the application.
      * can be set at the top of your application to be available everywhere.
      * @param string $layout
      * @return void
      */
-    public static function setLayout(string $layout)
+    public static function setLayout(string $layout): void
     {
-        self::$layout = self::getRootDir() . '/app/Views/' . trim($layout, '/');
+        self::$layout = self::getRootDir() . self::$APP_VIEW_PATH . trim($layout, '/');
     }
 
     /**
      * @param string $layout_name
      * @return void
      */
-    public static function setLayoutcontentparam(string $layout_name)
+    public static function setLayoutcontentparam(string $layout_name): void
     {
         self::$layout_content_param = $layout_name;
-    }
-
-    /**
-     * @param string $folder_name
-     * @return void
-     */
-    public static function setViewFolder(string $folder_name)
-    {
-        self::$VIEW_FOLDER = $folder_name;
     }
 
     /**
@@ -139,14 +129,6 @@ class Application
     }
 
     /**
-     * @return string
-     */
-    public static function getViewFolder()
-    {
-        return self::$VIEW_FOLDER ;
-    }
-
-    /**
      * @return Router
      */
     public function router(): Router
@@ -160,12 +142,10 @@ class Application
      */
     protected function routeProvider(): void
     {
-        $base_route_path = self::getRootDir() . '/app/Routes';
+        $base_route_path = self::getRootDir() . self::$APP_ROUTE_PATH;
         $api_route_path = $base_route_path . '/api.php';
         if (file_exists($api_route_path)) {
-            $this->router->group([
-                'pattern' => '/api'
-            ], function (Router $router) {
+            $this->router->group('/api', function (Router $router) {
                 if (isset($_SERVER['HTTP_ORIGIN'])) {
                     // Decide if the origin in $_SERVER['HTTP_ORIGIN'] is one
                     // you want to allow, and if so:
@@ -201,7 +181,7 @@ class Application
      */
     public function registerRoute(string $path): string
     {
-        return $this->basePath('app/Routes' . '/' . trim($path,'/'));
+        return $this->basePath(self::$APP_ROUTE_PATH . '/' . trim($path,'/'));
     }
     /**
      * @param string $path

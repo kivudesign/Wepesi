@@ -49,7 +49,7 @@ trait routeBuilder
             }
             return;
         } catch (\Exception $ex) {
-            Application::dumper($ex);
+            print_r($ex);
         }
     }
 
