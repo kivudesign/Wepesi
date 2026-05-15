@@ -27,13 +27,21 @@ class AppConfiguration
     }
 
     /**
-     * Set application view location files
-     * @param string $key
+     * Set up application view location files
      * @param string $value
      * @return AppConfiguration
      */
-    public function view(string $key = 'view', string $value = 'app/Views'): AppConfiguration {
-        return $this->setParams($key, $value);
+    public function view(string $value = '/app/Views'): AppConfiguration {
+        return $this->setParams('view', $value);
+    }
+
+    /**
+     * Set up application routes location files
+     * @param string $value
+     * @return AppConfiguration
+     */
+    public function route(string $value = '/app/Routes'): AppConfiguration {
+        return $this->setParams('route', $value);
     }
     /**
      * @param string $timezone
@@ -65,7 +73,7 @@ class AppConfiguration
     /**
      * @return array
      */
-    public function generate(): array
+    public function getCongigurations(): array
     {
         return $this->params;
     }

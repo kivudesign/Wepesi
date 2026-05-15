@@ -27,6 +27,8 @@ if (getenv('APP_ENV') === 'prod') {
 $appConfiguration = new AppConfiguration();
 
 $configuration = $appConfiguration
+    ->view()
+    ->route()
     ->lang(getenv('LANG'))
     ->timezone(getenv('TIME_ZONE'));
 

@@ -94,8 +94,8 @@ final class Validate
                 }
             }
         } catch (ValidationException $ex) {
-            Application::dumper($ex);
             Response::setStatusCode(500);
+            print_r($ex);
             exit;
         }
     }
