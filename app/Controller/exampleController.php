@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2023. wepesi dev framework
+ * Copyright (c) 2023-2026. Wepesi Dev Framework
  */
 
 /**
@@ -8,8 +8,7 @@
  *
  */
 
-namespace Wepesi\Controller;
-
+namespace App\controller;
 
 use Wepesi\Core\Http\Controller;
 use Wepesi\Core\Http\Input;
