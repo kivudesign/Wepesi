@@ -117,7 +117,7 @@ abstract class BaseComponent implements ComponentContract
     {
         $path = '/' . ltrim($viewComponent, '/');
         $path = Escape::checkFileExtension($path);
-        $file = Application::getRootDir() . '/views/components' . $path;
+        $file = Application::getViewPath() . '/components' . $path;
         if (file_exists($file)) {
             // in case we need to patch data on the subcomponent we can split it like
             if (count($data) > 0) {
