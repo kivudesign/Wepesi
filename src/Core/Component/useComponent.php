@@ -49,7 +49,7 @@ final class useComponent
             self::loadConfig(Application::getRootDir() . '/config/components.php');
         }
         if (!isset(self::$components[$name])) {
-            throw new \Exception("Component '$name' not register or not implemented.");
+            throw new \Exception("Component '$name' not registered or not implemented.");
         }
         $class = self::$components[$name];
 
