@@ -43,7 +43,7 @@ class useComponentTest extends TestCase
     public function testCallStaticWithUnknownComponentThrowsException(): void
     {
         $this->expectException(\Exception::class);
-        $this->expectExceptionMessage("Component 'unknown' not register or not implemented.");
+        $this->expectExceptionMessage("Component 'unknown' not registered or not implemented.");
         useComponent::unknown();
     }
 }
