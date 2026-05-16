@@ -115,17 +115,27 @@ abstract class BaseComponent implements ComponentContract
      */
     public function loadViewFile(string $viewComponent, array $data = []): ComponentContract
     {
+        $componentsDirectory = Application::getViewPath() . '/components';
+        $baseDirectory = realpath($componentsDirectory);
+        if ($baseDirectory === false) {
+            return $this;
+        }
         $path = '/' . ltrim($viewComponent, '/');
         $path = Escape::checkFileExtension($path);
-        $file = Application::getViewPath() . '/components' . $path;
+        $file = $componentsDirectory . $path;
+
         if (file_exists($file)) {
-            // in case we need to patch data on the subcomponent we can split it like
-            if (count($data) > 0) {
-                extract($data, EXTR_SKIP);
+            $resolvedFile = realpath($file);
+            $basePrefix = rtrim($baseDirectory, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            if ($resolvedFile !== false && ($resolvedFile === $baseDirectory || str_starts_with($resolvedFile, $basePrefix))) {
+                // in case we need to patch data on the subcomponent we can split it like
+                if (count($data) > 0) {
+                    extract($data, EXTR_SKIP);
+                }
+                ob_start();
+                require $file;
+                $this->subComponents = ob_get_clean();
             }
-            ob_start();
-            require_once $file;
-            $this->subComponents = ob_get_clean();
         }
 
         return $this;
