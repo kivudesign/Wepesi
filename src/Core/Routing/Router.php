@@ -82,7 +82,13 @@ class  Router implements RouterContract
     {
         $pattern = $this->baseRoute . Escape::addSlashes(trim($pattern, '/'));
         $pattern = $this->baseRoute ? rtrim($pattern, '/') : $pattern;
-        $route = new Route($pattern, $callable, $this->baseMiddleware);
+
+        $route = Application::make(Route::class, [
+            $pattern,
+            $callable,
+            $this->baseMiddleware
+        ]);
+
         $this->routes[$methode][] = $route;
 
         if ($name == null && is_string($callable)) {
@@ -151,10 +157,11 @@ class  Router implements RouterContract
         $this->baseRoute .= $pattern;
 
         if ($callable instanceof Closure) {
-            call_user_func($callable, $this);
+            Application::container()->call($callable, [$this]);
         } else {
-            (new RouteFileRegistrar($this))->register($callable);
+            Application::make(RouteFileRegistrar::class, [$this])->register($callable);
         }
+
         $this->baseRoute = $cur_base_route;
     }
 
@@ -199,18 +206,15 @@ class  Router implements RouterContract
     /**
      * @param string $name
      * @param array $params
-     * @return \Exception[]|RoutingException[]
+     * @return Mixed
+     * @throws RoutingException
      */
-    public function url(string $name, array $params = [])
+    public function url(string $name, array $params = []): mixed
     {
-        try {
-            if (!isset($this->_nameRoute[$name])) {
-                throw new RoutingException('No route match');
-            }
-            return $this->_nameRoute[$name]->geturl($params);
-        } catch (RoutingException $ex) {
-            return ['RoutingException' => $ex];
+        if (!isset($this->_nameRoute[$name])) {
+            throw new RoutingException('No route match');
         }
+        return $this->_nameRoute[$name]->geturl($params);
     }
 
     /**
