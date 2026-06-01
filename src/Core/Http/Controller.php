@@ -27,7 +27,6 @@ abstract class Controller extends BaseControllerMiddleware
      */
     public function __construct()
     {
-        parent::__construct();
         $this->view = new View();
     }
     /**
