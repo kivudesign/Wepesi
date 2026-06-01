@@ -81,7 +81,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
     /**
      * @return array
      */
-    private function generate(): array
+    public function generate(): array
     {
         return $this->items;
     }

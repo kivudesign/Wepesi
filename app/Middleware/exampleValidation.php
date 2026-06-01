@@ -24,7 +24,7 @@ class exampleValidation extends MiddleWare
 
         $this->validate->check($_POST, $schema);
         if (!$this->validate->passed()) {
-            print_r($this->validate->errors());
+            print_r($this->validate->getErrors());
         }
     }
 }
