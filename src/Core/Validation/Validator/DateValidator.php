@@ -57,7 +57,7 @@ final class DateValidator extends ValidatorProvider
     /**
      * @return void
      */
-    public function now()
+    public function now(): void
     {
         $min_date_time = strtotime('now');
         $min_date = date('d/F/Y', $min_date_time);
@@ -73,11 +73,13 @@ final class DateValidator extends ValidatorProvider
     }
 
     /**
+     * While trying to get day validation, use this module
+     *
      * @param string|null $times
+     *
      * @return  void
-     * while trying to get day validation use this module
      */
-    public function today(string $times = null)
+    public function today(string $times = null): void
     {
         $min_date_time = strtotime("now {$times}");
         $min_date = date('d/F/Y', $min_date_time);
@@ -93,11 +95,13 @@ final class DateValidator extends ValidatorProvider
     }
 
     /**
+     * Get the min date control from the given date
+     *
      * @param string|null $rule
+     *
      * @return void
-     * get the min date control from the given date
      */
-    public function min($rule)
+    public function min($rule): void
     {
         /**
          * $regex= "#[a-zA-Z]#";
@@ -120,11 +124,13 @@ final class DateValidator extends ValidatorProvider
     }
 
     /**
+     * While try to check maximum date of a defined period use this module
+     *
      * @param string|null $rule
+     *
      * @return void
-     * while try to check maximum date of a defined period use this module
      */
-    public function max($rule)
+    public function max($rule): void
     {
         $rule = $rule ?? 'now';
         $max_date_time = strtotime($rule);

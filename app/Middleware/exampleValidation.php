@@ -5,11 +5,15 @@
 
 namespace App\Middleware;
 
+use Wepesi\Core\Exceptions\ValidationException;
 use Wepesi\Core\Http\MiddleWare;
 
 class exampleValidation extends MiddleWare
 {
-    function changeLang()
+    /**
+     * @throws ValidationException
+     */
+    function changeLang(): void
     {
         $schema = [
             "token" => $this->rule->string("token")
@@ -17,6 +21,7 @@ class exampleValidation extends MiddleWare
                 ->max(50)
                 ->required(),
             "lang" => $this->rule->string("lang")
+                ->unique("languages")
                 ->min(1)
                 ->max(2)
                 ->required()

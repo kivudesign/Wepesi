@@ -14,7 +14,11 @@ interface RulesValidationContracts extends ValidationContracts
 {
 
     /**
-     * @return mixed
+     * Generates validation rules based on the provided configuration.
+     * 1. Generates the validation rules based on the provided configuration.
+     * 2. Returns the generated validation rules.
+     *
+     * @return array
      */
-    public function generate();
+    public function generate(): array;
 }

@@ -8,6 +8,10 @@ namespace Wepesi\Core;
 use Wepesi\Core\Database\Database;
 use Wepesi\Core\Database\DatabaseConfig;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseContracts;
+use Wepesi\Core\Database\Providers\Contracts\WhereBuilderContracts;
+use Wepesi\Core\Database\Providers\Contracts\WhereConditionContracts;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereConditions;
 use Wepesi\Core\DI\Container;
 use Wepesi\Core\DI\Contracts\ContainerContracts;
 use Wepesi\Core\Http\Input;
@@ -326,6 +330,14 @@ class Application
         });
 
         /*
+         * Database query builder services.
+         */
+        self::$container->bind(WhereBuilder::class);
+        self::$container->bind(WhereBuilderContracts::class, WhereBuilder::class);
+        self::$container->bind(WhereConditions::class);
+        self::$container->bind(WhereConditionContracts::class, WhereConditions::class);
+
+        /*
          * Route-related classes receive runtime constructor parameters.
          * They must be bind(), not singleton().
          */
@@ -355,7 +367,7 @@ class Application
          */
         self::$container->singleton(View::class);
         self::$container->bind(ViewEngineContracts::class, View::class);
-        self::$container->singleton(Validate::class);
+        self::$container->bind(Validate::class);
         self::$container->singleton(MessageErrorBuilder::class);
 
         /*

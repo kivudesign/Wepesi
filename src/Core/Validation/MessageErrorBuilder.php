@@ -32,8 +32,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      */
     public function type(string $value): MessageBuilderContracts
     {
-        $this->items['type'] = $value;
-        return $this;
+        return $this->setKeyValue('type', $value);
     }
 
     /**
@@ -42,8 +41,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      */
     public function message(string $value): MessageBuilderContracts
     {
-        $this->items['message'] = $value;
-        return $this;
+        return $this->setKeyValue('message', $value);
     }
 
     /**
@@ -53,7 +51,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
     public function label(string $value): MessageBuilderContracts
     {
         $this->items['label'] = $value;
-        return $this;
+        return $this->setKeyValue('label', $value);
     }
 
     /**
@@ -62,8 +60,7 @@ final class MessageErrorBuilder implements MessageBuilderContracts
      */
     public function limit(string $value): MessageBuilderContracts
     {
-        $this->items['limit'] = $value;
-        return $this;
+        return $this->setKeyValue('limit', $value);
     }
 
     /**
@@ -76,6 +73,12 @@ final class MessageErrorBuilder implements MessageBuilderContracts
         if (method_exists($this, $method)) {
             return call_user_func_array([$this, $method], $arg);
         }
+    }
+
+    private function setKeyValue(string $key, $value): MessageBuilderContracts
+    {
+        $this->items[$key] = $value;
+        return $this;
     }
 
     /**

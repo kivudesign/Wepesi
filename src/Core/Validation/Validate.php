@@ -6,7 +6,6 @@
 
 namespace Wepesi\Core\Validation;
 
-use ReflectionClass;
 use Wepesi\Core\Application;
 use Wepesi\Core\Exceptions\ValidationException;
 use Wepesi\Core\Http\Response;
@@ -27,80 +26,80 @@ final class Validate
      * @var bool
      */
     private bool $passed;
-    private MessageBuilderContracts $message;
 
     /**
-     * @param MessageBuilderContracts $message
+     * @var MessageBuilderContracts
      */
-    public function __construct(MessageBuilderContracts $message)
+    private MessageBuilderContracts $message;
+
+    public function __construct()
     {
         $this->errors = [];
         $this->passed = false;
-        $this->message = $message;
+        $this->message = Application::make(MessageErrorBuilder::class);
     }
 
     /**
+     * Validate the data source against the schema
+     *
      * @param array $resource data source where the information will be extracted;
      * @param array $schema data schema
+     *
      * @return void
+     * @throws ValidationException
      */
     function check(array $resource, array $schema): void
     {
-        try {
-            $this->errors = [];
-            $option_resolver = [];
-            /**
-             * use of Option resolver to catch all undefined key
-             * on the source data
-             */
-            foreach ($resource as $item => $response) {
-                $option_resolver[] = Application::make(Option::class, [$item]);
-            }
+        $this->errors = [];
+        $option_resolver = [];
+        /**
+         * use of Option resolver to catch all undefined keys
+         * on the source data
+         */
+        foreach ($resource as $item => $response) {
+            $option_resolver[] = Application::make(Option::class, [$item]);
+        }
 
-            $resolver = Application::make(OptionsResolver::class, [$option_resolver]);
-            $options = $resolver->resolve($schema);
-            $exceptions = $options['InvalidArgumentException'] ?? false;
-            if ($exceptions) {
-                $this->message
-                    ->type('object.unknown')
-                    ->message($exceptions->getMessage())
-                    ->label('exception');
-                $this->addError($this->message);
-            } else {
-                foreach ($schema as $item => $rules) {
-                    if (!is_array($rules) && is_object($rules)) {
-                        if (!$rules->generate()) {
-                            throw new ValidationException('This rule is not a valid! method generate does not exist');
-                        }
-                        $rules = $rules->generate();
+        $resolver = Application::make(OptionsResolver::class, [$option_resolver]);
+        $options = $resolver->resolve($schema);
+        $exceptions = $options['InvalidArgumentException'] ?? false;
+        if ($exceptions) {
+            $this->message
+                ->type('object.unknown')
+                ->message($exceptions->getMessage())
+                ->label('exception');
+            $this->addError($this->message);
+        } else {
+            foreach ($schema as $item => $rules) {
+                if (!is_array($rules) && is_object($rules)) {
+                    if (!$rules->generate()) {
+                        Response::setStatusCode(500);
+                        throw new ValidationException('This rule is not a valid! method generate does not exist');
                     }
-                    $class_namespace = array_keys($rules)[0];
-                    if ($class_namespace == 'any') continue;
-                    $validator_class = str_replace('Rules', 'Validator', $class_namespace);
+                    $rules = $rules->generate();
+                }
+                $class_namespace = array_keys($rules)[0];
+                if ($class_namespace == 'any') continue;
+                $validator_class = str_replace('Rules', 'Validator', $class_namespace);
 
-                    $instance = Application::make($validator_class, [
-                        $item,
-                        $resource
-                    ]);
+                $instance = Application::make($validator_class, [
+                    $item,
+                    $resource
+                ]);
 
-                    foreach ($rules[$class_namespace] as $method => $params) {
-                        if (method_exists($instance, $method)) {
-                            Application::container()->call([$instance, $method], [$params]);
-                        }
-                    }
-                    $result = $instance->result();
-                    if (count($result) > 0) {
-                        $this->errors = array_merge($this->errors, $result);
+                foreach ($rules[$class_namespace] as $method => $params) {
+                    if (method_exists($instance, $method)) {
+                        Application::container()->call([$instance, $method], [$params]);
                     }
                 }
-                if (count($this->errors) == 0) {
-                    $this->passed = true;
+                $result = $instance->result();
+                if (count($result) > 0) {
+                    $this->errors = array_merge($this->errors, $result);
                 }
             }
-        } catch (ValidationException $ex) {
-            Response::setStatusCode(500);
-            print_r($ex);
-            exit;
+            if (count($this->errors) == 0) {
+                $this->passed = true;
+            }
         }
     }
 
@@ -119,7 +118,7 @@ final class Validate
      * Get validation errors
      * 1. if the validation passed, the array will be empty
      * 2. if the validation failed, the array will contain the errors
-     * 
+     *
      * @return array
      */
     public function getErrors(): array

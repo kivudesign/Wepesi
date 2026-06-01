@@ -6,6 +6,11 @@
 
 namespace Wepesi\Core\Validation\Validator;
 
+use Wepesi\Core\Application;
+use Wepesi\Core\Database\Database;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder;
+use Wepesi\Core\Database\WhereQueryBuilder\WhereConditions;
+use Wepesi\Core\Escape;
 use Wepesi\Core\Validation\Providers\ValidatorProvider;
 
 /**
@@ -68,7 +73,7 @@ final class StringValidator extends ValidatorProvider
     /**
      *
      */
-    public function email()
+    public function email(): void
     {
         if (!filter_var($this->field_value, FILTER_VALIDATE_EMAIL)) {
             $this->messageItem
@@ -86,7 +91,7 @@ final class StringValidator extends ValidatorProvider
      * www.[domain].[extension]
      *
      */
-    public function url()
+    public function url(): void
     {
         if (!preg_match("/\b(?:(?:https?|ftp):\/\/|www\.)[-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|]/i", $this->field_value)) {
             $this->messageItem
@@ -102,7 +107,7 @@ final class StringValidator extends ValidatorProvider
      * @param string $key_to_match
      *
      */
-    public function match(string $key_to_match)
+    public function match(string $key_to_match): void
     {
         $this->isStringAndValid($key_to_match);
         if (isset($this->data_source[$key_to_match]) && (strlen($this->field_value) != strlen($this->data_source[$key_to_match])) && ($this->field_value != $this->data_source[$key_to_match])) {
@@ -139,10 +144,9 @@ final class StringValidator extends ValidatorProvider
     }
 
     /**
-     * @param string $ip_address
      * @return void
      */
-    public function addressIp()
+    public function addressIp(): void
     {
         if (!filter_var($this->field_value, FILTER_VALIDATE_IP)) {
             $this->messageItem
@@ -157,7 +161,7 @@ final class StringValidator extends ValidatorProvider
      * @param string $ip_address
      * @return void
      */
-    public function addressIpv6(string $ip_address)
+    public function addressIpv6(string $ip_address): void
     {
         if (!filter_var($ip_address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
             $this->messageItem
@@ -173,11 +177,11 @@ final class StringValidator extends ValidatorProvider
      * @return $this
      * @throws \Exception
      */
-    public function unique(string $table_name)
+    public function unique(string $table_name): StringValidator
     {
-        $db = \Wepesi\Core\Database\Database::getInstance();
-        $condition = (new \Wepesi\Core\Database\WhereQueryBuilder\WhereConditions($this->field_name))->isEqualTo(\Wepesi\Core\Escape::encode($this->field_value));
-        $where = (new \Wepesi\Core\Database\WhereQueryBuilder\WhereBuilder())->andOption($condition);
+        $db = Application::make(Database::class);
+        $condition = Application::make(WhereConditions::class,[$this->field_name])->isEqualTo(Escape::encode($this->field_value));
+        $where = Application::make(WhereBuilder::class)->andOption($condition);
         $check_uniq = $db->get($table_name)->where($where)->result();
         if ($db->error()) {
             $this->messageItem

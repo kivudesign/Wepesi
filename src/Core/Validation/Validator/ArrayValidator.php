@@ -29,11 +29,10 @@ final class ArrayValidator extends ValidatorProvider
 
     /**
      * @param int $rule
-     * @return void
+     *
      */
     public function max(int $rule): void
     {
-        // TODO: Implement max() method.
         if ($this->checkNotPositiveParamMethod($rule, true)) return;
         if (count($this->field_value) > $rule) {
             $this->messageItem

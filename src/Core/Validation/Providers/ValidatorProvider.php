@@ -6,6 +6,7 @@
 
 namespace Wepesi\Core\Validation\Providers;
 
+use Wepesi\Core\Application;
 use Wepesi\Core\Validation\MessageErrorBuilder;
 use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
 use Wepesi\Core\Validation\Providers\Contracts\ValidateRulesContracts;
@@ -40,28 +41,28 @@ abstract class ValidatorProvider implements ValidateRulesContracts
      *
      */
 
-    function __construct()
+    public function __construct()
     {
         $this->errors = [];
-        $this->messageItem = new MessageErrorBuilder();
+        $this->messageItem = Application::make(MessageErrorBuilder::class);
     }
 
     /**
      * @param int $rule
-     * @return mixed
+     *
      */
     abstract public function min(int $rule);
 
     /**
      * @param int $rule
-     * @return mixed
+     *
      */
     abstract public function max(int $rule);
 
     /**
-     * @return void
+     *
      */
-    public function required()
+    public function required(): void
     {
         if (is_array($this->field_value)) {
             if (count($this->field_value) == 0) {
