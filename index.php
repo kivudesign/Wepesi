@@ -6,6 +6,7 @@
 
 use Wepesi\Core\AppConfiguration;
 use Wepesi\Core\Application;
+use Wepesi\Core\DI\Container;
 use Wepesi\Core\DotEnv;
 
 // Define root directory
@@ -23,6 +24,7 @@ require_once $ROOT_DIR . '/config/init.php';
 if (getenv('APP_ENV') === 'prod') {
     autoIndexFolder(['assets']);
 }
+$container = new Container();
 
 $appConfiguration = new AppConfiguration();
 
@@ -32,6 +34,6 @@ $configuration = $appConfiguration
     ->lang(getenv('LANG'))
     ->timezone(getenv('TIME_ZONE'));
 
-$app = new Application($ROOT_DIR, $configuration);
+$app = new Application($ROOT_DIR, $configuration, $container);
 
 $app->run();
