@@ -40,12 +40,12 @@ final class BooleanValidator extends ValidatorProvider
 
     /**
      *
-     * @param string|null $itemKey
+     * @param string $itemKey
      * @return boolean
      */
-    private function isBoolean(string $itemKey = null): bool
+    private function isBoolean(string $itemKey = ""): bool
     {
-        $item_to_check = !$itemKey ? $this->field_name : $itemKey;
+        $item_to_check = (strlen(trim($itemKey))) > 0 ? $itemKey : $this->field_name;
         $val = $this->data_source[$item_to_check];
 
         $regex = "/^(true|false)$/";
@@ -64,7 +64,7 @@ final class BooleanValidator extends ValidatorProvider
      * @param $rule
      * @return void
      */
-    public function min($rule)
+    public function min($rule): void
     {
     }
 
@@ -72,7 +72,7 @@ final class BooleanValidator extends ValidatorProvider
      * @param $rule
      * @return void
      */
-    public function max($rule)
+    public function max($rule): void
     {
     }
 

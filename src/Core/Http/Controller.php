@@ -21,14 +21,11 @@ abstract class Controller extends BaseControllerMiddleware
      * @var View
      */
     protected ViewEngineContracts $view;
-
     /**
-     *
+     * @var MetaData
      */
-    public function __construct()
-    {
-        $this->view = new View();
-    }
+    private MetaData $metadata;
+
     /**
      * Framework service initializer.
      *
@@ -40,7 +37,6 @@ abstract class Controller extends BaseControllerMiddleware
     final public function __wepesiInit(): void
     {
         $this->view = Application::make(ViewEngineContracts::class);
-        $this->media = Application::make(Media::class);
         $this->metadata = Application::make(MetaData::class);
     }
 }

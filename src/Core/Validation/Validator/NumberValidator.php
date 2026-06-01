@@ -56,7 +56,7 @@ final class NumberValidator extends ValidatorProvider
      * @param int $rule
      * @return void
      */
-    public function min(int $rule)
+    public function min(int $rule): void
     {
         if ((int)$this->field_value < $rule) {
             $this->messageItem
@@ -72,7 +72,7 @@ final class NumberValidator extends ValidatorProvider
      * @param int $rule
      * @return void
      */
-    public function max(int $rule)
+    public function max(int $rule): void
     {
         if ((int)$this->field_value > $rule) {
             $this->messageItem
@@ -85,9 +85,9 @@ final class NumberValidator extends ValidatorProvider
     }
 
     /**
-     *
+     * @return void
      */
-    public function positive()
+    public function positive(): void
     {
         if ((int)$this->field_value < 0) {
             $this->messageItem

@@ -14,18 +14,19 @@ interface ValidationContracts
 {
     /**
      * @param int $rule
-     * @return mixed
+     *
      */
     public function min(int $rule);
 
     /**
      * @param int $rule
-     * @return mixed
+     *
      */
     public function max(int $rule);
 
     /**
-     * @return mixed
+     * Marks a field or parameter as mandatory.
+     * Ensures that a value must be provided for this specific field or parameter.
      */
     public function required();
 }
