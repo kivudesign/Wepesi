@@ -2,6 +2,7 @@
 
 namespace Wepesi\Core\Http;
 
+use Wepesi\Core\Application;
 use Wepesi\Core\Escape;
 use Wepesi\Core\Validation\Rules;
 use Wepesi\Core\Validation\Validate;
@@ -17,8 +18,8 @@ class Redirect
      */
     static public function to(string $location = '')
     {
-        $rule = new Rules();
-        $validate = new Validate();
+        $rule = Application::make(Rules::class);
+        $validate = Application::make(Validate::class);
         $schema = ['link' => $rule->string()->url()];
         $source = ['link' => $location];
         if (strlen(trim($location)) != 0) {
