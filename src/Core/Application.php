@@ -22,6 +22,7 @@ use Wepesi\Core\Routing\Router;
 use Wepesi\Core\Validation\MessageErrorBuilder;
 use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
 use Wepesi\Core\Validation\Validate;
+use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
 use Wepesi\Core\View\View;
 
 /**
@@ -337,10 +338,14 @@ class Application
         self::$container->bind(Option::class);
         self::$container->bind(OptionsResolver::class);
 
+
+        self::$container->bind(MessageBuilderContracts::class, MessageErrorBuilder::class);
         /*
          * HTTP services.
          */
-        self::$container->singleton(Request::class);
+        self::$container->singleton(Request::class, function () {
+            return Request::createFromGlobals();
+        });
         self::$container->singleton(Response::class);
         self::$container->singleton(Input::class);
         self::$container->singleton(Redirect::class);
@@ -349,9 +354,9 @@ class Application
          * View and validation services.
          */
         self::$container->singleton(View::class);
+        self::$container->bind(ViewEngineContracts::class, View::class);
         self::$container->singleton(Validate::class);
         self::$container->singleton(MessageErrorBuilder::class);
-        self::$container->bind(MessageBuilderContracts::class, MessageErrorBuilder::class);
 
         /*
          * Utility services.
