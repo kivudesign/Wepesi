@@ -47,7 +47,7 @@ interface ViewEngineContracts
     public function setLayoutContent(string $layout_name): void;
 
     /**
-     * reset view to default configuration
+     * reset the view to the default configuration
      */
     public function flush(): void;
 }
