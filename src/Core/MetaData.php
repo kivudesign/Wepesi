@@ -3,7 +3,6 @@
 
 namespace Wepesi\Core;
 
-
 class MetaData
 {
     private string $_title;
@@ -20,7 +19,7 @@ class MetaData
     /**
      * BundleMetaData constructor.
      */
-    function __construct()
+    public function __construct()
     {
         $this->_title = $_SERVER['SERVER_NAME'] ?? '';
         $this->_description = $this->_title;
@@ -37,7 +36,7 @@ class MetaData
      * @param string $title
      * @return $this
      */
-    function title(string $title): MetaData
+    public function title(string $title): MetaData
     {
         $this->_title = $title;
         return $this;
@@ -48,7 +47,7 @@ class MetaData
      * @param string $lang
      * @return $this
      */
-    function lang(string $lang): MetaData
+    public function lang(string $lang): MetaData
     {
         $this->_lang = $lang;
         return $this;
@@ -59,42 +58,43 @@ class MetaData
      * @param string $cover
      * @return $this
      */
-    function cover(string $cover): MetaData
+    public function cover(string $cover): MetaData
     {
         $this->_cover = $cover;
         return $this;
     }
 
     /**
-     * Author most of time used for twitter
+     * Author most time used for x previously(twitter)
+     *
      * @param string $author
      * @return $this
      */
-    function author(string $author): MetaData
+    public function author(string $author): MetaData
     {
         $this->_author = $author;
         return $this;
     }
 
     /**
-     *A meta description is an HTML element that sums up the content on your web page.
-     * Search engines typically show the meta description in search results below your title tag.
+     * A meta-description is an HTML element that sums up the content on your web page.
+     * Search engines typically show the meta-description in search results below your title tag.
      *
      * @param string $description
      * @return $this
      */
-    function descriptions(string $description): MetaData
+    public function descriptions(string $description): MetaData
     {
         $this->_description = $description;
         return $this;
     }
 
     /**
-     * the type of meta data eg.: article,blog
+     * the type of metadata e.g.: article, blog
      * @param string $type
      * @return $this
      */
-    function type(string $type): MetaData
+    public function type(string $type): MetaData
     {
         $this->_type = $type;
         return $this;
@@ -105,7 +105,7 @@ class MetaData
      * @param string $link
      * @return $this
      */
-    function link(string $link): MetaData
+    public function link(string $link): MetaData
     {
         $this->_link = $link;
         return $this;
@@ -120,7 +120,7 @@ class MetaData
      * 'FOLLOW': The search engine crawler will follow all the links in that webpage,
      * @return $this
      */
-    function follow(): MetaData
+    public function follow(): MetaData
     {
         $this->_tags[] = 'follow';
         $this->_tags = $this->_follow ? array_diff($this->_tags, ['nofollow']) : $this->_tags;
@@ -134,7 +134,7 @@ class MetaData
      * @param $keyword
      * @return MetaData
      */
-    function keyword($keyword): MetaData
+    public function keyword($keyword): MetaData
     {
         if (is_array($keyword)) {
             $this->_keyword = array_filter($keyword, function ($item) {
@@ -150,7 +150,7 @@ class MetaData
      * 'INDEX': The search engine crawler will index the whole webpage.
      * @return $this
      */
-    function index(): MetaData
+    public function index(): MetaData
     {
         $this->_tags[] = 'index';
         $this->_tags = $this->_index ? array_diff($this->_tags, ['noindex']) : $this->_tags;
@@ -163,7 +163,7 @@ class MetaData
      * 'NOFOLLOW': The search engine crawler will NOT follow the page and any links in that webpage.
      * @return $this
      */
-    function nofollow(): MetaData
+    public function nofollow(): MetaData
     {
         $this->_tags[] = 'nofollow';
         $this->_tags = $this->_follow ? array_diff($this->_tags, ['follow']) : $this->_tags;
@@ -173,10 +173,10 @@ class MetaData
     }
 
     /**
-     * 'NOINDEX':The search engine crawler will NOT index that webpages.
+     * 'NOINDEX':The search engine crawler will NOT index that webpage.
      * @return $this
      */
-    function noIndex(): MetaData
+    public function noIndex(): MetaData
     {
         $this->_tags[] = 'noindex';
         $this->_tags = $this->_index ? array_diff($this->_tags, ['index']) : $this->_tags;
@@ -190,21 +190,22 @@ class MetaData
      * By implementing the canonical tag in the code,
      * your website tells search engines that this URL is the main page
      * and that the engines shouldn’t index other pages.
-     * @param string $canonical : https://doctawetu.com
+     * @param string $canonical : https://example.com
      * @return $this
      */
-    function canonical(string $canonical): MetaData
+    public function canonical(string $canonical): MetaData
     {
         $this->_canonical = $canonical;
         return $this;
     }
 
     /**
-     * Get the complete meta data to be displayed
+     * Get the complete metadata to be displayed
      * @return string
      */
     public function build(): string
     {
+        $html = '';
         if ($this->_title && $this->_description) {
             $open_graph_meta = $this->openGraphMeta();
             $twitter_meta = $this->twitterMeta();
@@ -212,7 +213,7 @@ class MetaData
             $canonical_exist = $this->getCanonical();
             $keyword_exist = $this->getKeyWord();
             $author_exist = $this->getAuthor();
-            return <<<META
+            $html =  <<<META
                 <!-- Extra information -->
                 <meta name="mobile-web-app-capable" content="yes" />
                 <meta name="apple-mobile-web-app-title" content="yes" />
@@ -226,6 +227,7 @@ class MetaData
                 $twitter_meta
             META;
         }
+        return $html;
     }
 
     /**
@@ -265,7 +267,7 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     protected function getType(bool $twitter = false): string
     {
@@ -293,7 +295,7 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     protected function getLang(bool $twitter = false): string
     {
@@ -302,7 +304,7 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     protected function getTitle(bool $twitter = false): string
     {
@@ -311,9 +313,9 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    protected function getDescription(bool $twitter = false): ?string
+    protected function getDescription(bool $twitter = false): string
     {
         $destination = $twitter ? 'twitter' : 'og';
         return $this->_description ? "<meta property = \"$destination:description\" content = \"$this->_description\" />" : '';
@@ -347,7 +349,7 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     protected function getCanonical(bool $twitter = false): string
     {
@@ -356,7 +358,7 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     protected function getTags(): string
     {
@@ -365,7 +367,7 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
     protected function getKeyWord(): string
     {
@@ -374,9 +376,9 @@ class MetaData
     }
 
     /**
-     * @return string|null
+     * @return string
      */
-    protected function getAuthor(): ?string
+    protected function getAuthor(): string
     {
         return $this->_author ? "<meta name=\"author\" content=\"$this->_author\">" : '';
     }
