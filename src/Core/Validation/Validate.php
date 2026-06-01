@@ -6,6 +6,7 @@
 
 namespace Wepesi\Core\Validation;
 
+use ReflectionClass;
 use Wepesi\Core\Application;
 use Wepesi\Core\Exceptions\ValidationException;
 use Wepesi\Core\Http\Response;
@@ -29,13 +30,13 @@ final class Validate
     private MessageBuilderContracts $message;
 
     /**
-     *
+     * @param MessageBuilderContracts $message
      */
-    function __construct()
+    public function __construct(MessageBuilderContracts $message)
     {
         $this->errors = [];
         $this->passed = false;
-        $this->message = new MessageErrorBuilder();
+        $this->message = $message;
     }
 
     /**
@@ -43,7 +44,7 @@ final class Validate
      * @param array $schema data schema
      * @return void
      */
-    function check(array $resource, array $schema)
+    function check(array $resource, array $schema): void
     {
         try {
             $this->errors = [];
@@ -53,9 +54,10 @@ final class Validate
              * on the source data
              */
             foreach ($resource as $item => $response) {
-                $option_resolver[] = new Option($item);
+                $option_resolver[] = Application::make(Option::class, [$item]);
             }
-            $resolver = new OptionsResolver($option_resolver);
+
+            $resolver = Application::make(OptionsResolver::class, [$option_resolver]);
             $options = $resolver->resolve($schema);
             $exceptions = $options['InvalidArgumentException'] ?? false;
             if ($exceptions) {
@@ -68,20 +70,22 @@ final class Validate
                 foreach ($schema as $item => $rules) {
                     if (!is_array($rules) && is_object($rules)) {
                         if (!$rules->generate()) {
-                            throw new ValidationException("This rule is not a valid! method generate does not exist");
+                            throw new ValidationException('This rule is not a valid! method generate does not exist');
                         }
                         $rules = $rules->generate();
                     }
                     $class_namespace = array_keys($rules)[0];
-                    if ($class_namespace == "any") continue;
-                    $validator_class = str_replace("Rules", "Validator", $class_namespace);
-                    $reflexion = new \ReflectionClass($validator_class);
+                    if ($class_namespace == 'any') continue;
+                    $validator_class = str_replace('Rules', 'Validator', $class_namespace);
 
-                    $instance = $reflexion->newInstance($item, $resource);
+                    $instance = Application::make($validator_class, [
+                        $item,
+                        $resource
+                    ]);
 
                     foreach ($rules[$class_namespace] as $method => $params) {
                         if (method_exists($instance, $method)) {
-                            call_user_func_array([$instance, $method], [$params]);
+                            Application::container()->call([$instance, $method], [$params]);
                         }
                     }
                     $result = $instance->result();
@@ -101,18 +105,24 @@ final class Validate
     }
 
     /**
-     * @param array $item
+     * Add an error to the error list
+     *
+     * @param MessageBuilderContracts $item
      * @return void
      */
-    private function addError(MessageBuilderContracts $item)
+    private function addError(MessageBuilderContracts $item): void
     {
         $this->errors[] = $item->generate();
     }
 
     /**
+     * Get validation errors
+     * 1. if the validation passed, the array will be empty
+     * 2. if the validation failed, the array will contain the errors
+     * 
      * @return array
      */
-    public function errors(): array
+    public function getErrors(): array
     {
         return $this->errors;
     }

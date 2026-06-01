@@ -55,7 +55,7 @@ final class ArrayValidator extends ValidatorProvider
         $element_source = $this->data_source[$this->field_name];
         $validate->check($element_source, $elements);
         if (!$validate->passed()) {
-            foreach ($validate->errors() as $error) $this->addError($error);
+            foreach ($validate->getErrors() as $error) $this->addError($error);
         }
     }
 
