@@ -33,7 +33,17 @@ Requires PHP >= 8.0. Create a new project with:
 composer create-project wepesi/wepesi my-project
 ```
 
-Then open `my-project/` in your web server root and configure your `.env` file (copy `.env.example` to `.env`).
+Then open `my-project/` in your web server root and configure your `.env` file (copy `.env.example` to `.env`). At minimum set the database credentials:
+
+```ini
+DB_HOST=127.0.0.1
+DB_NAME=your_database
+DB_USER=your_user
+DB_PASSWORD=your_password
+DB_PORT=3306
+APP_ENV=dev
+LANG=en
+```
 
 ### Manual Setup
 
@@ -232,6 +242,8 @@ public function show(int $id): void
 
 Wepesi includes a simple ORM built around **Entity** classes. Create an entity in `app/Models/` by extending `Wepesi\Core\Database\Entity`.
 
+> **Database configuration** is read from your `.env` file (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`, `DB_PORT`). See [Installation](#installation) for details.
+
 ### Defining an entity
 
 ```php
@@ -243,8 +255,9 @@ use Wepesi\Core\Database\Entity;
 
 class UserEntity extends Entity
 {
-    // The framework infers the table name from the class name ("user")
-    // or you can override it:
+    // Without getName(), the framework lowercases the class short-name as the
+    // table name (e.g. "UserEntity" → "userentity"). Always override getName()
+    // to map the entity to the correct table:
     protected function getName(): string
     {
         return 'users';
