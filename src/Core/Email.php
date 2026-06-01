@@ -2,6 +2,9 @@
 
 namespace Wepesi\Core;
 
+use Exception;
+use Wepesi\Core\Validation\Validate;
+
 class Email
 {
     private $url;
@@ -55,7 +58,7 @@ class Email
         try {
             $body = $this->template($body);
             return $this->sendMail($data, $body);
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ["exception" => $ex->getMessage()];
         }
     }
@@ -132,7 +135,7 @@ class Email
             </body>
             </html>
         html_body;
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ["exception" => $ex->getMessage()];
         }
     }
@@ -151,7 +154,7 @@ class Email
                 "From:$this->from"
             ];
             return mail($this->to, $this->subject, $body, implode("\r\n", $header));
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ["exception" => $ex->getMessage()];
         }
     }
@@ -162,16 +165,16 @@ class Email
     private function checkConfig(array $config_data)
     {
         try {
-            $validat = new Validate($config_data);
+            $validat = Application::make(Validate::class,$config_data);
             $schema = [
                 "from" => $validat->string("from")->required()->email()->check(),
                 "to" => $validat->string("to")->required()->email()->check(),
             ];
             $validat->check($config_data, $schema);
             if (!$validat->passed()) {
-                throw new \Exception($validat->errors());
+                throw new Exception($validat->getErrors());
             }
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return ["exception" => $ex->getMessage()];
         }
     }
