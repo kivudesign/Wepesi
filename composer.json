@@ -6,7 +6,8 @@
     "time": "2021-11-12",
     "autoload": {
         "psr-4": {
-            "Wepesi\\": "src/"
+            "Wepesi\\Core\\": "src/Core",
+            "Wepesi\\Test\\": "src/Test"
         }
     },
     "keywords": [
