@@ -3,13 +3,13 @@
  * Copyright (c) 2026. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\Component\Contracts;
+namespace Wepesi\Core\Component\Providers\Contracts;
 
 /**
  * @package Wepesi\Core\Component
  * @template T
  */
-interface ComponentContract
+interface ComponentContracts
 {
     /**
      * Build HTML component UI content
