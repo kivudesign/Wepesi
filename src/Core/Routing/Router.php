@@ -81,8 +81,8 @@ class  Router implements RouterContract
      */
     private function add(string $pattern, $callable, ?string $name, string $methode): RouteContract
     {
-        $pattern = $this->baseRoute ? Escape::addSlashes($pattern): $pattern;
-
+        $pattern = $this->baseRoute . Escape::addSlashes($pattern);
+        $pattern = $this->baseRoute ? rtrim($pattern, '/') : $pattern;
         $route = Application::make(Route::class, [
             $pattern,
             $callable,
