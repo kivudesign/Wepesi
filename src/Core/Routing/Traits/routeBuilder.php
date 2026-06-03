@@ -43,7 +43,7 @@ trait routeBuilder
         }
         }catch (InvalidArgumentException $exception){
             Response::setStatusCode(500);
-            error_log($exception->getMessage(), $exception->getCode());
+            error_log($exception->getMessage());
             throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
     }
