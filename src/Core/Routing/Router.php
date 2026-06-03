@@ -80,8 +80,7 @@ class  Router implements RouterContract
      */
     private function add(string $pattern, $callable, ?string $name, string $methode): RouteContract
     {
-        $pattern = $this->baseRoute . Escape::addSlashes(trim($pattern, '/'));
-        $pattern = $this->baseRoute ? rtrim($pattern, '/') : $pattern;
+        $pattern = $this->baseRoute ? Escape::addSlashes($pattern): $pattern;
 
         $route = Application::make(Route::class, [
             $pattern,
@@ -126,16 +125,6 @@ class  Router implements RouterContract
     public function delete(string $path, $callable, $name = null): Route
     {
         return $this->add($path, $callable, $name, 'DELETE');
-    }
-
-    /**
-     * @param string $path
-     * @return string
-     */
-    private function trimPath(string $path): string
-    {
-        $trim_path = trim($path, '/');
-        return strlen($trim_path) > 0 ? Escape::addSlashes($trim_path) : '';
     }
 
     /**
