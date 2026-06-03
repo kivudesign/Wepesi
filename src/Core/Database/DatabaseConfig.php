@@ -9,8 +9,8 @@ use Wepesi\Core\Database\Providers\Contracts\DatabaseConfigContracts;
 
 /**
  *
- * Provide DataBase connection connection configurations.
- * By default set up from `.env`.
+ * Provide DataBase connection configurations.
+ * By default, set up from `.env`.
  * @package Wepesi\Core\Database
  * @template DatabaseConfig of DatabaseConfigContracts
  * @template-implements DatabaseConfigContracts<DatabaseConfig>
@@ -23,7 +23,7 @@ class DatabaseConfig implements DatabaseConfigContracts
     protected static array $db_config = [];
 
     /**
-     * Get database connection information's
+     * Get database connection information
      * @return object|null
      */
     public function getDBConfig(): ?object
@@ -35,7 +35,7 @@ class DatabaseConfig implements DatabaseConfigContracts
     }
 
     /**
-     * Set database host name
+     * Set the database host name
      * @param string $host_name database host name default 127.0.0.1
      * @return DatabaseConfigContracts
      */
@@ -44,6 +44,11 @@ class DatabaseConfig implements DatabaseConfigContracts
         return $this->setConfig('host', $host_name);
     }
 
+    /**
+     * @param string $key
+     * @param string $value
+     * @return DatabaseConfigContracts
+     */
     private function setConfig(string $key, string $value): DatabaseConfigContracts
     {
         self::$db_config[$key] = $value;
@@ -51,7 +56,7 @@ class DatabaseConfig implements DatabaseConfigContracts
     }
 
     /**
-     * Set database connection user  password
+     * Set database password
      * @param string $password database password
      * @return DatabaseConfigContracts
      */
@@ -61,7 +66,7 @@ class DatabaseConfig implements DatabaseConfigContracts
     }
 
     /**
-     * Set database connection username
+     * Set the database username
      * @param string $username database username
      * @return $this
      */
@@ -71,17 +76,17 @@ class DatabaseConfig implements DatabaseConfigContracts
     }
 
     /**
-     * set database connection default 3306
+     * set a database port
      * @param string $port database port default 3306
      * @return DatabaseConfigContracts
      */
-    public function port(string $port): DatabaseConfigContracts
+    public function port(string $port = '3306'): DatabaseConfigContracts
     {
         return $this->setConfig('port', $port);
     }
 
     /**
-     * Set database name to be selected
+     * Set database name
      * @param string $db_name database name
      * @return DatabaseConfigContracts
      */
