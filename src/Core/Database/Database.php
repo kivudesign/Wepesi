@@ -23,7 +23,7 @@ use Wepesi\Core\Http\Response;
 class Database extends DatabaseConfig implements DatabaseContracts
 {
     /**
-     * @var Database
+     * @var DatabaseContracts
      */
     private static DatabaseContracts $_instance;
     /**
