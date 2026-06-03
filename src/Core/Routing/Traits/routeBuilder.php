@@ -5,10 +5,9 @@
 
 namespace Wepesi\Core\Routing\Traits;
 
-use BadMethodCallException;
 use InvalidArgumentException;
-use ReflectionException;
 use Wepesi\Core\Application;
+use Wepesi\Core\Http\Response;
 
 /**
  *
@@ -20,10 +19,12 @@ trait routeBuilder
      * @param array $matches
      * @param bool $is_middleware
      * @return void
+     * @link http://github.com/kivudesign/Wepesi
      */
     protected function routeFunctionCall($callable, array $matches = [], bool $is_middleware = false): void
     {
         $class_element = !$is_middleware ? 'controller' : 'middleware';
+        try{
         if (is_string($callable) || is_array($callable)) {
             $callable_params = is_string($callable) ? explode('#', $callable) : $callable;
             if (count($callable_params) != 2) {
@@ -39,6 +40,11 @@ trait routeBuilder
             Application::container()->call([$class_name, $class_method_name], $matches);
         } else if (isset($callable) && is_callable($callable, true)) {
             Application::container()->call($callable, $matches);
+        }
+        }catch (InvalidArgumentException $exception){
+            Response::setStatusCode(500);
+            error_log($exception->getMessage(), $exception->getCode());
+            throw new InvalidArgumentException($exception->getMessage(), $exception->getCode());
         }
     }
 

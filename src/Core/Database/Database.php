@@ -12,6 +12,7 @@ use Wepesi\Core\Config;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseContracts;
 use Wepesi\Core\Database\Traits\QueryExecute;
 use Wepesi\Core\Exceptions\DatabaseException;
+use Wepesi\Core\Http\Response;
 
 /**
  * @package Wepesi\Core\Database
@@ -24,7 +25,7 @@ class Database extends DatabaseConfig implements DatabaseContracts
     /**
      * @var Database
      */
-    private static Database $_instance;
+    private static DatabaseContracts $_instance;
     /**
      * @var
      */
@@ -74,8 +75,8 @@ class Database extends DatabaseConfig implements DatabaseContracts
     protected function setUp(): void
     {
         try {
-            if (!Config::get('mysql/usable')) {
-                throw new DatabaseException('you should authorized user database on config file.');
+            if (!Config::get('config/database')) {
+                throw new DatabaseException('you should authorized use of database on config file.');
             }
             $this->flush();
             $config = $this->getDBConfig();
@@ -89,7 +90,9 @@ class Database extends DatabaseConfig implements DatabaseContracts
             $this->pdoObject->setAttribute(PDO::MYSQL_ATTR_FOUND_ROWS, true);
             $this->pdoObject->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $ex) {
-            die($ex->getMessage());
+            Response::setStatusCode(500);
+            error_log($ex->getMessage());
+            throw new PDOException($ex->getMessage());
         }
     }
 
@@ -164,7 +167,7 @@ class Database extends DatabaseConfig implements DatabaseContracts
     }
 
     /**
-     * Update row information of a selected tables
+     * Update row information of a selected table
      * @param string $table this is the name of the table where to get information
      * @return DBUpdate
      */
