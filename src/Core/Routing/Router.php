@@ -17,6 +17,7 @@ use Wepesi\Core\Routing\Traits\routeBuilder;
 /**
  * @template T
  * @template-implements RouterContract<T>
+ * @link https://github.com/kivudesign/Wepesi/tree/master/app/Routes
  */
 class  Router implements RouterContract
 {
@@ -25,9 +26,9 @@ class  Router implements RouterContract
      */
     protected array $baseMiddleware;
     /**
-     * @var string|mixed|null
+     * @var string
      */
-    private ?string $url;
+    private string $url;
     /**
      * @var array
      */
@@ -41,7 +42,7 @@ class  Router implements RouterContract
      */
     private string $baseRoute;
     /**
-     * @var null
+     * @var callable|object|string
      */
     private $notFoundCallback;
 
@@ -128,10 +129,12 @@ class  Router implements RouterContract
     }
 
     /**
-     * The group method help to group a collection of routes in to a sub-route pattern.
+     * Group a collection of routes in to a sub-route pattern.
      * The sub-route pattern is prefixed into all following routes defined in the scope.
      * @param array|string $base_route can be a string or an array to defined middleware for the group routing
      * @param string|Closure $callable a callable method can be a controller method or an anonymous callable method
+     * @link https://github.com/kivudesign/Wepesi/tree/master/app/Routes#subroutine--group-routing
+     * @return void
      */
     public function group(array|string $base_route, string|Closure $callable): void
     {
@@ -155,7 +158,8 @@ class  Router implements RouterContract
     }
 
     /**
-     * @param Closure $callable
+     * @param Closure|string $callable
+     * @link https://github.com/kivudesign/Wepesi/tree/master/app/Routes#api-groupe-routing
      * @return void
      */
     public function api(Closure|string $callable): void
@@ -207,9 +211,9 @@ class  Router implements RouterContract
     }
 
     /**
-     * @return mixed|void
+     * @return mixed
      */
-    protected function getUrl()
+    protected function getUrl(): mixed
     {
         return $this->url;
     }
@@ -218,6 +222,7 @@ class  Router implements RouterContract
      * Set the 404 handling functions.
      *
      * @param callable|object|string $match_fn The function to be executed
+     * @link https://github.com/kivudesign/Wepesi/tree/master/app/Routes#custom-404
      * @param $callable
      */
     public function set404(callable|object|string $match_fn, $callable = null): void
@@ -239,6 +244,8 @@ class  Router implements RouterContract
     }
     /**
      * Execute the route request
+     * @link https://github.com/kivudesign/Wepesi/tree/master/app/Routes
+     * @return mixed
      */
     public function run()
     {
@@ -296,9 +303,9 @@ class  Router implements RouterContract
     }
 
     /**
-     * @return mixed|void
+     * @return mixed
      */
-    protected function getMethodeUrl()
+    protected function getMethodeUrl(): mixed
     {
         return $_SERVER['REQUEST_URI'];
     }
