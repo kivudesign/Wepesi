@@ -386,7 +386,7 @@ class Application
         /**
          * Component management
          */
-        self::$container->bind(useComponent::class);
+        self::$container->singleton(useComponent::class);
         self::$container->bind(BaseComponent::class, useComponent::class);
         self::$container->bind(ComponentContracts::class, BaseComponent::class);
         /*
