@@ -3,11 +3,11 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\View\Provider;
+namespace Wepesi\Core\View\Providers;
 
 use Wepesi\Core\Application;
 use Wepesi\Core\Escape;
-use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
+use Wepesi\Core\View\Providers\Contracts\ViewEngineContracts;
 
 /**
  * @template T
@@ -81,8 +81,8 @@ abstract class ViewBuilderProviders implements ViewEngineContracts
     }
 
     /**
-     * Set layout template file,
-     * by default all file should be located on views directory.
+     * Set the layout template file;
+     * by default, all files should be located on views' directory.
      *
      * @param class-string<T> $template
      */
@@ -102,7 +102,8 @@ abstract class ViewBuilderProviders implements ViewEngineContracts
     }
 
     /**
-     * Reset view to default configuration     *
+     * Reset view to default configuration
+     * @return void
      */
     public function flush(): void
     {

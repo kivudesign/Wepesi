@@ -3,7 +3,7 @@
  * Copyright (c) 2024. Wepesi Dev Framework
  */
 
-namespace Wepesi\Core\View\Provider\Contract;
+namespace Wepesi\Core\View\Providers\Contracts;
 
 /**
  * @template T

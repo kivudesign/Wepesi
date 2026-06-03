@@ -14,8 +14,8 @@ use Wepesi\Core\Application;
 use Wepesi\Core\Escape;
 use Wepesi\Core\Http\Response;
 use Wepesi\Core\MetaData;
-use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
-use Wepesi\Core\View\Provider\ViewBuilderProviders;
+use Wepesi\Core\View\Providers\Contracts\ViewEngineContracts;
+use Wepesi\Core\View\Providers\ViewBuilderProviders;
 use function libxml_clear_errors;
 use function libxml_use_internal_errors;
 
