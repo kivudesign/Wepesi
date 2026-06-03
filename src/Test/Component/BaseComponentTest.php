@@ -5,7 +5,7 @@
 
 namespace Wepesi\Test\Component;
 
-use Wepesi\Core\Component\Provider\BaseComponent;
+use Wepesi\Core\Component\Providers\BaseComponent;
 use PHPUnit\Framework\TestCase;
 
 class TestComponent extends BaseComponent
