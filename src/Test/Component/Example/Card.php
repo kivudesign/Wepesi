@@ -5,7 +5,7 @@
 
 namespace Wepesi\Test\Component\Example;
 
-use Wepesi\Core\Component\Provider\BaseComponent;
+use Wepesi\Core\Component\Providers\BaseComponent;
 
 class Card extends BaseComponent
 {

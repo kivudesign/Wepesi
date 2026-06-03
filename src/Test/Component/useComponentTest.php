@@ -16,7 +16,7 @@ class useComponentTest extends TestCase
     {
         // Create a temporary config file for testing
         $this->configFile = __DIR__ . '/temp_components.php';
-        file_put_contents($this->configFile, '<?php return ["card"=>\Wepesi\Test\Component\Example\Card::class];');
+        file_put_contents($this->configFile, '<?php return ["card"=>Wepesi\Test\Component\Example\Card::class];');
         useComponent::loadConfig($this->configFile);
     }
 
