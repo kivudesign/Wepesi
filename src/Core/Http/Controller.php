@@ -7,9 +7,8 @@ namespace Wepesi\Core\Http;
 
 use Wepesi\Core\Application;
 use Wepesi\Core\Http\Providers\BaseControllerMiddleware;
-use Wepesi\Core\Media;
 use Wepesi\Core\MetaData;
-use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
+use Wepesi\Core\View\Providers\Contracts\ViewEngineContracts;
 use Wepesi\Core\View\View;
 
 /**
@@ -24,14 +23,14 @@ abstract class Controller extends BaseControllerMiddleware
     /**
      * @var MetaData
      */
-    private MetaData $metadata;
+    protected MetaData $metadata;
 
     /**
      * Framework service initializer.
      *
      * This method is called automatically by the DI container after the controller
      * is created, so child controllers do not need to call parent::__construct().
-     *
+     * @link https://github.com/kivudesign/Wepesi/controllers
      * @return void
      */
     final public function __wepesiInit(): void

@@ -5,6 +5,9 @@
 
 namespace Wepesi\Core;
 
+use Wepesi\Core\Component\Providers\BaseComponent;
+use Wepesi\Core\Component\Providers\Contracts\ComponentContracts;
+use Wepesi\Core\Component\useComponent;
 use Wepesi\Core\Database\Database;
 use Wepesi\Core\Database\DatabaseConfig;
 use Wepesi\Core\Database\Providers\Contracts\DatabaseContracts;
@@ -26,7 +29,8 @@ use Wepesi\Core\Routing\Router;
 use Wepesi\Core\Validation\MessageErrorBuilder;
 use Wepesi\Core\Validation\Providers\Contracts\MessageBuilderContracts;
 use Wepesi\Core\Validation\Validate;
-use Wepesi\Core\View\Provider\Contract\ViewEngineContracts;
+use Wepesi\Core\View\Providers\Contracts\ViewEngineContracts;
+use Wepesi\Core\View\Providers\ViewBuilderProviders;
 use Wepesi\Core\View\View;
 
 /**
@@ -283,12 +287,13 @@ class Application
      */
     private function initDB(): void
     {
+        $config = self::$container->make(Config::class)->get('mysql');
         self::$container->get(DatabaseConfig::class)
-            ->host($_ENV['DB_HOST'])
-            ->port($_ENV['DB_PORT'])
-            ->db($_ENV['DB_NAME'])
-            ->username($_ENV['DB_USER'])
-            ->password($_ENV['DB_PASSWORD']);
+            ->host($_ENV['DB_HOST']?? $config['host'])
+            ->port($_ENV['DB_PORT']?? $config['port'])
+            ->db($_ENV['DB_NAME']?? $config['db'])
+            ->username($_ENV['DB_USER']?? $config['username'])
+            ->password($_ENV['DB_PASSWORD']?? $config['password']);
     }
     /**
      * @return void
@@ -316,11 +321,11 @@ class Application
          * Core application services.
          */
         self::$container->singleton(Router::class);
-        self::$container->singleton(DatabaseConfig::class);
 
         /*
          * Database uses a private constructor, so it must be registered through getInstance().
          */
+        self::$container->singleton(DatabaseConfig::class);
         self::$container->singleton(Database::class, function () {
             return Database::getInstance();
         });
@@ -350,8 +355,6 @@ class Application
         self::$container->bind(Option::class);
         self::$container->bind(OptionsResolver::class);
 
-
-        self::$container->bind(MessageBuilderContracts::class, MessageErrorBuilder::class);
         /*
          * HTTP services.
          */
@@ -363,17 +366,35 @@ class Application
         self::$container->singleton(Redirect::class);
 
         /*
-         * View and validation services.
+         * View services.
          */
         self::$container->singleton(View::class);
+        self::$container->bind(ViewBuilderProviders::class, View::class);
         self::$container->bind(ViewEngineContracts::class, View::class);
-        self::$container->bind(Validate::class);
-        self::$container->singleton(MessageErrorBuilder::class);
 
+        /**
+         * Validation services.
+         */
+        self::$container->bind(Validate::class);
+
+        /**
+         * Message builder services.
+         */
+        self::$container->bind(MessageErrorBuilder::class);
+        self::$container->bind(MessageBuilderContracts::class, MessageErrorBuilder::class);
+
+        /**
+         * Component management
+         */
+        self::$container->bind(useComponent::class);
+        self::$container->bind(BaseComponent::class, useComponent::class);
+        self::$container->bind(ComponentContracts::class, BaseComponent::class);
         /*
          * Utility services.
          */
-        self::$container->singleton(Config::class);
+        if (!self::$container->has(Config::class)) {
+            self::$container->singleton(Config::class);
+        }
         self::$container->singleton(DotEnv::class);
         self::$container->singleton(Hash::class);
         self::$container->singleton(I18n::class);

@@ -6,33 +6,40 @@
 
 use Wepesi\Core\AppConfiguration;
 use Wepesi\Core\Application;
+use Wepesi\Core\Config;
 use Wepesi\Core\DI\Container;
 use Wepesi\Core\DotEnv;
 
 // Define root directory
-$ROOT_DIR = __DIR__;
+$ROOT_DIR = str_replace('\\', '/', __DIR__);
 
-if ((substr(PHP_OS, 0, 3)) === 'WIN') $ROOT_DIR = str_replace("\\", '/', $ROOT_DIR);
+require_once $ROOT_DIR . '/config/bootstrap.php';
 
-require_once $ROOT_DIR . '/config/init.php';
+$envFile = $ROOT_DIR . '/.env';
 
-(new DotEnv($ROOT_DIR . '/.env'))->load();
+if (is_file($envFile)) {
+    (new DotEnv($envFile))->load();
+}
+
+$appConfig = new Config();
+$appConfig->load($ROOT_DIR . '/config/globals.php');
+$appConfig->load($ROOT_DIR . '/config/database.php');
 
 /**
- *  Generate and index a file for redirection (protection) while APP_DEV in production
+ * Generate index files for directory protection in production.
  */
 if (getenv('APP_ENV') === 'prod') {
     autoIndexFolder(['assets']);
 }
+
 $container = new Container();
+$container->instance(Config::class, $appConfig);
 
-$appConfiguration = new AppConfiguration();
-
-$configuration = $appConfiguration
+$configuration = (new AppConfiguration())
     ->view()
     ->route()
-    ->lang(getenv('LANG'))
-    ->timezone(getenv('TIME_ZONE'));
+    ->lang(getenv('LANG') ?: Config::get('lang', 'fr'))
+    ->timezone(getenv('TIME_ZONE') ?: 'Africa/Kigali');
 
 $app = new Application($ROOT_DIR, $configuration, $container);
 
