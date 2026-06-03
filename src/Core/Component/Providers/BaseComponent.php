@@ -70,7 +70,7 @@ abstract class BaseComponent implements ComponentContracts
      */
     public function attribute(string $name, string $value): ComponentContracts
     {
-        return $this->setAttribute($name,htmlspecialchars($value));;
+        return $this->setAttribute($name,htmlspecialchars($value));
     }
 
     /**
@@ -82,7 +82,7 @@ abstract class BaseComponent implements ComponentContracts
      */
     public function data(string $name, string $value): ComponentContracts
     {
-        return $this->setAttribute($name,htmlspecialchars($value));;
+        return $this->setAttribute($name,htmlspecialchars($value));
     }
 
     /**
