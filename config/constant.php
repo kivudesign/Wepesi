@@ -5,7 +5,7 @@
 
 /**
  * allow configuration are store in this file
- * for database and the connection
+ * for a database and the connection
  * they declare as global tho to be accessible from anywhere in the project
  */
 

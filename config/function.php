@@ -50,7 +50,8 @@ if (! function_exists('url')) {
      */
     function url(string $path): string
     {
-        return WEB_ROOT . ltrim($path, '/');
+        $web_root = str_replace('index.php', '', $_SERVER['SCRIPT_NAME']);
+        return $web_root . ltrim($path, '/');
     }
 }
 
@@ -59,7 +60,7 @@ if (! function_exists('autoIndexFolder')) {
      * @param array $exclude_folder
      * @return void
      */
-    function autoIndexFolder(array $exclude_folder = [])
+    function autoIndexFolder(array $exclude_folder = []): void
     {
         $app_root = appDirSeparator(dirname(__DIR__));
         // check if cache directory exists before processing
@@ -134,6 +135,7 @@ if (! function_exists('dumper')) {
     /**
      * @param $ex
      * @return void
+     * @deprecated
      */
     function dumper($ex)
     {
@@ -195,5 +197,47 @@ if (! function_exists('directoryExists')) {
             return false;
         }
         return true;
+    }
+}
+
+if (! function_exists('getDomainIP')) {
+    /**
+     * Get App domain
+     * define default domain
+     */
+    /**
+     * Get host domain ip address
+     * @return string
+     */
+    function getDomainIP(): string
+    {
+        $ip = $_SERVER['REMOTE_ADDR'];
+
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        } elseif ($ip == '::1') {
+            $ip = gethostbyname(getHostName());
+        }
+        return $ip;
+    }
+}
+
+if (! function_exists('serverDomain')) {
+    /**
+     * Get server information
+     * @return object
+     */
+    function serverDomain(): object
+    {
+        $server_name = $_SERVER['SERVER_NAME'];
+        $protocol = isset($_SERVER['SERVER_PROTOCOL']) ? strtolower(explode('/', $_SERVER['SERVER_PROTOCOL'])[0]) : 'http';
+        $domain = getDomainIp() === '127.0.0.1' ? "$protocol://$server_name" : $server_name;
+        return (object)[
+            'server_name' => $server_name,
+            'protocol' => $protocol,
+            'domain' => $domain
+        ];
     }
 }

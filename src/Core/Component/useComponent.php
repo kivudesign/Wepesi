@@ -3,7 +3,7 @@
 namespace Wepesi\Core\Component;
 
 use Wepesi\Core\Application;
-use Wepesi\Core\Component\Contracts\ComponentContract;
+use Wepesi\Core\Component\Providers\Contracts\ComponentContracts;
 
 /**
  * 
@@ -66,6 +66,8 @@ final class useComponent
      *
      * @param  mixed $directory
      * @param  mixed $namespace
+     *
+     * @link https://github.com/kivudesign/Wepesi/tree/master/app/Components
      * @return void
      */
     public static function registerFromDirectory(string $directory, string $namespace): void
@@ -73,7 +75,7 @@ final class useComponent
         $files = glob(rtrim($directory, "/") . "/*.php");
         foreach ($files as $file) {
             $class = $namespace . "\\" . basename($file, '.php');
-            if (class_exists($class) && is_a($class, ComponentContract::class, true)) {
+            if (class_exists($class) && is_a($class, ComponentContracts::class, true)) {
                 $name = lcfirst(basename($file, '.php'));
                 self::$components[$name] = $class;
             }
@@ -82,7 +84,7 @@ final class useComponent
     }
 
     /**
-     * Register manually one-off component
+     * Manually register a one-off component
      *
      * @param  mixed $name
      * @param  mixed $className
