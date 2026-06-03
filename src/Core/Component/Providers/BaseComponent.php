@@ -3,19 +3,19 @@
  * Copyright (c) 2026. Wepesi Framework
  */
 
-namespace Wepesi\Core\Component\Provider;
+namespace Wepesi\Core\Component\Providers;
 
 use Wepesi\Core\Application;
-use Wepesi\Core\Component\Contracts\ComponentContract;
+use Wepesi\Core\Component\Providers\Contracts\ComponentContracts;
 use Wepesi\Core\Escape;
 
 /**
  * @package Wepesi\Core\Component
- * @template BaseComponent of ComponentContract
+ * @template BaseComponent of ComponentContracts
  * @template-implement ComponentContract<BaseComponent>
  */
 
-abstract class BaseComponent implements ComponentContract
+abstract class BaseComponent implements ComponentContracts
 {
     /**
      * @var string
@@ -44,7 +44,7 @@ abstract class BaseComponent implements ComponentContract
      * @param  mixed $id
      * @return self
      */
-    public function id(string $id): ComponentContract
+    public function id(string $id): ComponentContracts
     {
         $this->id = htmlspecialchars($id);
         return $this;
@@ -55,7 +55,7 @@ abstract class BaseComponent implements ComponentContract
      * @param  mixed $class
      * @return self
      */
-    public function class(string $class): ComponentContract
+    public function class(string $class): ComponentContracts
     {
         $this->class = htmlspecialchars($class);
         return $this;
@@ -68,7 +68,7 @@ abstract class BaseComponent implements ComponentContract
      * @param string $value
      * @return self
      */
-    public function attribute(string $name, string $value): ComponentContract
+    public function attribute(string $name, string $value): ComponentContracts
     {
         return $this->setAttribute($name,htmlspecialchars($value));;
     }
@@ -78,9 +78,9 @@ abstract class BaseComponent implements ComponentContract
      *
      * @param string $name
      * @param string $value
-     * @return ComponentContract
+     * @return ComponentContracts
      */
-    public function data(string $name, string $value): ComponentContract
+    public function data(string $name, string $value): ComponentContracts
     {
         return $this->setAttribute($name,htmlspecialchars($value));;
     }
@@ -111,9 +111,9 @@ abstract class BaseComponent implements ComponentContract
     /**
      * @param string $viewComponent
      * @param array $data
-     * @return ComponentContract
+     * @return ComponentContracts
      */
-    public function loadViewFile(string $viewComponent, array $data = []): ComponentContract
+    public function loadViewFile(string $viewComponent, array $data = []): ComponentContracts
     {
         $componentsDirectory = Application::getViewPath() . '/components';
         $baseDirectory = realpath($componentsDirectory);
@@ -144,9 +144,9 @@ abstract class BaseComponent implements ComponentContract
     /**
      * @param string $name
      * @param string $value
-     * @return ComponentContract
+     * @return ComponentContracts
      */
-    private function setAttribute(string $name, string $value): ComponentContract
+    private function setAttribute(string $name, string $value): ComponentContracts
     {
         $this->dataAttribute[$name] = $value;
         return $this;
