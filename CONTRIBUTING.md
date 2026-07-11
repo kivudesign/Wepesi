@@ -195,7 +195,7 @@ src/Core/
 ./vendor/bin/phpunit src/Test/ConfigTest.php
 ```
 
-All new code must be covered by unit tests placed under `src/Test/` mirroring the source directory structure.
+All new code must be covered by unit tests. Test files live under `src/Test/` and should mirror the module structure under `src/Core/`. For example, a class at `src/Core/Payment/Payment.php` should have its tests at `src/Test/Payment/PaymentTest.php`.
 
 ---
 
