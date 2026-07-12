@@ -29,7 +29,7 @@ class Media
     /**
      * @param string $target_dir
      */
-    public function __construct(string $target_dir = "/public")
+    public function __construct(string $target_dir = "public")
     {
         $this->target_dir = $target_dir;
     }
