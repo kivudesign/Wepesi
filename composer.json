@@ -7,16 +7,31 @@
     "autoload": {
         "psr-4": {
             "Wepesi\\Core\\": "src/Core",
-            "Wepesi\\Test\\": "src/Test"
+            "Wepesi\\Test\\": "src/Test",
+            "Wepesi\\Rules\\": "src/Rules"
         }
     },
     "keywords": [
-        "framework","library","orm","router","jwt",
-        "metadata","view","validation","hash","Token",
-        "quick framework","quick library",
-        "wepesi framework","wepesi quick",
-        "wepesi orm","quick orm","light orm",
-        "php mvc","mvc","API"
+        "framework",
+        "library",
+        "orm",
+        "router",
+        "jwt",
+        "metadata",
+        "view",
+        "validation",
+        "hash",
+        "Token",
+        "quick framework",
+        "quick library",
+        "wepesi framework",
+        "wepesi quick",
+        "wepesi orm",
+        "quick orm",
+        "light orm",
+        "php mvc",
+        "mvc",
+        "API"
     ],
     "homepage": "https://github.com/kivudesign/Wepesi-Quick/issues",
     "support": {
@@ -33,7 +48,9 @@
             "url": "https://github.com/kivudesign/Wepesi-Quick"
         }
     ],
-    "include-path": ["lib/"],
+    "include-path": [
+        "lib/"
+    ],
     "authors": [
         {
             "name": "bim-g",
@@ -43,7 +60,7 @@
         }
     ],
     "require": {
-        "php" : ">=8.0",
+        "php": ">=8.0",
         "ext-mbstring": "*",
         "ext-libxml": "*",
         "ext-dom": "*",
