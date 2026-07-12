@@ -1,0 +1,6 @@
+#!/bin/sh
+./vendor/bin/phpcs --standard=phpcs.xml src/
+if [ $? -ne 0 ]; then
+  echo "❌ Snake_case validation failed. Fix variable/property names."
+  exit 1
+fi
