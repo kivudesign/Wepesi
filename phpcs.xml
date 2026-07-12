@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="Wepesi Coding Standards">
+    <description>Custom coding standards for Wepesi project</description>
+
+    <!-- Scan source code -->
+    <!-- <file>src</file> -->
+    <!-- <file>tests</file> -->
+
+    <!-- Base standard -->
+    <rule ref="PSR12"/>
+
+    <!-- Enforce method/property visibility -->
+    <rule ref="Squiz.Scope.MethodScope"/>
+
+    <!-- Optional: enforce snake_case variables -->
+    <!-- PHPCS doesn’t have a built-in sniff for snake_case variables, so you’ll rely on your PHPStan SnakeCaseVariableRule for that. -->
+</ruleset>
