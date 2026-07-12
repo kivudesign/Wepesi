@@ -1,6 +1,20 @@
 #!/bin/sh
-./vendor/bin/phpcs --standard=phpcs.xml src/
+
+echo "Running code quality checks before push..."
+
+# Run PHPStan
+vendor/bin/phpstan analyse --no-progress
 if [ $? -ne 0 ]; then
-  echo "❌ Snake_case validation failed. Fix variable/property names."
+  echo "❌ PHPStan failed. Fix errors before pushing."
   exit 1
 fi
+
+# Run PHPCS
+vendor/bin/phpcs --standard=phpcs.xml
+if [ $? -ne 0 ]; then
+  echo "❌ PHPCS failed. Fix coding style issues before pushing."
+  exit 1
+fi
+
+echo "✅ All checks passed. Proceeding with push."
+exit 0
