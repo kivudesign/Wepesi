@@ -3,7 +3,7 @@
     <description>Custom coding standards for Wepesi project</description>
 
     <!-- Scan source code -->
-    <!-- <file>src</file> -->
+    <file>src</file>
     <!-- <file>tests</file> -->
 
     <!-- Base standard -->
