@@ -40,9 +40,11 @@ class MethodVisibilityRule implements Rule
 
             // Trait: discourage public unless documented
             if ($parent instanceof Node\Stmt\Trait_ && $node->isPublic()) {
-                $errors[] = RuleErrorBuilder::message(
-                    sprintf('Trait method %s should not be public unless explicitly documented.', $node->name)
-                )->build();
+                if ($docComment === null || stripos($docComment->getText(), '@api') === false) {
+                    $errors[] = RuleErrorBuilder::message(
+                        sprintf('Public trait method %s must be explicitly documented (e.g. with @api).', $node->name)
+                    )->build();
+                }
             }
         }
 
