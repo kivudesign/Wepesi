@@ -48,17 +48,22 @@ class MethodVisibilityRule implements Rule
 
         // Handle properties
         if ($node instanceof Node\Stmt\Property) {
+            $propNames = array_map(
+                static fn(\PhpParser\Node\PropertyItem $prop): string => $prop->name->toString(),
+                $node->props
+            );
+            $propList = implode(', ', $propNames);
             // Interfaces cannot have properties
             if ($parent instanceof Node\Stmt\Interface_) {
                 $errors[] = RuleErrorBuilder::message(
-                    sprintf('Property %s not allowed in interfaces.', implode(', ', $node->props))
+                    sprintf('Property %s not allowed in interfaces.', $propList)
                 )->build();
             }
 
             // Abstract classes: properties should not be private if intended for subclass use
             if ($parent instanceof Node\Stmt\Class_ && $parent->isAbstract() && $node->isPrivate()) {
                 $errors[] = RuleErrorBuilder::message(
-                    sprintf('Private property %s may limit subclass extensibility.', implode(', ', $node->props))
+                    sprintf('Private property %s may limit subclass extensibility.', $propList)
                 )->build();
             }
         }
