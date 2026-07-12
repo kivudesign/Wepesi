@@ -1,12 +1,12 @@
 parameters:
     level: max
     paths:
-    #    - src
+        - src
     # Add custom rules later if needed
 services:
-    #- class: Wepesi\Rules\SnakeCaseVariableRule
-    #  tags: [phpstan.rules.rule]
+    - class: Wepesi\Rules\SnakeCaseVariableRule
+      tags: [phpstan.rules.rule]
 
-    #- class: Wepesi\Rules\MethodVisibilityRule
-    #  tags: [phpstan.rules.rule]
+    - class: Wepesi\Rules\MethodVisibilityRule
+      tags: [phpstan.rules.rule]
 
